@@ -23,7 +23,7 @@ return [
             'driver' => 'pdo_mysql',
             'host' => '127.0.0.1',
             'port' => 8889,
-            'dbname' => 'fituska-api',
+            'dbname' => 'fituska',
             'user' => 'root',
             'password' => 'root',
             'charset' => 'utf8'
