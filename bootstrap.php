@@ -13,7 +13,10 @@ $container->set("settings", require __DIR__ . '/settings.php');
 $container->set(EntityManager::class, function (Container $container): EntityManager {
     $config = Setup::createAnnotationMetadataConfiguration(
         $container->get('settings')['doctrine']['metadata_dirs'],
-        $container->get('settings')['doctrine']['dev_mode']
+        $container->get('settings')['doctrine']['dev_mode'],
+        null,
+        null,
+        false
     );
 
     return EntityManager::create(

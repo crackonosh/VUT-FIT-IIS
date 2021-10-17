@@ -17,16 +17,16 @@ return [
         'cache_dir' => APP_ROOT . '/var/doctrine',
 
         // you should add any other path containing annotated entity classes
-        'metadata_dirs' => [APP_ROOT . '/src/Domain/'],
+        'metadata_dirs' => [APP_ROOT . '/src/Domain'],
 
         'connection' => [
             'driver' => 'pdo_mysql',
-            'host' => 'localhost',
+            'host' => '127.0.0.1',
             'port' => 8889,
             'dbname' => 'fituska-api',
             'user' => 'root',
             'password' => 'root',
-            'charset' => 'utf-8'
+            'charset' => 'utf8'
         ]
     ]
 ];
