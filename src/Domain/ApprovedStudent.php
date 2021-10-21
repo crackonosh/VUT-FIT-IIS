@@ -1,6 +1,7 @@
 <?php
 namespace Domain;
 
+use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -50,5 +51,35 @@ class ApprovedStudent
     ){
         $this->student = $student;
         $this->course_code = $course_code;
+    }
+
+    public function getStudent(): int
+    {
+        return $this->student;
+    }
+
+    public function getCourseCode(): string
+    {
+        return $this->course_code;
+    }
+
+    public function getApprovedBy(): int
+    {
+        return $this->approved_by;
+    }
+
+    public function setApprovedBy(int $approved_by): void
+    {
+        $this->approved_by = $approved_by;
+    }
+
+    public function getApprovedOn(): DateTime
+    {
+        return $this->approved_on;
+    }
+
+    public function setApprovedOn(DateTime $approved_on): void
+    {
+        $this->approved_on = $approved_on;
     }
 }
