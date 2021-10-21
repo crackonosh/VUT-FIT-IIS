@@ -46,4 +46,19 @@ class MessageReaction
         $this->message = $message;
         $this->name = $name;
     }
+    
+    public function getReacter(): int
+    {
+        return $this->reacter;
+    }
+
+    public function getMessage(): int
+    {
+        return $this->message;
+    }
+
+    public function getName(): string
+    {
+        return $this->name;
+    }
 }
