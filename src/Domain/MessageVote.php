@@ -1,6 +1,7 @@
 <?php
 namespace Domain;
 
+use Doctrine\Common\Cache\VoidCache;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -33,7 +34,7 @@ class MessageVote
 
     /**
      * @ORM\Column(type="boolean")
-     * @var boolean
+     * @var bool
      */
     private $score;
 
@@ -44,6 +45,26 @@ class MessageVote
     ){
         $this->message = $message;
         $this->voter = $voter;
+        $this->score = $score;
+    }
+
+    public function getMessage(): int
+    {
+        return $this->message;
+    }
+
+    public function getVoter(): int
+    {
+        return $this->voter;
+    }
+
+    public function getScore(): bool
+    {
+        return $this->score;
+    }
+
+    public function setScore(bool $score): void
+    {
         $this->score = $score;
     }
 }
