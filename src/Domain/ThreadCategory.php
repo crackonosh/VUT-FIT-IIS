@@ -25,14 +25,14 @@ class ThreadCategory
 
     /**
      * @ORM\ManyToOne(targetEntity="User")
-     * @ORM\JoinColumn(onDelete="CASCADE")
+     * @ORM\JoinColumn(onDelete="CASCADE", nullable=false)
      * @var int
      */
     private $created_by;
 
     /**
      * @ORM\ManyToOne(targetEntity="Course")
-     * @ORM\JoinColumn(onDelete="CASCADE", referencedColumnName="code")
+     * @ORM\JoinColumn(onDelete="CASCADE", referencedColumnName="code", nullable=false)
      * @var string
      */
     private $course_code;

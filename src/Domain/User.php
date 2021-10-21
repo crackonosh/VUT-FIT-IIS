@@ -49,7 +49,7 @@ class User
 
     /**
      * @ORM\ManyToOne(targetEntity="Role")
-     * @ORM\JoinColumn(onDelete="CASCADE")
+     * @ORM\JoinColumn(onDelete="CASCADE", nullable=false)
      * @var int
      */
     private $role;

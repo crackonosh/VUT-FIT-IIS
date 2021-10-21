@@ -19,7 +19,7 @@ class Message
 
     /**
      * @ORM\ManyToOne(targetEntity="Thread")
-     * @ORM\JoinColumn(onDelete="CASCADE")
+     * @ORM\JoinColumn(onDelete="CASCADE", nullable=false)
      * @var int
      */
     private $thread;
@@ -32,7 +32,7 @@ class Message
 
     /**
      * @ORM\ManyToOne(targetEntity="User")
-     * @ORM\JoinColumn(onDelete="CASCADE")
+     * @ORM\JoinColumn(onDelete="CASCADE", nullable=false)
      * @var int
      */
     private $created_by;

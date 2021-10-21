@@ -19,7 +19,7 @@ class Thread
 
     /**
      * @ORM\ManyToOne(targetEntity="Course")
-     * @ORM\JoinColumn(onDelete="CASCADE", referencedColumnName="code")
+     * @ORM\JoinColumn(onDelete="CASCADE", referencedColumnName="code", nullable=false)
      * @var string
      */
     private $course_code;
@@ -58,7 +58,7 @@ class Thread
 
     /**
      * @ORM\ManyToOne(targetEntity="ThreadCategory")
-     * @ORM\JoinColumn(onDelete="CASCADE")
+     * @ORM\JoinColumn(onDelete="CASCADE", nullable=false)
      * @var int
      */
     private $category;

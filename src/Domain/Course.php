@@ -17,7 +17,7 @@ class Course
     private $code;
 
     /**
-     * @ORM\Column(type="string", length=64)
+     * @ORM\Column(type="string")
      * @var string
      */
     private $name;

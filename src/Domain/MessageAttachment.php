@@ -25,7 +25,7 @@ class MessageAttachment
 
     /**
      * @ORM\ManyToOne(targetEntity="Message")
-     * @ORM\JoinColumn(onDelete="CASCADE")
+     * @ORM\JoinColumn(onDelete="CASCADE", nullable=false)
      * @var int
      */
     private $message;
