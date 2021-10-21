@@ -15,7 +15,7 @@ class User
      * @ORM\GeneratedValue
      * @var int
      */
-    private $ID;
+    private $id;
 
     /**
      * @ORM\Column(type="string", length=64)
@@ -49,7 +49,7 @@ class User
 
     /**
      * @ORM\ManyToOne(targetEntity="Role")
-     * @ORM\JoinColumn(onDelete="CASCADE", referencedColumnName="ID")
+     * @ORM\JoinColumn(onDelete="CASCADE")
      * @var int
      */
     private $role;
