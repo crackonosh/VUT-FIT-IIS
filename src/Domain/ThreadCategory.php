@@ -46,4 +46,34 @@ class ThreadCategory
         $this->created_by = $created_by;
         $this->course_code = $course_code;
     }
+
+    public function getName(): string
+    {
+        return $this->name;
+    }
+
+    public function setName(string $name): void
+    {
+        $this->name = $name;
+    }
+
+    public function getCreatedBy(): int
+    {
+        return $this->created_by;
+    }
+
+    public function setCreatedBy(int $created_by): void
+    {
+        $this->created_by = $created_by;
+    }
+
+    public function getCourseCode(): int
+    {
+        return $this->course_code;
+    }
+
+    public function setCourseCode(int $course_code): void
+    {
+        $this->course_code = $course_code;
+    }
 }
