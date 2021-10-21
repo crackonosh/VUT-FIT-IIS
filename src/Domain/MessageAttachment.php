@@ -37,4 +37,14 @@ class MessageAttachment
         $this->name = $name;
         $this->message = $message;
     }
+
+    public function getName(): string
+    {
+        return $this->name;
+    }
+
+    public function getMessage(): int
+    {
+        return $this->message;
+    }
 }
