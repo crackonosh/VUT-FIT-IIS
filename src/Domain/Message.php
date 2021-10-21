@@ -1,6 +1,7 @@
 <?php
 namespace Domain;
 
+use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -51,5 +52,30 @@ class Message
         $this->thread = $thread;
         $this->text = $text;
         $this->created_by = $created_by;   
+    }
+
+    public function getThread(): int
+    {
+        return $this->thread;
+    }
+
+    public function getText(): string
+    {
+        return $this->text;
+    }
+
+    public function setText(string $text): void
+    {
+        $this->text = $text;
+    }
+
+    public function getCreatedBy(): int
+    {
+        return $this->created_by;
+    }
+
+    public function getCreatedOn(): DateTime
+    {
+        return $this->created_on;
     }
 }
