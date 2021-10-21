@@ -18,7 +18,7 @@ class ThreadCategory
     private $id;
 
     /**
-     * @ORM\Column(type="string", unique=true)
+     * @ORM\Column(type="string")
      * @var string
      */
     private $name;
