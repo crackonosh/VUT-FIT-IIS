@@ -47,10 +47,4 @@ class Course
      * @var DateTime
      */
     private $approved_on;
-
-    /**
-     * @ORM\Column(type="boolean", options={"default": false})
-     * @var bool
-     */
-    private $is_approved;
 }
