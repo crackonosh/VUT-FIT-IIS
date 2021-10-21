@@ -20,7 +20,7 @@ class Message
     /**
      * @ORM\ManyToOne(targetEntity="Thread")
      * @ORM\JoinColumn(onDelete="CASCADE")
-     * @var string
+     * @var int
      */
     private $thread;
 

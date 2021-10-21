@@ -5,29 +5,24 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity
- * @ORM\Table(name="Courses")
+ * @ORM\Table(name="ApprovedStudents")
  */
-class Course
+class ApprovedStudent
 {
     /**
      * @ORM\ID
-     * @ORM\Column(type="string", length=12)
+     * @ORM\Column(type="integer")
+     * @ORM\GeneratedValue
      * @var int
      */
-    private $code;
-
-    /**
-     * @ORM\Column(type="string", length=64)
-     * @var string
-     */
-    private $name;
+    private $id;
 
     /**
      * @ORM\ManyToOne(targetEntity="User")
      * @ORM\JoinColumn(onDelete="CASCADE", nullable=false)
      * @var int
      */
-    private $lecturer;
+    private $student;
 
     /**
      * @ORM\ManyToOne(targetEntity="User")
@@ -37,14 +32,15 @@ class Course
     private $approved_by;
 
     /**
-     * @ORM\Column(type="datetime", options={"default": "CURRENT_TIMESTAMP"})
-     * @var DateTime
-     */
-    private $created_on;
-
-    /**
      * @ORM\Column(type="datetime", nullable=true)
      * @var DateTime
      */
     private $approved_on;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="Course")
+     * @ORM\JoinColumn(onDelete="CASCADE", referencedColumnName="code", nullable=false)
+     * @var string
+     */
+    private $course_code;
 }
