@@ -12,7 +12,7 @@ class Course
     /**
      * @ORM\ID
      * @ORM\Column(type="string", length=12)
-     * @var int
+     * @var string
      */
     private $code;
 
@@ -47,4 +47,14 @@ class Course
      * @var DateTime
      */
     private $approved_on;
+
+    public function __construct(
+        string $code,
+        string $name,
+        int $lecturer
+    ){
+        $this->code = $code;
+        $this->name = $name;
+        $this->lecturer = $lecturer;
+    }
 }

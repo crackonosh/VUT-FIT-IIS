@@ -43,4 +43,12 @@ class ApprovedStudent
      * @var string
      */
     private $course_code;
+
+    public function __construct(
+        int $student,
+        string $course_code
+    ){
+        $this->student = $student;
+        $this->course_code = $course_code;
+    }
 }

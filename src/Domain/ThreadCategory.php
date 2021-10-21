@@ -36,4 +36,14 @@ class ThreadCategory
      * @var string
      */
     private $course_code;
+
+    public function __construct(
+        string $name,
+        int $created_by,
+        string $course_code
+    ){
+        $this->name = $name;
+        $this->created_by = $created_by;
+        $this->course_code = $course_code;
+    }
 }

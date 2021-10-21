@@ -42,4 +42,14 @@ class Message
      * @var DateTime
      */
     private $created_on;
+
+    public function __construct(
+        int $thread,
+        string $text,
+        int $created_by
+    ){
+        $this->thread = $thread;
+        $this->text = $text;
+        $this->created_by = $created_by;   
+    }
 }

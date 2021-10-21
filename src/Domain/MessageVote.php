@@ -36,4 +36,14 @@ class MessageVote
      * @var boolean
      */
     private $score;
+
+    public function __construct(
+        int $message,
+        int $voter,
+        bool $score
+    ){
+        $this->message = $message;
+        $this->voter = $voter;
+        $this->score = $score;
+    }
 }

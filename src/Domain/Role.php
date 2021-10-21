@@ -22,4 +22,9 @@ class Role
      * @var string
      */
     private $name;
+
+    public function __construct(string $name)
+    {
+        $this->name = $name;
+    }
 }

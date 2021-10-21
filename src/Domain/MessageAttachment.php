@@ -29,4 +29,12 @@ class MessageAttachment
      * @var int
      */
     private $message;
+
+    public function __construct(
+        string $name,
+        int $message
+    ){
+        $this->name = $name;
+        $this->message = $message;
+    }
 }

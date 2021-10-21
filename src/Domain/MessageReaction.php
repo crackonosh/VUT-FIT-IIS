@@ -36,4 +36,14 @@ class MessageReaction
      * @var string
      */
     private $name;
+
+    public function __construct(
+        int $reacter,
+        int $message,
+        string $name
+    ){
+        $this->reacter = $reacter;
+        $this->message = $message;
+        $this->name = $name;
+    }
 }
