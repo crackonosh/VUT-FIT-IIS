@@ -1,5 +1,5 @@
 <?php
-namespace Domain;
+namespace App\Domain;
 
 use Doctrine\Common\Cache\VoidCache;
 use Doctrine\ORM\Mapping as ORM;

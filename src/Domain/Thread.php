@@ -1,5 +1,5 @@
 <?php
-namespace Domain;
+namespace App\Domain;
 
 use DateTime;
 use Doctrine\ORM\Mapping as ORM;
