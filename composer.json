@@ -8,5 +8,8 @@
     },
     "autoload": {
         "psr-4": {"": "src/"}
+    },
+    "scripts": {
+        "start": "php -S localhost:8000 src/public/index.php"
     }
 }
