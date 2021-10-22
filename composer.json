@@ -7,7 +7,7 @@
         "php-di/slim-bridge": "3.0"
     },
     "autoload": {
-        "psr-4": {"": "src/"}
+        "psr-4": {"App\\": "src/"}
     },
     "scripts": {
         "start": "php -S localhost:8000 src/public/index.php"
