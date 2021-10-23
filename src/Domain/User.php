@@ -58,11 +58,15 @@ class User
         string $name,
         string $password,
         string $email,
+        string $address = NULL,
+        string $phone = NULL,
         int $role
     ){
         $this->name = $name;
         $this->password = $password;
         $this->email = $email;
+        $this->address = $address;
+        $this->phone = $phone;
         $this->role = $role;   
     }
 
