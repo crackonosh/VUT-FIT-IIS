@@ -83,21 +83,54 @@ class UserController
 
     public function getUsers(Request $request, Response $response): Response
     {
-        $result = $this->em->getRepository("App\Domain\User")->findAll();
+        $results = $this->em->getRepository("App\Domain\User")->findAll();
         
         $msg = array();
         /** @var User */
-        foreach ($result as $res)
+        foreach ($results as $result)
         {
             $tmp = array(
-                "id" => $res->getID(),
-                "name" => $res->getName(),
-                "phone" => $res->getPhone(),
-                "address" => $res->getAddress()
+                "id" => $result->getID(),
+                "name" => $result->getName(),
+                "phone" => $result->getPhone(),
+                "address" => $result->getAddress()
             );
             array_push($msg, $tmp);
         }
         
+        $response->getBody()->write(json_encode($msg));
+        return $response;
+    }
+
+    public function getUserByEmail(Request $request, Response $response, $args): Response
+    {
+        $user = $this->em->createQueryBuilder()
+            ->select("u")
+            ->from("App\Domain\User", 'u')
+            ->where("u.email LIKE '%" . $args["email"] . "%'");
+
+        $results = $user->getQuery()->getArrayResult();
+
+        if (count($results) == 0)
+        {
+            $response = $response->withStatus(404);
+            $response->getBody()->write("No results found.");
+            return $response;
+        }
+
+        $msg = array();
+        /** @var User */
+        foreach ($results as $result)
+        {
+            $tmp = array(
+                "id" => $result["id"],
+                "name" => $result["name"],
+                "phone" => $result["phone"],
+                "address" => $result["address"]
+            );
+            array_push($msg, $tmp);
+        }
+
         $response->getBody()->write(json_encode($msg));
         return $response;
     }
