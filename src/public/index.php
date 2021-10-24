@@ -2,7 +2,6 @@
 
 use App\Controller\RoleController;
 use App\Controller\UserController;
-use App\Domain\Role;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Server\RequestHandlerInterface as RequestHandler;
