@@ -105,7 +105,7 @@ class User
         $this->password = $password;
     }
 
-    public function getAddress(): string
+    public function getAddress(): ?string
     {
         return $this->address;
     }
@@ -115,7 +115,7 @@ class User
         $this->address = $address;
     }
 
-    public function getPhone(): string
+    public function getPhone(): ?string
     {
         return $this->phone;
     }
