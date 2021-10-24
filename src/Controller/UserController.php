@@ -2,7 +2,6 @@
 namespace App\Controller;
 
 use Doctrine\ORM\EntityManager;
-use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use App\Domain\User;
 use App\Domain\Role;
 use App\Services\UserService;
@@ -13,7 +12,9 @@ require_once __DIR__ . '/../Functions.php';
 
 class UserController
 {
+    /** @var EntityManager */
     private $em;
+    /** @var string */
     private $errorMsg = "";
 
     public function __construct(EntityManager $em)
@@ -82,7 +83,22 @@ class UserController
 
     public function getUsers(Request $request, Response $response): Response
     {
-        $response->getBody()->write(json_encode($this->em->getRepository("App\Domain\User")->findAll()));
+        $result = $this->em->getRepository("App\Domain\User")->findAll();
+        
+        $msg = array();
+        /** @var User */
+        foreach ($result as $res)
+        {
+            $tmp = array(
+                "id" => $res->getID(),
+                "name" => $res->getName(),
+                "phone" => $res->getPhone(),
+                "address" => $res->getAddress()
+            );
+            array_push($msg, $tmp);
+        }
+        
+        $response->getBody()->write(json_encode($msg));
         return $response;
     }
 }
