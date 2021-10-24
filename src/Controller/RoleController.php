@@ -33,12 +33,13 @@ class RoleController
 
     public function readRoles(Request $request, Response $response): Response
     {
-        $roles = $this->em->getRepository("App\Domain\Role")->findAll();
+        $roles = $this->em->getRepository("App\Domain\Role")->findBy(array(), array("id" => "asc"));
 
         $msg = array();
         foreach ($roles as $role)
         {
-            array_push($msg, $role->getName());
+            $tmp = array($role->getID(), $role->getName());
+            array_push($msg, $tmp);
         }
 
         $response->getBody()->write(json_encode($msg));
