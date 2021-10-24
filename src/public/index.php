@@ -2,6 +2,7 @@
 
 use App\Controller\RoleController;
 use App\Controller\UserController;
+use App\Domain\Role;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Server\RequestHandlerInterface as RequestHandler;
@@ -47,7 +48,10 @@ $app->get('/', function (Request $request, Response $response, $args) {
     return $response;
 });
 
+$app->get('/roles', RoleController::class . ':readRoles');
 $app->post('/role/add/{name}', RoleController::class . ':addRole');
+$app->put('/role/{id}/{name}', RoleController::class . ':updateRole');
+$app->delete('/role/{id}', RoleController::class . ':deleteRole');
 
 $app->post('/user', UserController::class . ':addUser');
 $app->get('/users', UserController::class . ':getUsers');
