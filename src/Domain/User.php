@@ -50,7 +50,7 @@ class User
     /**
      * @ORM\ManyToOne(targetEntity="Role")
      * @ORM\JoinColumn(onDelete="CASCADE", nullable=false)
-     * @var int
+     * @var Role
      */
     private $role;
 
@@ -60,7 +60,7 @@ class User
         string $email,
         string $address = NULL,
         string $phone = NULL,
-        int $role
+        Role $role
     ){
         $this->name = $name;
         $this->password = $password;
@@ -68,6 +68,11 @@ class User
         $this->address = $address;
         $this->phone = $phone;
         $this->role = $role;   
+    }
+
+    public function getID(): int
+    {
+        return $this->id;
     }
 
     public function getName(): string
@@ -120,12 +125,12 @@ class User
         $this->phone = $phone;
     }
 
-    public function getRole(): int
+    public function getRole(): Role
     {
         return $this->role;
     }
 
-    public function setRole(int $role): void
+    public function setRole(Role $role): void
     {
         $this->role = $role;
     }

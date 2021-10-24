@@ -5,7 +5,7 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use App\Domain\User;
 use App\Domain\Role;
-use App\Service\UserService;
+use App\Services\UserService;
 use Slim\Psr7\Request;
 use Slim\Psr7\Response;
 
@@ -42,7 +42,13 @@ class UserController
         if (!UserService::isEmailValid($body["email"]))
         {
             $response = $response->withStatus(403);
-            $response->getBody()->write("Email is already taken.");
+            $response->getBody()->write("Email is not valid.");
+            return $response;
+        }
+        if (UserService::isEmailTaken($this->em, $body["email"]))
+        {
+            $response = $response->withStatus(403);
+            $response->getBody()->write("Email already exists in database.");
             return $response;
         }
 
@@ -64,16 +70,9 @@ class UserController
             $body["phone"],
             $userRole
         );
-        $this->em->persist($user);
 
-        try {
-            $this->em->flush();
-        } catch (UniqueConstraintViolationException $e)
-        {
-            $response = $response->withStatus(403);
-            $response->getBody()->write("Email already exists in database.");
-            return $response;
-        }
+        $this->em->persist($user);
+        $this->em->flush();
 
         $response = $response->withStatus(201);
         $response->getBody()->write("Successfully created new user.");
