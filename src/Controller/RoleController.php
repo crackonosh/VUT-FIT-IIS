@@ -36,9 +36,13 @@ class RoleController
         $roles = $this->em->getRepository("App\Domain\Role")->findBy(array(), array("id" => "asc"));
 
         $msg = array();
+        /** @var Role */
         foreach ($roles as $role)
         {
-            $tmp = array($role->getID(), $role->getName());
+            $tmp = array(
+                "id" => $role->getID(),
+                "name" => $role->getName()
+            );
             array_push($msg, $tmp);
         }
 
