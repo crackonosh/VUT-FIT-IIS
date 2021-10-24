@@ -65,4 +65,24 @@ class RoleController
         $response->getBody()->write("Role successfully updated.");
         return $response;
     }
+
+    public function deleteRole(Request $request, Response $response, $args): Response
+    {
+        $roleID = $args["id"];
+
+        $role = $this->em->find("App\Domain\Role", $roleID);
+
+        if ($role == NULL)
+        {
+            $response = $response->withStatus(404);
+            $response->getBody()->write("Role with specified ID not found.");
+            return $response;
+        }
+
+        $this->em->remove($role);
+        $this->em->flush();
+
+        $response->getBody()->write("Successfully deleted role.");
+        return $response;
+    }
 }
