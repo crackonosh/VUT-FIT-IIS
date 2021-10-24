@@ -28,6 +28,11 @@ class Role
         $this->name = $name;
     }
 
+    public function getID(): int
+    {
+        return $this->id;
+    }
+
     public function getName(): string
     {
         return $this->name;
