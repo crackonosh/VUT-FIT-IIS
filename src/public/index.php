@@ -1,5 +1,6 @@
 <?php
 
+use App\Controller\RoleController;
 use App\Controller\UserController;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
@@ -45,6 +46,8 @@ $app->get('/', function (Request $request, Response $response, $args) {
     );
     return $response;
 });
+
+$app->post('/role/add/{name}', RoleController::class . ':addRole');
 
 $app->post('/user', UserController::class . ':addUser');
 $app->get('/users', UserController::class . ':getUsers');
