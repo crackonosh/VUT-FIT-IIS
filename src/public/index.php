@@ -54,6 +54,7 @@ $app->delete('/role/{id}', RoleController::class . ':deleteRole');
 
 $app->post('/user', UserController::class . ':addUser');
 $app->get('/users', UserController::class . ':getUsers');
+$app->get('/users/email/{email}', UserController::class . ':getUserByEmail');
 
 
 $app->run();
