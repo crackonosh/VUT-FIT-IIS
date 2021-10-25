@@ -26,14 +26,14 @@ class Course
     /**
      * @ORM\ManyToOne(targetEntity="User")
      * @ORM\JoinColumn(onDelete="CASCADE", nullable=false)
-     * @var int
+     * @var User
      */
     private $lecturer;
 
     /**
      * @ORM\ManyToOne(targetEntity="User")
      * @ORM\JoinColumn(onDelete="CASCADE")
-     * @var int
+     * @var User
      */
     private $approved_by;
 
@@ -86,7 +86,7 @@ class Course
         $this->name = $name;
     }
 
-    public function getLecturer(): int
+    public function getLecturer(): User
     {
         return $this->lecturer;
     }
@@ -96,7 +96,7 @@ class Course
         return $this->created_on;
     }
 
-    public function getApprovedBy(): int
+    public function getApprovedBy(): User
     {
         return $this->approved_by;
     }
