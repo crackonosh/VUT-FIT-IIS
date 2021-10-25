@@ -70,6 +70,17 @@ class User
         $this->role = $role;   
     }
 
+    public function __toArray(): array
+    {
+        return array(
+            "id" => $this->id,
+            "name" => $this->name,
+            "email" => $this->email,
+            "address" => $this->address,
+            "phone" => $this->phone
+        );
+    } 
+
     public function getID(): int
     {
         return $this->id;
