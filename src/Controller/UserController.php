@@ -87,15 +87,9 @@ class UserController
         
         $msg = array();
         /** @var User */
-        foreach ($results as $result)
+        foreach ($results as $user)
         {
-            $tmp = array(
-                "id" => $result->getID(),
-                "name" => $result->getName(),
-                "phone" => $result->getPhone(),
-                "address" => $result->getAddress()
-            );
-            array_push($msg, $tmp);
+            array_push($msg, $user->__toArray());
         }
         
         $response->getBody()->write(json_encode($msg));
