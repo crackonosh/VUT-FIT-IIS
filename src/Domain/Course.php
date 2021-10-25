@@ -2,6 +2,7 @@
 namespace App\Domain;
 
 use DateTime;
+use DateTimeZone;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -52,11 +53,12 @@ class Course
     public function __construct(
         string $code,
         string $name,
-        int $lecturer
+        User $lecturer
     ){
         $this->code = $code;
         $this->name = $name;
         $this->lecturer = $lecturer;
+        $this->created_on = new DateTime('now', new DateTimeZone("Europe/Prague"));
     }
 
     public function __toArray(): array
