@@ -12,7 +12,7 @@ class Course
 {
     /**
      * @ORM\ID
-     * @ORM\Column(type="string", length=12)
+     * @ORM\Column(type="string", length=16)
      * @var string
      */
     private $code;
@@ -57,6 +57,18 @@ class Course
         $this->code = $code;
         $this->name = $name;
         $this->lecturer = $lecturer;
+    }
+
+    public function __toArray(): array
+    {
+        return array(
+            "code" => $this->code,
+            "name" => $this->name,
+            "lecturer" => $this->lecturer,
+            "approved_by" => $this->approved_by,
+            "created_on" => $this->created_on,
+            "approved_on" => $this->approved_on
+        );
     }
 
     public function getCode(): string
