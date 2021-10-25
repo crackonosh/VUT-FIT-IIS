@@ -1,5 +1,6 @@
 <?php
 
+use App\Controller\CourseController;
 use App\Controller\RoleController;
 use App\Controller\UserController;
 use Psr\Http\Message\ResponseInterface as Response;
@@ -47,14 +48,20 @@ $app->get('/', function (Request $request, Response $response, $args) {
     return $response;
 });
 
+/** ROLE ENDPOINTS */
 $app->get('/roles', RoleController::class . ':readRoles');
 $app->post('/role/add/{name}', RoleController::class . ':addRole');
 $app->put('/role/{id}/{name}', RoleController::class . ':updateRole');
 $app->delete('/role/{id}', RoleController::class . ':deleteRole');
 
-$app->post('/user', UserController::class . ':addUser');
+/** USER ENDPOINTS */
 $app->get('/users', UserController::class . ':getUsers');
 $app->get('/users/email/{email}', UserController::class . ':getUserByEmail');
+$app->post('/users/add', UserController::class . ':addUser');
+
+/** COURSE ENDPOINTS */
+$app->post('/courses/add', CourseController::class . ':addCourse');
+$app->get('/courses', CourseController::class . ':getCourses');
 
 
 $app->run();
