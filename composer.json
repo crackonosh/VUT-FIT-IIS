@@ -11,5 +11,8 @@
     },
     "scripts": {
         "start": "php -S localhost:8000 src/public/index.php"
+    },
+    "config": {
+        "vendor-dir": "src/vendor/"
     }
 }
