@@ -21,8 +21,9 @@ return [
 
         'connection' => [
             'driver' => 'pdo_mysql',
-            'host' => '127.0.0.1',
-            'port' => 8889,
+            'host' => 'mysql',
+            // uncomment next line if you are using this outside of docker and fill with valid port
+            // 'port' => 6033,
             'dbname' => 'fituska',
             'user' => 'root',
             'password' => 'root',
