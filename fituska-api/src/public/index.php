@@ -1,7 +1,7 @@
 <?php
 
 // leave this here if you don't wanna get mad about `uSe CoNtInUe 2 hur dur dur` warning msgs (might break something :pausechamp:) :loudasleeper:
-error_reporting(E_ALL ^ E_WARNING); 
+//error_reporting(E_ALL ^ E_WARNING); 
 
 use App\Controller\CourseController;
 use App\Controller\RoleController;

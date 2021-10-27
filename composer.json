@@ -10,9 +10,6 @@
         "psr-4": {"App\\": "src/"}
     },
     "scripts": {
-        "start": "php -S localhost:8000 src/public/index.php"
-    },
-    "config": {
-        "vendor-dir": "src/vendor/"
+        "start": "php -S localhost:8000 kek/src/public/index.php"
     }
 }

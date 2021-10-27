@@ -9,7 +9,7 @@ services:
     depends_on:
       - mysql
     volumes:
-      - ./:/var/www/html
+      - ./kek/:/var/www/html
     ports:
       - 8000:80
   
