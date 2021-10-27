@@ -15,4 +15,4 @@ then
   exit 1
 fi
 
-docker exec -it $CONTAINER_ID php vendor/bin/doctrine orm:schema-tool:update --force --dump-sql
+docker exec -it $CONTAINER_ID php composer.phar install
