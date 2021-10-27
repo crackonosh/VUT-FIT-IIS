@@ -80,14 +80,27 @@ class CourseController
                 "name" => $lecturerUser->getName()
             );
 
+            $approvedBy = $course->getApprovedBy();
+            $approvedByData = NULL;
+            if ($approvedByData != NULL)
+            {
+                $approvedByData = array(
+                    "id" => $approvedBy->getID(),
+                    "name" => $approvedBy->getName()
+                );
+            }
+
             $data = array(
                 "code" => $course->getCode(),
                 "name" => $course->getName(),
                 "lecturer" => $lecturerData,
-                "created_on" => $course->getCreatedOn()->format("Y-m-d H:i:s")
+                "approved_by" => $approvedByData,
+                "created_on" => $course->getCreatedOn()->format("Y-m-d H:i:s"),
+                "approved_on" => $course->getApprovedOn() ? $course->getApprovedOn()->format("Y-m-d H:i:s") : NULL
             );
             array_push($msg, $data);
         }
+
         $response->getBody()->write(json_encode($msg));
         return $response;
     }

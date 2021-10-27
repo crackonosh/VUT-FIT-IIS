@@ -98,7 +98,7 @@ class Course
         return $this->created_on;
     }
 
-    public function getApprovedBy(): User
+    public function getApprovedBy(): ?User
     {
         return $this->approved_by;
     }
@@ -108,7 +108,7 @@ class Course
         $this->approved_by = $approved_by;
     }
 
-    public function getApprovedOn(): DateTime
+    public function getApprovedOn(): ?DateTime
     {
         return $this->approved_on;
     }
