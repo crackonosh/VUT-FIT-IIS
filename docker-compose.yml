@@ -9,7 +9,7 @@ services:
     depends_on:
       - mysql
     volumes:
-      - ./kek/:/var/www/html
+      - ./fituska-api/:/var/www/html
     ports:
       - 8000:80
   
