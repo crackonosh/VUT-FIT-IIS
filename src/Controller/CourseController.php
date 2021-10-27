@@ -3,7 +3,6 @@ namespace App\Controller;
 
 use Doctrine\ORM\EntityManager;
 use App\Domain\Course;
-use App\Domain\Role;
 use App\Domain\User;
 use App\Services\CourseService;
 use Slim\Psr7\Request;
@@ -64,6 +63,32 @@ class CourseController
 
         $response = $response->withStatus(201);
         $response->getBody()->write("Successfully created new course.");
+        return $response;
+    }
+
+    public function getCourses(Request $request, Response $response): Response
+    {
+        $results = $this->em->getRepository("App\Domain\Course")->findAll();
+
+        $msg = array();
+        /** @var Course */
+        foreach ($results as $course)
+        {
+            $lecturerUser = $course->getLecturer();
+            $lecturerData = array(
+                "id" => $lecturerUser->getID(),
+                "name" => $lecturerUser->getName()
+            );
+
+            $data = array(
+                "code" => $course->getCode(),
+                "name" => $course->getName(),
+                "lecturer" => $lecturerData,
+                "created_on" => $course->getCreatedOn()->format("Y-m-d H:i:s")
+            );
+            array_push($msg, $data);
+        }
+        $response->getBody()->write(json_encode($msg));
         return $response;
     }
 }

@@ -60,8 +60,8 @@ $app->get('/users/email/{email}', UserController::class . ':getUserByEmail');
 $app->post('/users/add', UserController::class . ':addUser');
 
 /** COURSE ENDPOINTS */
+$app->get('/courses/get', CourseController::class . ':getCourses');
 $app->post('/courses/add', CourseController::class . ':addCourse');
-$app->get('/courses', CourseController::class . ':getCourses');
 
 
 $app->run();
