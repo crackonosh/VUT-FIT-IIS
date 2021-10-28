@@ -3,6 +3,14 @@
 - [slim framework](https://www.slimframework.com/) used for routing
 - [doctrine](https://www.doctrine-project.org/index.html) used for ORM
 
+## Table of Content
+* [Requirements](#requirements)
+* [Installation](#installation)
+    * [Using docker](#using-docker)
+    * [Using composer](#using-composer)
+        + [Using XAMP MAMP](#using-xamp-mamp)
+* [Development](#development)
+
 ## Requirements
 - `composer`
 - `docker` with `docker-compose` (necessary if using [docker](#using-docker) for running the app)
