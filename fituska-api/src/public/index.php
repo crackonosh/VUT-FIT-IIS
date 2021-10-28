@@ -53,18 +53,22 @@ $app->get('/', function (Request $request, Response $response, $args) {
 
 /** ROLE ENDPOINTS */
 $app->get('/roles', RoleController::class . ':readRoles');
-$app->post('/role/add/{name}', RoleController::class . ':addRole');
-$app->put('/role/{id}/{name}', RoleController::class . ':updateRole');
-$app->delete('/role/{id}', RoleController::class . ':deleteRole');
+$app->post('/roles/add/{name}', RoleController::class . ':addRole');
+$app->put('/roles/{id}/{name}', RoleController::class . ':updateRole');
+$app->delete('/roles/{id}', RoleController::class . ':deleteRole');
 
 /** USER ENDPOINTS */
 $app->get('/users', UserController::class . ':getUsers');
 $app->get('/users/email/{email}', UserController::class . ':getUserByEmail');
+// $app->get('/users/name/{name}', UserController::class . ':getUserByName');
 $app->post('/users/add', UserController::class . ':addUser');
+// $app->post('/users/{userID}/role/{roleID}', UserController::class . ':changeRole');
 
 /** COURSE ENDPOINTS */
 $app->get('/courses/get', CourseController::class . ':getCourses');
+// $app->get('/courses/{id}/get', CourseController::class . ':getCourseByID');
 $app->post('/courses/add', CourseController::class . ':addCourse');
+// $app->post('/courses/{id}/approve', CourseController::class . ':approveCourse');
 
 
 $app->run();
