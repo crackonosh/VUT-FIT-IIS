@@ -8,7 +8,7 @@
 * [Installation](#installation)
     * [Using docker](#using-docker)
     * [Using composer](#using-composer)
-        + [Using XAMP MAMP](#using-xamp-mamp)
+    * [Using XAMP MAMP](#using-xamp-mamp)
 * [Development](#development)
 
 ## Requirements
@@ -32,7 +32,7 @@ For using this method you have to setup database on your own and change database
 - run `composer start` - this starts php server
 - run `php vendor/bin/doctrine orm:schema-tool:update --force --dump-sql` - this creates tables by `fituska-api/src/Domain/` folder into database
 
-###### Using XAMP MAMP
+##### Using XAMP MAMP
 Almost same as using composer, but you'll set your "apache directory" to `fituska-api/src/public/` and then run the server
 - then run `php vendor/bin/doctrine orm:schema-tool:update --force --dump-sql` in `fituska-api/` - this creates tables by `fituska-api/src/Domain/` folder into database
 
