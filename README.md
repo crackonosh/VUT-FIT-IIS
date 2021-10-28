@@ -1,9 +1,13 @@
 # IIS - Fituska with gamification
-### Requirements
+#### Used technologies
+- [slim framework](https://www.slimframework.com/) used for routing
+- [doctrine](https://www.doctrine-project.org/index.html) used for ORM
+
+## Requirements
 - `composer`
 - `docker` with `docker-compose` (necessary if using [docker](#using-docker) for running the app)
 
-### Installation
+## Installation
 We can start the application 3 different ways using:
 1. [docker](#using-docker)
 2. [composer](#using-composer) 
@@ -24,5 +28,5 @@ For using this method you have to setup database on your own and change database
 Almost same as using composer, but you'll set your "apache directory" to `fituska-api/src/public/` and then run the server
 - then run `php vendor/bin/doctrine orm:schema-tool:update --force --dump-sql` in `fituska-api/` - this creates tables by `fituska-api/src/Domain/` folder into database
 
-### Development
+## Development
 - TBD
