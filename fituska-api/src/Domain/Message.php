@@ -21,7 +21,7 @@ class Message
     /**
      * @ORM\ManyToOne(targetEntity="Thread")
      * @ORM\JoinColumn(onDelete="CASCADE", nullable=false)
-     * @var int
+     * @var Thread
      */
     private $thread;
 
@@ -34,7 +34,7 @@ class Message
     /**
      * @ORM\ManyToOne(targetEntity="User")
      * @ORM\JoinColumn(onDelete="CASCADE", nullable=false)
-     * @var int
+     * @var User
      */
     private $created_by;
 
@@ -54,7 +54,7 @@ class Message
         $this->created_by = $created_by;   
     }
 
-    public function getThread(): int
+    public function getThread(): Thread
     {
         return $this->thread;
     }
@@ -64,12 +64,13 @@ class Message
         return $this->text;
     }
 
+    // might not be necessary (editing should be allowed?)
     public function setText(string $text): void
     {
         $this->text = $text;
     }
 
-    public function getCreatedBy(): int
+    public function getCreatedBy(): User
     {
         return $this->created_by;
     }

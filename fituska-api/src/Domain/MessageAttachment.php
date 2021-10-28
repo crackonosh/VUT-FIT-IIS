@@ -26,7 +26,7 @@ class MessageAttachment
     /**
      * @ORM\ManyToOne(targetEntity="Message")
      * @ORM\JoinColumn(onDelete="CASCADE", nullable=false)
-     * @var int
+     * @var Message
      */
     private $message;
 
@@ -43,7 +43,7 @@ class MessageAttachment
         return $this->name;
     }
 
-    public function getMessage(): int
+    public function getMessage(): Message
     {
         return $this->message;
     }

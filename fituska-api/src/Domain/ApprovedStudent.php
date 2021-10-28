@@ -21,14 +21,14 @@ class ApprovedStudent
     /**
      * @ORM\ManyToOne(targetEntity="User")
      * @ORM\JoinColumn(onDelete="CASCADE", nullable=false)
-     * @var int
+     * @var User
      */
     private $student;
 
     /**
      * @ORM\ManyToOne(targetEntity="User")
      * @ORM\JoinColumn(onDelete="CASCADE")
-     * @var int
+     * @var User
      */
     private $approved_by;
 
@@ -53,7 +53,7 @@ class ApprovedStudent
         $this->course_code = $course_code;
     }
 
-    public function getStudent(): int
+    public function getStudent(): User
     {
         return $this->student;
     }
@@ -63,7 +63,7 @@ class ApprovedStudent
         return $this->course_code;
     }
 
-    public function getApprovedBy(): int
+    public function getApprovedBy(): ?User
     {
         return $this->approved_by;
     }
@@ -73,7 +73,7 @@ class ApprovedStudent
         $this->approved_by = $approved_by;
     }
 
-    public function getApprovedOn(): DateTime
+    public function getApprovedOn(): ?DateTime
     {
         return $this->approved_on;
     }

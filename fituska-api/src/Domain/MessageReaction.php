@@ -20,14 +20,14 @@ class MessageReaction
     /**
      * @ORM\ManyToOne(targetEntity="User")
      * @ORM\JoinColumn(onDelete="CASCADE", nullable=false)
-     * @var int
+     * @var User
      */
     private $reacter;
 
     /**
      * @ORM\ManyToOne(targetEntity="Message")
      * @ORM\JoinColumn(onDelete="CASCADE", nullable=false)
-     * @var int
+     * @var Message
      */
     private $message;
 
@@ -47,12 +47,12 @@ class MessageReaction
         $this->name = $name;
     }
     
-    public function getReacter(): int
+    public function getReacter(): User
     {
         return $this->reacter;
     }
 
-    public function getMessage(): int
+    public function getMessage(): Message
     {
         return $this->message;
     }

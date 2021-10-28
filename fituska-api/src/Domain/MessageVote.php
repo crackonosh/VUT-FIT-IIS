@@ -21,14 +21,14 @@ class MessageVote
     /**
      * @ORM\ManyToOne(targetEntity="Message")
      * @ORM\JoinColumn(onDelete="CASCADE", nullable=false)
-     * @var int
+     * @var Message
      */
     private $message;
 
     /**
      * @ORM\ManyToOne(targetEntity="User")
      * @ORM\JoinColumn(onDelete="CASCADE", nullable=false)
-     * @var int
+     * @var User
      */
     private $voter;
 
@@ -48,12 +48,12 @@ class MessageVote
         $this->score = $score;
     }
 
-    public function getMessage(): int
+    public function getMessage(): Message
     {
         return $this->message;
     }
 
-    public function getVoter(): int
+    public function getVoter(): User
     {
         return $this->voter;
     }

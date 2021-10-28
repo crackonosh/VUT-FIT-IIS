@@ -34,7 +34,7 @@ class Thread
     /**
      * @ORM\ManyToOne(targetEntity="User")
      * @ORM\JoinColumn(onDelete="CASCADE", nullable=false)
-     * @var int
+     * @var User
      */
     private $created_by;
 
@@ -47,7 +47,7 @@ class Thread
     /**
      * @ORM\ManyToOne(targetEntity="User")
      * @ORM\JoinColumn(onDelete="CASCADE")
-     * @var int
+     * @var User
      */
     private $closed_by;
 
@@ -60,7 +60,7 @@ class Thread
     /**
      * @ORM\ManyToOne(targetEntity="ThreadCategory")
      * @ORM\JoinColumn(onDelete="CASCADE", nullable=false)
-     * @var int
+     * @var ThreadCategory
      */
     private $category;
 
@@ -81,11 +81,6 @@ class Thread
         return $this->course_code;
     }
 
-    public function setCourseCode(string $course_code): void
-    {
-        $this->course_code = $course_code;
-    }
-
     public function getTitle(): string
     {
         return $this->title;
@@ -96,14 +91,9 @@ class Thread
         $this->title = $title;
     }
 
-    public function getCreatedBy(): int
+    public function getCreatedBy(): User
     {
         return $this->created_by;
-    }
-
-    public function setCreatedBy(int $created_by): void
-    {
-        $this->created_by = $created_by;
     }
 
     public function getCreatedOn(): DateTime
@@ -111,7 +101,7 @@ class Thread
         return $this->created_on;
     }
 
-    public function getClosedBy(): int
+    public function getClosedBy(): User
     {
         return $this->closed_by;
     }
@@ -131,7 +121,7 @@ class Thread
         $this->closed_on = $closed_on;
     }
 
-    public function getCategory(): int
+    public function getCategory(): ThreadCategory
     {
         return $this->category;
     }

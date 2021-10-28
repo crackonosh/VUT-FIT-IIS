@@ -26,14 +26,14 @@ class ThreadCategory
     /**
      * @ORM\ManyToOne(targetEntity="User")
      * @ORM\JoinColumn(onDelete="CASCADE", nullable=false)
-     * @var int
+     * @var User
      */
     private $created_by;
 
     /**
      * @ORM\ManyToOne(targetEntity="Course")
      * @ORM\JoinColumn(onDelete="CASCADE", referencedColumnName="code", nullable=false)
-     * @var string
+     * @var Course
      */
     private $course_code;
 
@@ -57,7 +57,7 @@ class ThreadCategory
         $this->name = $name;
     }
 
-    public function getCreatedBy(): int
+    public function getCreatedBy(): User
     {
         return $this->created_by;
     }
@@ -67,7 +67,7 @@ class ThreadCategory
         $this->created_by = $created_by;
     }
 
-    public function getCourseCode(): int
+    public function getCourseCode(): Course
     {
         return $this->course_code;
     }
