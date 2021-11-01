@@ -119,6 +119,7 @@ class UserController
             $tmp = array(
                 "id" => $result["id"],
                 "name" => $result["name"],
+                "email" => $result["email"],
                 "phone" => $result["phone"],
                 "address" => $result["address"]
             );
@@ -126,6 +127,35 @@ class UserController
         }
 
         $response->getBody()->write(json_encode($msg));
+        return $response;
+    }
+
+    public function changeRole(Request $request, Response $response, $args): Response
+    {
+        /** @var User */
+        $user = $this->em->getRepository("App\Domain\User")->find($args["userID"]);
+        /** @var Role */
+        $role = $this->em->getRepository("App\Domain\Role")->find($args["roleID"]);
+
+        if (!$user)
+        {
+            $response = $response->withStatus(404);
+            $response->getBody()->write("Unable to find user with specified ID.");
+            return $response;
+        }
+        if (!$role)
+        {
+            $response = $response->withStatus(404);
+            $response->getBody()->write("Unable to find role with specified ID.");
+            return $response;
+        }
+
+        $user->setRole($role);
+
+        $this->em->persist($user);
+        $this->em->flush();
+
+        $response->getBody()->write("Successfully updated user's role.");
         return $response;
     }
 }
