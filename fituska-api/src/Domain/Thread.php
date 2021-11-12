@@ -53,14 +53,14 @@ class Thread
     private $closed_by;
 
     /**
-     * @ORM\Column(type="datetime")
+     * @ORM\Column(type="datetime", nullable=true)
      * @var DateTime
      */
     private $closed_on;
 
     /**
      * @ORM\ManyToOne(targetEntity="ThreadCategory")
-     * @ORM\JoinColumn(onDelete="CASCADE", nullable=false)
+     * @ORM\JoinColumn(onDelete="CASCADE", nullable=true)
      * @var ?ThreadCategory
      */
     private $category;
@@ -75,7 +75,7 @@ class Thread
         $this->title = $title;
         $this->created_by = $created_by;
         $this->category = $category;
-        $this->created_on = new DateTime('now', new DateTimeZone("Europe\Prague"));
+        $this->created_on = new DateTime('now', new DateTimeZone("Europe/Prague"));
     }
 
     public function getCourseCode(): string
