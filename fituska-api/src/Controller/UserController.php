@@ -54,7 +54,7 @@ class UserController
         }
 
         /** @var Role */
-        $userRole = $this->em->getRepository("App\Domain\Role")->find($body["role"]);
+        $userRole = $this->em->find(Role::class, $body["role"]);
 
         if ($userRole == NULL)
         {
@@ -89,7 +89,7 @@ class UserController
 
     public function getUsers(Request $request, Response $response): Response
     {
-        $results = $this->em->getRepository("App\Domain\User")->findAll();
+        $results = $this->em->getRepository(User::class)->findAll();
         
         $msg = array();
         /** @var User */
@@ -106,7 +106,7 @@ class UserController
     {
         $user = $this->em->createQueryBuilder()
             ->select("u")
-            ->from("App\Domain\User", 'u')
+            ->from(User::class, 'u')
             ->where("u.email LIKE '%" . $args["email"] . "%'");
 
         $results = $user->getQuery()->getArrayResult();
@@ -125,6 +125,7 @@ class UserController
             $tmp = array(
                 "id" => $result["id"],
                 "name" => $result["name"],
+                "email" => $result["email"],
                 "phone" => $result["phone"],
                 "address" => $result["address"]
             );
@@ -165,6 +166,35 @@ class UserController
         }
 
         $response->getBody()->write(json_encode($msg));
+    }
+
+    public function changeRole(Request $request, Response $response, $args): Response
+    {
+        /** @var User */
+        $user = $this->em->find(User::class, $args["userID"]);
+        /** @var Role */
+        $role = $this->em->find(Role::class, $args["roleID"]);
+
+        if (!$user)
+        {
+            $response = $response->withStatus(404);
+            $response->getBody()->write("Unable to find user with specified ID.");
+            return $response;
+        }
+        if (!$role)
+        {
+            $response = $response->withStatus(404);
+            $response->getBody()->write("Unable to find role with specified ID.");
+            return $response;
+        }
+
+        $user->setRole($role);
+
+        $this->em->persist($user);
+        $this->em->flush();
+
+        $response->getBody()->write("Successfully updated user's role.");
+
         return $response;
     }
 }

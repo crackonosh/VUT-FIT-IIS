@@ -33,7 +33,7 @@ class RoleController
 
     public function readRoles(Request $request, Response $response): Response
     {
-        $roles = $this->em->getRepository("App\Domain\Role")->findBy(array(), array("id" => "asc"));
+        $roles = $this->em->getRepository(Role::class)->findBy(array(), array("id" => "asc"));
 
         $msg = array();
         /** @var Role */
@@ -55,7 +55,7 @@ class RoleController
         $roleID = $args["id"];
         $newName = $args["name"];
 
-        $role = $this->em->find("App\Domain\Role", $roleID);
+        $role = $this->em->find(Role::class, $roleID);
         
         if ($role == NULL)
         {
@@ -75,7 +75,7 @@ class RoleController
     {
         $roleID = $args["id"];
 
-        $role = $this->em->find("App\Domain\Role", $roleID);
+        $role = $this->em->find(Role::class, $roleID);
 
         if ($role == NULL)
         {

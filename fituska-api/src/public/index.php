@@ -6,6 +6,8 @@ error_reporting(E_ALL ^ E_WARNING);
 use App\Controller\CourseController;
 use App\Controller\RoleController;
 use App\Controller\UserController;
+use App\Controller\ThreadCategoryController;
+use App\Controller\ThreadController;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Server\RequestHandlerInterface as RequestHandler;
@@ -52,6 +54,7 @@ $app->get('/', function (Request $request, Response $response, $args) {
 });
 
 /** ROLE ENDPOINTS */
+// those endpoints should be working only if admin
 $app->get('/roles', RoleController::class . ':readRoles');
 $app->post('/roles/add/{name}', RoleController::class . ':addRole');
 $app->put('/roles/{id}/{name}', RoleController::class . ':updateRole');
@@ -62,13 +65,25 @@ $app->get('/users', UserController::class . ':getUsers');
 $app->get('/users/email/{email}', UserController::class . ':getUserByEmail');
 $app->get('/users/name/{name}', UserController::class . ':getUserByName');
 $app->post('/users/add', UserController::class . ':addUser');
-// $app->post('/users/{userID}/role/{roleID}', UserController::class . ':changeRole');
+$app->put('/users/{userID}/role/{roleID}', UserController::class . ':changeRole'); // only moderator/admin should be able to change roles of others
 
 /** COURSE ENDPOINTS */
+// public endpoints
 $app->get('/courses/get', CourseController::class . ':getCourses');
-// $app->get('/courses/{id}/get', CourseController::class . ':getCourseByID');
+$app->get('/courses/{code}/get', CourseController::class . ':getCourseByCode');
+$app->get('/courses/get/approved', CourseController::class . ':getApprovedCourses');
+$app->get('/courses/get/not-approved', CourseController::class . ':getNotApprovedCourses'); // only for moderators+
 $app->post('/courses/add', CourseController::class . ':addCourse');
-// $app->post('/courses/{id}/approve', CourseController::class . ':approveCourse');
+$app->put('/courses/{code}/approve', CourseController::class . ':approveCourse'); // this endpoint needs JWT to function correctly ("approved_by" should be taken as ID from Authorization header, now it sets "approved_on" only)
+
+/** THREAD CATEGORY ENDPOINTS */
+$app->get('/courses/{code}/get/categories', ThreadCategoryController::class . ':readThreadCategories');
+$app->post('/categories/add', ThreadCategoryController::class . ':addThreadCategory'); // only lecturer should be able to add category to course (his ID will be taken from JWT afterwards)
+$app->put('/categories/{id}/update', ThreadCategoryController::class . ':updateThreadCategory'); // only lecturer should be able to change categories
+$app->delete('/categories/{id}/delete', ThreadCategoryController::class . ':deleteThreadCategory'); // this endpoint needs JWT to function correctly (Check that person trying to delete the category is lecturer of course)
+
+/** THREAD CATEGORY */
+$app->post('/threads/add', ThreadController::class . ':addThread'); // created by will be taken from JWT
 
 
 $app->run();

@@ -2,6 +2,7 @@
 namespace App\Domain;
 
 use DateTime;
+use DateTimeZone;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -21,9 +22,9 @@ class Thread
     /**
      * @ORM\ManyToOne(targetEntity="Course")
      * @ORM\JoinColumn(onDelete="CASCADE", referencedColumnName="code", nullable=false)
-     * @var string
+     * @var Course
      */
-    private $course_code;
+    private $course;
 
     /**
      * @ORM\Column(type="string")
@@ -52,28 +53,29 @@ class Thread
     private $closed_by;
 
     /**
-     * @ORM\Column(type="datetime")
+     * @ORM\Column(type="datetime", nullable=true)
      * @var DateTime
      */
     private $closed_on;
 
     /**
      * @ORM\ManyToOne(targetEntity="ThreadCategory")
-     * @ORM\JoinColumn(onDelete="CASCADE", nullable=false)
-     * @var ThreadCategory
+     * @ORM\JoinColumn(onDelete="CASCADE", nullable=true)
+     * @var ?ThreadCategory
      */
     private $category;
 
     public function __construct(
-        string $course_code,
+        Course $course,
         string $title,
-        int $created_by,
-        int $category
+        User $created_by,
+        ThreadCategory $category = NULL
     ){
-        $this->course_code = $course_code;
+        $this->course= $course;
         $this->title = $title;
         $this->created_by = $created_by;
         $this->category = $category;
+        $this->created_on = new DateTime('now', new DateTimeZone("Europe/Prague"));
     }
 
     public function getCourseCode(): string
@@ -101,7 +103,7 @@ class Thread
         return $this->created_on;
     }
 
-    public function getClosedBy(): User
+    public function getClosedBy(): ?User
     {
         return $this->closed_by;
     }
@@ -111,7 +113,7 @@ class Thread
         $this->closed_by = $closed_by;
     }
 
-    public function getClosedOn(): DateTime
+    public function getClosedOn(): ?DateTime
     {
         return $this->closed_on;
     }
@@ -121,12 +123,12 @@ class Thread
         $this->closed_on = $closed_on;
     }
 
-    public function getCategory(): ThreadCategory
+    public function getCategory(): ?ThreadCategory
     {
         return $this->category;
     }
 
-    public function setCategory(int $category): void
+    public function setCategory(ThreadCategory $category): void
     {
         $this->category = $category;
     }
