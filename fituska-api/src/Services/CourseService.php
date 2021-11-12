@@ -11,4 +11,12 @@ class CourseService
 
         return count($result);
     }
+
+    public static function isCourseApproved(EntityManager &$em, string $code): bool
+    {
+        $result = $em->getRepository("App\Domain\Course")->findBy(array("code" => "$code"));
+
+        // code is unique so 
+        return $result[0]->getApprovedOn() != null;
+    }
 }
