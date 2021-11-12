@@ -79,7 +79,7 @@ $app->put('/courses/{code}/approve', CourseController::class . ':approveCourse')
 $app->get('/course/{code}/get/categories', ThreadCategoryController::class . ':readThreadCategories');
 $app->post('/categories/add', ThreadCategoryController::class . ':addThreadCategory'); // only lecturer should be able to add category to course (his ID will be taken from JWT afterwards)
 $app->put('/categories/{id}/update', ThreadCategoryController::class . ':updateThreadCategory'); // only lecturer should be able to change categories
-$app->delete('/categories/{id}/delete', ThreadCategoryController::class . ':deleteThreadCategory'); // this endpoint needs JWT to function correctly (Check that wether person trying to delete the category is lecturer of course)
+$app->delete('/categories/{id}/delete', ThreadCategoryController::class . ':deleteThreadCategory'); // this endpoint needs JWT to function correctly (Check that person trying to delete the category is lecturer of course)
 
 
 $app->run();
