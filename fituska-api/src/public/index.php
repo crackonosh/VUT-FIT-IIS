@@ -6,6 +6,7 @@ error_reporting(E_ALL ^ E_WARNING);
 use App\Controller\CourseController;
 use App\Controller\RoleController;
 use App\Controller\UserController;
+use App\Controller\ThreadCategoryController;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Server\RequestHandlerInterface as RequestHandler;
@@ -76,7 +77,7 @@ $app->put('/courses/{code}/approve', CourseController::class . ':approveCourse')
 
 /** THREAD CATEGORY ENDPOINTS */
 $app->get('/course/{code}/get/categories', ThreadCategoryController::class . ':readThreadCatogires');
-$app->post('/categories/add', ThreadCategoryController::class . ':addThreadCategory'); // only lecturer should be able to add category to course
+$app->post('/categories/add', ThreadCategoryController::class . ':addThreadCategory'); // only lecturer should be able to add category to course (his ID will be taken from JWT afterwards)
 $app->put('/categories/{id}/update', ThreadCategoryController::class . ':updateThreadCategory'); // only lecturer should be able to change categories
 $app->delete('/categories/{id}/delete', ThreadCategoryController::class . ':deleteThreadCategory'); // this endpoint needs JWT to function correctly (Check that wether person trying to delete the category is lecturer of course)
 
