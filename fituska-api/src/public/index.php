@@ -66,9 +66,11 @@ $app->put('/users/{userID}/role/{roleID}', UserController::class . ':changeRole'
 
 /** COURSE ENDPOINTS */
 $app->get('/courses/get', CourseController::class . ':getCourses');
-// $app->get('/courses/{id}/get', CourseController::class . ':getCourseByID');
+$app->get('/courses/{code}/get', CourseController::class . ':getCourseByCode');
+$app->get('/courses/get/approved', CourseController::class . ':getApprovedCourses');
 $app->post('/courses/add', CourseController::class . ':addCourse');
-// $app->post('/courses/{id}/approve', CourseController::class . ':approveCourse');
+$app->put('/courses/{code}/approve', CourseController::class . ':approveCourse'); // this endpoint needs JWT to function correctly ("approved_by" should be taken as ID from Authorization header, now it sets "approved_on" only)
+
 
 
 $app->run();

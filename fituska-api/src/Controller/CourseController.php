@@ -7,6 +7,8 @@ use App\Domain\User;
 use App\Services\CourseService;
 use Slim\Psr7\Request;
 use Slim\Psr7\Response;
+use DateTime;
+use DateTimeZone;
 
 require_once __DIR__ . '/../Functions.php';
 
@@ -80,13 +82,12 @@ class CourseController
                 "name" => $lecturerUser->getName()
             );
 
-            $approvedBy = $course->getApprovedBy();
             $approvedByData = NULL;
-            if ($approvedByData != NULL)
+            if ($course->getApprovedBy())
             {
                 $approvedByData = array(
-                    "id" => $approvedBy->getID(),
-                    "name" => $approvedBy->getName()
+                    "id" => $course->getApprovedBy()->getID(),
+                    "name" => $course->getApprovedBy()->getName()
                 );
             }
 
@@ -99,6 +100,126 @@ class CourseController
                 "approved_on" => $course->getApprovedOn() ? $course->getApprovedOn()->format("Y-m-d H:i:s") : NULL
             );
             array_push($msg, $data);
+        }
+
+        $response->getBody()->write(json_encode($msg));
+        return $response;
+    }
+
+    public function getCourseByCode(Request $request, Response $response, $args): Response
+    {
+        /** @var Course */
+        $course = $this->em->getRepository("App\Domain\Course")->find($args["code"]);
+
+        if (!$course)
+        {
+            $response = $response->withStatus(404);
+            $response->getBody()->write("Unable to find course with specified code.");
+            return $response;
+        }
+
+        $lecturerData = array(
+            "id" => $course->getLecturer()->getID(),
+            "name" => $course->getLecturer()->getName()
+        );
+
+        /** @var User */
+        $approvedByData = NULL;
+        if ($course->getApprovedBy())
+        {
+            $approvedByData = array(
+                "id" => $course->getApprovedBy()->getID(),
+                "name" => $course->getApprovedBy()->getName()
+            );
+        }
+        
+        $msg = array(
+            "code" => $course->getCode(),
+            "name" => $course->getName(),
+            "lecturer" => $lecturerData,
+            "approved_by" => $course->getApprovedBy(),
+            "created_on" => $course->getCreatedOn()->format("Y-m-d H:i:s"),
+            "approved_on" => $course->getApprovedOn() ? $course->getApprovedOn()->format("Y-m-d H:i:s") : NULL
+        );
+
+        $response->getBody()->write(json_encode($msg));
+        return $response;
+    }
+
+    public function approveCourse(Request $request, Response $response, $args): Response
+    {
+        /** @var Course */
+        $course = $this->em->getRepository("App\Domain\Course")->find($args["code"]);
+
+        if (!$course)
+        {
+            $response = $response->withStatus(404);
+            $response->getBody()->write("Unable to find course with specified code.");
+            return $response;
+        }
+
+        if (CourseService::isCourseApproved($this->em, $args["code"]))
+        {
+            $response = $response->withStatus(403);
+            $response->getBody()->write("Course {$args['code']} is already approved.");
+            return $response;
+        }
+
+        $course->setApprovedOn(new DateTime('now', new DateTimeZone("Europe/Prague")));
+
+        $this->em->persist($course);
+        $this->em->flush();
+
+        $response->getBody()->write("Successfully approved course.");
+        return $response;
+    }
+
+    public function getApprovedCourses(Request $request, Response $response, $args): Response
+    {
+        $courses = $this->em->createQueryBuilder()
+            ->select("c, u")
+            ->from("App\Domain\Course", 'c')
+            ->join("c.lecturer", 'u')
+            ->where("c.approved_on IS NOT NULL");
+
+        $results = $courses->getQuery()->getArrayResult();
+
+        if (count($results) == 0)
+        {
+            $response = $response->withStatus(404);
+            $response->getBody()->write("No approved courses were found.");
+            return $response;
+        }
+
+        $msg = array();
+        /** @var Course */
+        foreach ($results as $course)
+        {
+            $lecturerData = array(
+                "id" => $course["lecturer"]["id"],
+                "name" => $course["lecturer"]["name"]
+            );
+
+            /** fix fetching approved_by data */
+            $approvedByData = NULL;
+            if (isset($course["approved_by"]))
+            {
+                $approvedByData = array(
+                    "id" => $course["approved_by"]["id"],
+                    "name" => $course["approved_by"]["name"]
+                );
+            }
+
+            $tmp = array(
+                "code" => $course["code"],
+                "name" => $course["name"],
+                "lecturer" => $lecturerData,
+                "approved_by" => $approvedByData,
+                "approved_on" => $course["approved_on"] ? $course["approved_on"]->format("Y-m-d H:i:s") : NULL,
+                "created_on" => $course["created_on"]->format("Y-m-d H:i:s")
+            );
+
+            array_push($msg, $tmp);
         }
 
         $response->getBody()->write(json_encode($msg));
