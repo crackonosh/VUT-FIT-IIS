@@ -7,6 +7,7 @@ use App\Controller\CourseController;
 use App\Controller\RoleController;
 use App\Controller\UserController;
 use App\Controller\ThreadCategoryController;
+use App\Controller\ThreadController;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Server\RequestHandlerInterface as RequestHandler;
@@ -76,10 +77,13 @@ $app->post('/courses/add', CourseController::class . ':addCourse');
 $app->put('/courses/{code}/approve', CourseController::class . ':approveCourse'); // this endpoint needs JWT to function correctly ("approved_by" should be taken as ID from Authorization header, now it sets "approved_on" only)
 
 /** THREAD CATEGORY ENDPOINTS */
-$app->get('/course/{code}/get/categories', ThreadCategoryController::class . ':readThreadCategories');
+$app->get('/courses/{code}/get/categories', ThreadCategoryController::class . ':readThreadCategories');
 $app->post('/categories/add', ThreadCategoryController::class . ':addThreadCategory'); // only lecturer should be able to add category to course (his ID will be taken from JWT afterwards)
 $app->put('/categories/{id}/update', ThreadCategoryController::class . ':updateThreadCategory'); // only lecturer should be able to change categories
 $app->delete('/categories/{id}/delete', ThreadCategoryController::class . ':deleteThreadCategory'); // this endpoint needs JWT to function correctly (Check that person trying to delete the category is lecturer of course)
+
+/** THREAD CATEGORY */
+$app->post('/threads/add', ThreadController::class . ':addThread'); // created by will be taken from JWT
 
 
 $app->run();
