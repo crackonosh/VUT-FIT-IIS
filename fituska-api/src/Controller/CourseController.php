@@ -72,6 +72,13 @@ class CourseController
     {
         $results = $this->em->getRepository("App\Domain\Course")->findAll();
 
+        if (!count($results))
+        {
+            $response = $response->withStatus(404);
+            $response->getBody()->write("No courses were found.");
+            return $response;
+        }
+
         $msg = array();
         /** @var Course */
         foreach ($results as $course)
@@ -220,6 +227,51 @@ class CourseController
             );
 
             array_push($msg, $tmp);
+        }
+
+        $response->getBody()->write(json_encode($msg));
+        return $response;
+    }
+
+    public function getNotApprovedCourses(Request $request, Response $response, $args): Response
+    {
+        $results = $this->em->getRepository("App\Domain\Course")->findBy(array("approved_on" => null));
+
+        if (!count($results))
+        {
+            $response = $response->withStatus(404);
+            $response->getBody()->write("No not approved courses were found.");
+            return $response;
+        }
+
+        $msg = array();
+        /** @var Course */
+        foreach ($results as $course)
+        {
+            $lecturerUser = $course->getLecturer();
+            $lecturerData = array(
+                "id" => $lecturerUser->getID(),
+                "name" => $lecturerUser->getName()
+            );
+
+            $approvedByData = NULL;
+            if ($course->getApprovedBy())
+            {
+                $approvedByData = array(
+                    "id" => $course->getApprovedBy()->getID(),
+                    "name" => $course->getApprovedBy()->getName()
+                );
+            }
+
+            $data = array(
+                "code" => $course->getCode(),
+                "name" => $course->getName(),
+                "lecturer" => $lecturerData,
+                "approved_by" => $approvedByData,
+                "created_on" => $course->getCreatedOn()->format("Y-m-d H:i:s"),
+                "approved_on" => $course->getApprovedOn() ? $course->getApprovedOn()->format("Y-m-d H:i:s") : NULL
+            );
+            array_push($msg, $data);
         }
 
         $response->getBody()->write(json_encode($msg));
