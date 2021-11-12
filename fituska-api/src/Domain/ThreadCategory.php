@@ -47,6 +47,11 @@ class ThreadCategory
         $this->course = $course;
     }
 
+    public function getID(): int
+    {
+        return $this->id;
+    }
+
     public function getName(): string
     {
         return $this->name;
