@@ -60,7 +60,7 @@ $app->delete('/roles/{id}', RoleController::class . ':deleteRole');
 /** USER ENDPOINTS */
 $app->get('/users', UserController::class . ':getUsers');
 $app->get('/users/email/{email}', UserController::class . ':getUserByEmail');
-// $app->get('/users/name/{name}', UserController::class . ':getUserByName');
+$app->get('/users/name/{name}', UserController::class . ':getUserByName');
 $app->post('/users/add', UserController::class . ':addUser');
 // $app->post('/users/{userID}/role/{roleID}', UserController::class . ':changeRole');
 
