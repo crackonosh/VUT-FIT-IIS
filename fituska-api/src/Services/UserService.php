@@ -12,6 +12,7 @@ class UserService
 
     public static function isEmailTaken(EntityManager &$em, string $email): bool
     {
+        /** @var User[] */
         $result = $em->getRepository("App\Domain\User")->findBy(array("email" => "$email"));
 
         return count($result);
