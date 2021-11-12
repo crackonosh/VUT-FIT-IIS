@@ -54,7 +54,7 @@ class UserController
         }
 
         /** @var Role */
-        $userRole = $this->em->getRepository("App\Domain\Role")->find($body["role"]);
+        $userRole = $this->em->find(Role::class, $body["role"]);
 
         if ($userRole == NULL)
         {
@@ -83,7 +83,7 @@ class UserController
 
     public function getUsers(Request $request, Response $response): Response
     {
-        $results = $this->em->getRepository("App\Domain\User")->findAll();
+        $results = $this->em->getRepository(User::class)->findAll();
         
         $msg = array();
         /** @var User */
@@ -100,7 +100,7 @@ class UserController
     {
         $user = $this->em->createQueryBuilder()
             ->select("u")
-            ->from("App\Domain\User", 'u')
+            ->from(User::class, 'u')
             ->where("u.email LIKE '%" . $args["email"] . "%'");
 
         $results = $user->getQuery()->getArrayResult();
@@ -133,9 +133,9 @@ class UserController
     public function changeRole(Request $request, Response $response, $args): Response
     {
         /** @var User */
-        $user = $this->em->getRepository("App\Domain\User")->find($args["userID"]);
+        $user = $this->em->find(User::class, $args["userID"]);
         /** @var Role */
-        $role = $this->em->getRepository("App\Domain\Role")->find($args["roleID"]);
+        $role = $this->em->find(Role::class, $args["roleID"]);
 
         if (!$user)
         {

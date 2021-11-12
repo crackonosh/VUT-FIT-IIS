@@ -44,7 +44,7 @@ class ThreadCategoryController
         }
 
         /** @var User */
-        $user = $this->em->getRepository("App\Domain\User")->find($body["created_by"]); // should be taken from JWT
+        $user = $this->em->find(User::class, $body["created_by"]); // should be taken from JWT
 
         if (!$user)
         {
@@ -54,7 +54,7 @@ class ThreadCategoryController
         }
 
         /** @var Course */
-        $course = $this->em->getRepository("App\Domain\Course")->find($body["course_code"]);
+        $course = $this->em->find(Course::class, $body["course_code"]);
 
         if (!$course)
         {
@@ -79,7 +79,7 @@ class ThreadCategoryController
 
     public function readThreadCategories(Request $request, Response $response, $args): Response
     {
-        $results = $this->em->getRepository("App\Domain\ThreadCategory")->findBy(array("course" => $args["code"]));
+        $results = $this->em->getRepository(ThreadCategory::class)->findBy(array("course" => $args["code"]));
 
         if (!count($results))
         {
@@ -116,7 +116,7 @@ class ThreadCategoryController
         echo($this->errorMsg);
 
         /** @var ThreadCategory */
-        $tCategory = $this->em->getRepository(ThreadCategory::class)->find($args["id"]);
+        $tCategory = $this->em->find(ThreadCategory::class, $args["id"]);
 
         if (!$tCategory)
         {
@@ -137,7 +137,7 @@ class ThreadCategoryController
     public function deleteThreadCategory(Request $request, Response $response, $args): Response
     {
         /** @var ThreadCategory */
-        $tCategory = $this->em->getRepository(ThreadCategory::class)->find($args["id"]);
+        $tCategory = $this->em->find(ThreadCategory::class, $args["id"]);
 
         if (!$tCategory)
         {

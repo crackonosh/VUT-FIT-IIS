@@ -45,7 +45,7 @@ class CourseController
         }
 
         /** @var User */
-        $lecturerUser = $this->em->getRepository("App\Domain\User")->find($body["lecturer"]);
+        $lecturerUser = $this->em->find(User::class, $body["lecturer"]);
 
         if ($lecturerUser == NULL)
         {
@@ -70,7 +70,8 @@ class CourseController
 
     public function getCourses(Request $request, Response $response): Response
     {
-        $results = $this->em->getRepository("App\Domain\Course")->findAll();
+        /** @var Course[] */
+        $results = $this->em->getRepository(Course::class)->findAll();
 
         if (!count($results))
         {
@@ -80,7 +81,6 @@ class CourseController
         }
 
         $msg = array();
-        /** @var Course */
         foreach ($results as $course)
         {
             $lecturerUser = $course->getLecturer();
@@ -116,7 +116,7 @@ class CourseController
     public function getCourseByCode(Request $request, Response $response, $args): Response
     {
         /** @var Course */
-        $course = $this->em->getRepository("App\Domain\Course")->find($args["code"]);
+        $course = $this->em->find(Course::class, $args["code"]);
 
         if (!$course)
         {
@@ -130,7 +130,6 @@ class CourseController
             "name" => $course->getLecturer()->getName()
         );
 
-        /** @var User */
         $approvedByData = NULL;
         if ($course->getApprovedBy())
         {
@@ -144,7 +143,7 @@ class CourseController
             "code" => $course->getCode(),
             "name" => $course->getName(),
             "lecturer" => $lecturerData,
-            "approved_by" => $course->getApprovedBy(),
+            "approved_by" => $approvedByData,
             "created_on" => $course->getCreatedOn()->format("Y-m-d H:i:s"),
             "approved_on" => $course->getApprovedOn() ? $course->getApprovedOn()->format("Y-m-d H:i:s") : NULL
         );
@@ -156,7 +155,7 @@ class CourseController
     public function approveCourse(Request $request, Response $response, $args): Response
     {
         /** @var Course */
-        $course = $this->em->getRepository("App\Domain\Course")->find($args["code"]);
+        $course = $this->em->find(Course::class, $args["code"]);
 
         if (!$course)
         {
@@ -185,7 +184,7 @@ class CourseController
     {
         $courses = $this->em->createQueryBuilder()
             ->select("c, u")
-            ->from("App\Domain\Course", 'c')
+            ->from(Course::class, 'c')
             ->join("c.lecturer", 'u')
             ->where("c.approved_on IS NOT NULL");
 
@@ -235,7 +234,7 @@ class CourseController
 
     public function getNotApprovedCourses(Request $request, Response $response, $args): Response
     {
-        $results = $this->em->getRepository("App\Domain\Course")->findBy(array("approved_on" => null));
+        $results = $this->em->getRepository(Course::class)->findBy(array("approved_on" => null));
 
         if (!count($results))
         {
