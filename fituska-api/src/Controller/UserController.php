@@ -156,10 +156,10 @@ class UserController
         /** @var user */
         foreach ($result as $result)
         {
-            $tmp array(
+            $tmp = array(
                 "id" => $result["id"],
-                "email" => $result["email"]
-                "phone" => $result["phone"]
+                "email" => $result["email"],
+                "phone" => $result["phone"],
                 "address" => $result["address"]
             );
             array_push($msg, $tmp);
