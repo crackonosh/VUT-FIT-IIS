@@ -2,6 +2,7 @@
 namespace App\Domain;
 
 use DateTime;
+use DateTimeZone;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -21,9 +22,9 @@ class Thread
     /**
      * @ORM\ManyToOne(targetEntity="Course")
      * @ORM\JoinColumn(onDelete="CASCADE", referencedColumnName="code", nullable=false)
-     * @var string
+     * @var Course
      */
-    private $course_code;
+    private $course;
 
     /**
      * @ORM\Column(type="string")
@@ -65,15 +66,16 @@ class Thread
     private $category;
 
     public function __construct(
-        string $course_code,
+        Course $course,
         string $title,
-        int $created_by,
-        int $category
+        User $created_by,
+        ThreadCategory $category
     ){
-        $this->course_code = $course_code;
+        $this->course= $course;
         $this->title = $title;
         $this->created_by = $created_by;
         $this->category = $category;
+        $this->created_on = new DateTime('now', new DateTimeZone("Europe\Prague"));
     }
 
     public function getCourseCode(): string
