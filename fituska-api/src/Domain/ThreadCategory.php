@@ -35,16 +35,16 @@ class ThreadCategory
      * @ORM\JoinColumn(onDelete="CASCADE", referencedColumnName="code", nullable=false)
      * @var Course
      */
-    private $course_code;
+    private $course;
 
     public function __construct(
         string $name,
-        int $created_by,
-        string $course_code
+        User $created_by,
+        Course $course
     ){
         $this->name = $name;
         $this->created_by = $created_by;
-        $this->course_code = $course_code;
+        $this->course = $course;
     }
 
     public function getName(): string
@@ -67,13 +67,13 @@ class ThreadCategory
         $this->created_by = $created_by;
     }
 
-    public function getCourseCode(): Course
+    public function getCourse(): Course
     {
-        return $this->course_code;
+        return $this->course;
     }
 
-    public function setCourseCode(int $course_code): void
+    public function setCourseCode(Course $course): void
     {
-        $this->course_code = $course_code;
+        $this->course = $course;
     }
 }
