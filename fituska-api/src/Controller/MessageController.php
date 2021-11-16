@@ -36,23 +36,27 @@ class MessageController extends Controller
         $thread = $this->em->find(Thread::class, $args["id"]);
         if (!$thread)
         {
-            $response = $response->withStatus(404);
             $response->getBody()->write("Unable to create message. Thread not found.");
-            return $response;
+            return $response
+                ->withHeader('Conent-type', 'application/json')
+                ->withStatus(404);
         }
 
         /** @var User */
         $author = $this->em->find(User::class, $body["created_by"]);
         if (!$author)
         {
-            $response = $response->withStatus(404);
             $response->getBody()->write("Unable to create message. User ID not found.");
-            return $response;
+            return $response
+                ->withHeader('Conent-type', 'application/json')
+                ->withStatus(404);
         }
 
         $this->ms->addMessage($thread, $author, $body["message"]);
 
         $response->getBody()->write("Successfully created a message.");
-        return $response;
+        return $response
+            ->withHeader('Conent-type', 'application/json')
+            ->withStatus(201);
     }
 }

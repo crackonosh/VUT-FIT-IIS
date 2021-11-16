@@ -39,15 +39,17 @@ class UserController extends Controller
         // check email validity and if it's unique
         if (!$this->us->isEmailValid($body["email"]))
         {
-            $response = $response->withStatus(403);
             $response->getBody()->write("Email is not valid.");
-            return $response;
+            return $response
+                ->withHeader('Content-type', 'application/json')
+                ->withStatus(403);
         }
         if ($this->us->isEmailTaken($body["email"]))
         {
-            $response = $response->withStatus(403);
             $response->getBody()->write("Email already exists in database.");
-            return $response;
+            return $response
+                ->withHeader('Content-type', 'application/json')
+                ->withStatus(403);
         }
 
         /** @var Role */
@@ -55,9 +57,10 @@ class UserController extends Controller
 
         if ($userRole == NULL)
         {
-            $response = $response->withStatus(404);
             $response->getBody()->write("Unable to assign user role with not existing ID.");
-            return $response;
+            return $response
+                ->withHeader('Content-type', 'application/json')
+                ->withStatus(404);
         }
         
         $user = new User(
@@ -72,9 +75,10 @@ class UserController extends Controller
         $this->em->persist($user);
         $this->em->flush();
 
-        $response = $response->withStatus(201);
         $response->getBody()->write("Successfully created new user.");
-        return $response;
+        return $response
+            ->withHeader('Content-type', 'application/json')
+            ->withStatus(201);
         
     }
 
@@ -90,7 +94,8 @@ class UserController extends Controller
         }
         
         $response->getBody()->write(json_encode($msg));
-        return $response;
+        return $response
+            ->withHeader('Conent-type', 'application/json');
     }
 
     public function getUserByEmail(Request $request, Response $response, $args): Response
@@ -104,9 +109,10 @@ class UserController extends Controller
 
         if (count($results) == 0)
         {
-            $response = $response->withStatus(404);
             $response->getBody()->write("No results found.");
-            return $response;
+            return $response
+                ->withHeader('Conent-type', 'application/json')
+                ->withStatus(404);
         }
 
         $msg = array();
@@ -124,7 +130,8 @@ class UserController extends Controller
         }
 
         $response->getBody()->write(json_encode($msg));
-        return $response;
+        return $response
+            ->withHeader('Conent-type', 'application/json');
     }
 
     public function changeRole(Request $request, Response $response, $args): Response
@@ -136,15 +143,17 @@ class UserController extends Controller
 
         if (!$user)
         {
-            $response = $response->withStatus(404);
             $response->getBody()->write("Unable to find user with specified ID.");
-            return $response;
+            return $response
+                ->withHeader('Conent-type', 'application/json')
+                ->withStatus(404);
         }
         if (!$role)
         {
-            $response = $response->withStatus(404);
             $response->getBody()->write("Unable to find role with specified ID.");
-            return $response;
+            return $response
+                ->withHeader('Conent-type', 'application/json')
+                ->withStatus(404);
         }
 
         $user->setRole($role);
@@ -153,6 +162,7 @@ class UserController extends Controller
         $this->em->flush();
 
         $response->getBody()->write("Successfully updated user's role.");
-        return $response;
+        return $response
+            ->withHeader('Conent-type', 'application/json');
     }
 }

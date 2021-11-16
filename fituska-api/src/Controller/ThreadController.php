@@ -43,9 +43,10 @@ class ThreadController extends Controller
 
         if (!$course)
         {
-            $response = $response->withStatus(404);
             $response->getBody()->write("Unable to create thread in not existing course.");
-            return $response;
+            return $response
+                ->withHeader('Conent-type', 'application/json')
+                ->withStatus(404);
         }
 
         /** @var User */
@@ -54,9 +55,10 @@ class ThreadController extends Controller
 
         if (!$createdBy)
         {
-            $response = $response->withStatus(404);
             $response->getBody()->write("Unable to assign not existing user.");
-            return $response;
+            return $response
+                ->withHeader('Conent-type', 'application/json')
+                ->withStatus(404);
         }
 
         /** @var Category */
@@ -77,9 +79,10 @@ class ThreadController extends Controller
 
         $this->ms->addMessage($thread, $createdBy, $body["message"]);
 
-        $response = $response->withStatus(201);
         $response->getBody()->write("Successfully created new thread.");
-        return $response;
+        return $response
+            ->withHeader('Conent-type', 'application/json')
+            ->withStatus(201);
     }
 
     public function getThread(Request $request, Response $response, $args): Response
@@ -89,8 +92,10 @@ class ThreadController extends Controller
 
         if (!$thread)
         {
-            $response = $response->withStatus(404);
             $response->getBody()->write("Unable to find thread with specified ID");
+            return $response
+                ->withHeader('Conent-type', 'application/json')
+                ->withStatus(404);
         }
 
         $msg = array(
@@ -105,7 +110,8 @@ class ThreadController extends Controller
         );
 
         $response->getBody()->write(json_encode($msg));
-        return $response;
+        return $response
+            ->withHeader('Conent-type', 'application/json');
     }
 
     public function getThreadsForCourse(Request $request, Response $response, $args): Response
@@ -114,9 +120,10 @@ class ThreadController extends Controller
         $course = $this->em->find(Course::class, $args["code"]);
         if (!$course)
         {
-            $response = $response->withStatus(404);
             $response->getBody()->write("Unable to find threads for non existing course code.");
-            return $response;
+            return $response
+                ->withHeader('Conent-type', 'application/json')
+                ->withStatus(404);
         }
 
         /** @var Thread[] */
@@ -124,9 +131,10 @@ class ThreadController extends Controller
 
         if(count($threads) == 0)
         {
-            $response = $response->withStatus(404);
             $response->getBody()->write("No thread found for this course.");
-            return $response;
+            return $response
+                ->withHeader('Conent-type', 'application/json')
+                ->withStatus(404);
         }
 
         $msg = array();
@@ -144,7 +152,8 @@ class ThreadController extends Controller
         }
 
         $response->getBody()->write(json_encode($msg));
-        return $response;
+        return $response
+            ->withHeader('Conent-type', 'application/json');
     }
 
     public function getThreadsByTitle(Request $request, Response $response, $args): Response
@@ -160,9 +169,10 @@ class ThreadController extends Controller
 
         if (count($results) == 0)
         {
-            $response = $response->withStatus(404);
             $response->getBody()->write("No results found.");
-            return $response;
+            return $response
+                ->withHeader('Conent-type', 'application/json')
+                ->withStatus(404);
         }
 
         $msg = array();
@@ -181,7 +191,8 @@ class ThreadController extends Controller
         }
 
         $response->getBody()->write(json_encode($msg));
-        return $response;
+        return $response
+            ->withHeader('Conent-type', 'application/json');
     }
 
     public function closeThread(Request $request, Response $response, $args): Response
@@ -190,9 +201,10 @@ class ThreadController extends Controller
         $thread = $this->em->find(Thread::class, $args["id"]);
         if (!$thread)
         {
-            $response = $response->withStatus(404);
             $response->getBody()->write("Unable to close thread for specified ID. No thread found.");
-            return $response;
+            return $response
+                ->withHeader('Conent-type', 'application/json')
+                ->withStatus(404);
         }
 
         // add setClosedBy that needs JWT for fetching user
@@ -204,7 +216,8 @@ class ThreadController extends Controller
         $this->em->flush();
 
         $response->getBody()->write("Successfully closed a thread.");
-        return $response;
+        return $response
+            ->withHeader('Conent-type', 'application/json');
     }
 
     public function deleteThread(Request $request, Response $response, $args): Response
@@ -213,9 +226,10 @@ class ThreadController extends Controller
         $thread = $this->em->find(Thread::class, $args["id"]);
         if (!$thread)
         {
-            $response = $response->withStatus(404);
             $response->getBody()->write("Unable to delete thread for specified ID. No thread found.");
-            return $response;
+            return $response
+                ->withHeader('Conent-type', 'application/json')
+                ->withStatus(404);
         }
 
         // add check for author/lecturer from JWT
@@ -224,6 +238,7 @@ class ThreadController extends Controller
         $this->em->flush();
 
         $response->getBody()->write("Successfully deleted a thread.");
-        return $response;
+        return $response
+            ->withHeader('Conent-type', 'application/json');
     }
 }
