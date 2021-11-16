@@ -78,6 +78,11 @@ class Thread
         $this->created_on = new DateTime('now', new DateTimeZone("Europe/Prague"));
     }
 
+    public function getID(): int
+    {
+        return $this->id;
+    }
+
     public function getCourseCode(): string
     {
         return $this->course_code;
