@@ -5,13 +5,12 @@ use App\Domain\Course;
 use App\Domain\User;
 use App\Domain\Thread;
 use App\Domain\ThreadCategory;
+use App\Services\MessageService;
 use DateTime;
 use DateTimeZone;
 use Doctrine\ORM\EntityManager;
 use Slim\Psr7\Request;
 use Slim\Psr7\Response;
-
-use function DI\create;
 
 require_once __DIR__ . '/../Functions.php';
 
@@ -35,7 +34,8 @@ class ThreadController
             "course_code" => createArgument("string", $body["course_code"]),
             "title" => createArgument("string", $body["title"]),
             "created_by" => createArgument("integer", $body["created_by"]),
-            "category" => createArgument("integer", $body["category"], true)
+            "category" => createArgument("integer", $body["category"], true),
+            "message" => createArgument("string", $body["message"])
         );
 
         parseArgument($this->errorMsg, $bodyArguments);
@@ -77,6 +77,8 @@ class ThreadController
 
         $this->em->persist($thread);
         $this->em->flush();
+
+        MessageService::addMessage($this->em, $thread, $createdBy, $body["message"]);
 
         $response = $response->withStatus(201);
         $response->getBody()->write("Successfully created new thread.");
