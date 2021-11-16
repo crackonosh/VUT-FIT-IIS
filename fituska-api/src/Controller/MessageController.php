@@ -1,9 +1,7 @@
 <?php
 namespace App\Controller;
 
-use App\Domain\Message;
 use App\Domain\Thread;
-use App\Domain\ThreadMessage;
 use App\Domain\User;
 use App\Services\MessageService;
 use Doctrine\ORM\EntityManager;
