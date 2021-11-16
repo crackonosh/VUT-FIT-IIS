@@ -4,6 +4,7 @@
 error_reporting(E_ALL ^ E_WARNING); 
 
 use App\Controller\CourseController;
+use App\Controller\MessageController;
 use App\Controller\RoleController;
 use App\Controller\UserController;
 use App\Controller\ThreadCategoryController;
@@ -90,5 +91,8 @@ $app->post('/threads/add', ThreadController::class . ':addThread'); // created b
 $app->put('/threads/{id}/close', ThreadController::class . ':closeThread'); // missing JWT and gamification
 $app->delete('/threads/{id}/delete', ThreadController::class . ':deleteThread'); // only author or lecturer
 
+/** THREAD MESSAGE ENDPOINTS */
+// users shouldn't delete/update messages because they'll get points for them ?
+$app->post('/threads/{id}/message/add', MessageController::class . ':addMessage'); // created_by JWT and check if enrolled in course
 
 $app->run();
