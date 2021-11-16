@@ -10,8 +10,6 @@ require_once __DIR__ . '/../Functions.php';
 
 class RoleController
 {
-    private $em;
-
     public function __construct(EntityManager $em)
     {
         $this->em = $em;   

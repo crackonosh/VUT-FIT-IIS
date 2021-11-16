@@ -12,14 +12,13 @@ use DateTimeZone;
 
 class CourseController extends Controller
 {
-    /** @var EntityManager */
-    private $em;
-    /** @var string */
-    private $errorMsg = "";
+    /** @var CourseService */
+    private $cs;
 
-    public function __construct(EntityManager $em)
+    public function __construct(EntityManager $em, CourseService $cs)
     {
         $this->em = $em;
+        $this->cs = $cs;
     }
 
     public function addCourse(Request $request, Response $response): Response
@@ -32,10 +31,10 @@ class CourseController extends Controller
             "lecturer" => $this->createArgument("integer", $body["lecturer"]),
         );
 
-        $this->parseArgument($this->errorMsg, $bodyArguments);
+        $this->parseArgument($bodyArguments);
         echo($this->errorMsg);
 
-        if (CourseService::isCodeUnique($this->em, $body["code"]))
+        if ($this->cs->isCodeUnique($body["code"]))
         {
             $response = $response->withStatus(403);
             $response->getBody()->write("Course code already exists");
@@ -162,7 +161,7 @@ class CourseController extends Controller
             return $response;
         }
 
-        if (CourseService::isCourseApproved($this->em, $args["code"]))
+        if ($this->cs->isCourseApproved($args["code"]))
         {
             $response = $response->withStatus(403);
             $response->getBody()->write("Course {$args['code']} is already approved.");
