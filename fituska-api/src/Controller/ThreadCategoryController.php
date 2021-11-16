@@ -12,14 +12,13 @@ use Slim\Psr7\Response;
 
 class ThreadCategoryController extends Controller
 {
-    /** @var EntityManager */
-    private $em;
-    /** @var string */
-    private $errorMsg = "";
+    /** @var ThreadCategoryService */
+    private $tcs;
 
-    public function __construct(EntityManager $em)
+    public function __construct(EntityManager $em, ThreadCategoryService $tcs)
     {
         $this->em = $em;
+        $this->tcs = $tcs;
     }
 
     public function addThreadCategory(Request $request, Response $response, $args): Response
@@ -32,10 +31,10 @@ class ThreadCategoryController extends Controller
             "course_code" => $this->createArgument("string", $body["course_code"])
         );
 
-        $this->parseArgument($this->errorMsg, $bodyArguments);
+        $this->parseArgument($bodyArguments);
         echo($this->errorMsg);
 
-        if (!ThreadCategoryService::isNameUniqueForCourse($this->em, $body["name"], $body["course_code"]))
+        if (!$this->tcs->isNameUniqueForCourse($body["name"], $body["course_code"]))
         {
             $response = $response->withStatus(403);
             $response->getBody()->write("Category with given name already exists for this course.");
@@ -108,10 +107,10 @@ class ThreadCategoryController extends Controller
         $body = $request->getParsedBody();
 
         $bodyArguments = array(
-            "name" => createArgument("string", $body["name"])
+            "name" => $this->createArgument("string", $body["name"])
         );
 
-        parseArgument($this->errorMsg, $bodyArguments);
+        $this->parseArgument($bodyArguments);
         echo($this->errorMsg);
 
         /** @var ThreadCategory */
