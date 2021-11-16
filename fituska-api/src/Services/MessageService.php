@@ -8,7 +8,15 @@ use App\Domain\User;
 
 class MessageService
 {
-    public static function addMessage(EntityManager &$em, Thread $thread, User $author, string $message)
+    /** @var EntityManage */
+    private $em;
+
+    public function __construct(EntityManager $em)
+    {
+        $this->em = $em;   
+    }
+
+    public function addMessage(Thread $thread, User $author, string $message)
     {
         $message = new Message(
             $thread,
@@ -16,7 +24,7 @@ class MessageService
             $author
         );
 
-        $em->persist($message);
-        $em->flush($message);
+        $this->em->persist($message);
+        $this->em->flush($message);
     }
 }
