@@ -8,9 +8,8 @@ use Doctrine\ORM\EntityManager;
 use Slim\Psr7\Request;
 use Slim\Psr7\Response;
 
-require_once __DIR__ . '/../Functions.php';
 
-class MessageController
+class MessageController extends Controller
 {
     /** @var EntityManager */
     private $em;
@@ -27,11 +26,11 @@ class MessageController
         $body = $request->getParsedBody();
 
         $bodyArguments = array(
-            "message" => createArgument("string", $body["message"]),
-            "created_by" => createArgument("integer", $body["created_by"])
+            "message" => $this->createArgument("string", $body["message"]),
+            "created_by" => $this->createArgument("integer", $body["created_by"])
         );
 
-        parseArgument($this->errorMsg, $bodyArguments);
+        $this->parseArgument($this->errorMsg, $bodyArguments);
         echo($this->errorMsg);
 
         /** @var Thread */

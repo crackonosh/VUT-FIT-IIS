@@ -8,9 +8,7 @@ use App\Services\UserService;
 use Slim\Psr7\Request;
 use Slim\Psr7\Response;
 
-require_once __DIR__ . '/../Functions.php';
-
-class UserController
+class UserController extends Controller
 {
     /** @var EntityManager */
     private $em;
@@ -28,15 +26,15 @@ class UserController
 
 
         $bodyArguments = array(
-            "name" => createArgument("string", $body["name"]),
-            "password" => createArgument("string", $body["password"]),
-            "email" => createArgument("string", $body["email"]),
-            "address" => createArgument("string", $body["address"], true),
-            "phone" => createArgument("string", $body["phone"], true),
-            "role" => createArgument("integer", $body["role"])
+            "name" => $this->createArgument("string", $body["name"]),
+            "password" => $this->createArgument("string", $body["password"]),
+            "email" => $this->createArgument("string", $body["email"]),
+            "address" => $this->createArgument("string", $body["address"], true),
+            "phone" => $this->createArgument("string", $body["phone"], true),
+            "role" => $this->createArgument("integer", $body["role"])
         );
 
-        parseArgument($this->errorMsg, $bodyArguments);
+        $this->parseArgument($this->errorMsg, $bodyArguments);
         echo($this->errorMsg);
 
         // check email validity and if it's unique

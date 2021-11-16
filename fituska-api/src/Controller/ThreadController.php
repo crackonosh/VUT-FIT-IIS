@@ -12,9 +12,7 @@ use Doctrine\ORM\EntityManager;
 use Slim\Psr7\Request;
 use Slim\Psr7\Response;
 
-require_once __DIR__ . '/../Functions.php';
-
-class ThreadController
+class ThreadController extends Controller
 {
     /** @var EntityManager */
     private $em;
@@ -31,14 +29,14 @@ class ThreadController
         $body = $request->getParsedBody();
 
         $bodyArguments = array(
-            "course_code" => createArgument("string", $body["course_code"]),
-            "title" => createArgument("string", $body["title"]),
-            "created_by" => createArgument("integer", $body["created_by"]),
-            "category" => createArgument("integer", $body["category"], true),
-            "message" => createArgument("string", $body["message"])
+            "course_code" => $this->createArgument("string", $body["course_code"]),
+            "title" => $this->createArgument("string", $body["title"]),
+            "created_by" => $this->createArgument("integer", $body["created_by"]),
+            "category" => $this->createArgument("integer", $body["category"], true),
+            "message" => $this->createArgument("string", $body["message"])
         );
 
-        parseArgument($this->errorMsg, $bodyArguments);
+        $this->parseArgument($this->errorMsg, $bodyArguments);
         echo($this->errorMsg);
 
         /** @var Course */

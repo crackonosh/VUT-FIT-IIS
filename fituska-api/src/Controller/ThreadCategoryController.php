@@ -9,9 +9,8 @@ use App\Services\ThreadCategoryService;
 use Slim\Psr7\Request;
 use Slim\Psr7\Response;
 
-require_once __DIR__ . '/../Functions.php';
 
-class ThreadCategoryController
+class ThreadCategoryController extends Controller
 {
     /** @var EntityManager */
     private $em;
@@ -28,12 +27,12 @@ class ThreadCategoryController
         $body = $request->getParsedBody();
 
         $bodyArguments = array(
-            "name" => createArgument("string", $body["name"]),
-            "created_by" => createArgument("integer", $body["created_by"]),
-            "course_code" => createArgument("string", $body["course_code"])
+            "name" => $this->createArgument("string", $body["name"]),
+            "created_by" => $this->createArgument("integer", $body["created_by"]),
+            "course_code" => $this->createArgument("string", $body["course_code"])
         );
 
-        parseArgument($this->errorMsg, $bodyArguments);
+        $this->parseArgument($this->errorMsg, $bodyArguments);
         echo($this->errorMsg);
 
         if (!ThreadCategoryService::isNameUniqueForCourse($this->em, $body["name"], $body["course_code"]))

@@ -10,9 +10,7 @@ use Slim\Psr7\Response;
 use DateTime;
 use DateTimeZone;
 
-require_once __DIR__ . '/../Functions.php';
-
-class CourseController
+class CourseController extends Controller
 {
     /** @var EntityManager */
     private $em;
@@ -29,12 +27,12 @@ class CourseController
         $body = $request->getParsedBody();
 
         $bodyArguments = array(
-            "code" => createArgument("string", $body["code"]),
-            "name" => createArgument("string", $body["name"]),
-            "lecturer" => createArgument("integer", $body["lecturer"]),
+            "code" => $this->createArgument("string", $body["code"]),
+            "name" => $this->createArgument("string", $body["name"]),
+            "lecturer" => $this->createArgument("integer", $body["lecturer"]),
         );
 
-        parseArgument($this->errorMsg, $bodyArguments);
+        $this->parseArgument($this->errorMsg, $bodyArguments);
         echo($this->errorMsg);
 
         if (CourseService::isCodeUnique($this->em, $body["code"]))
