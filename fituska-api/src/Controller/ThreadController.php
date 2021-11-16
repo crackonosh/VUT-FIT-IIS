@@ -14,14 +14,13 @@ use Slim\Psr7\Response;
 
 class ThreadController extends Controller
 {
-    /** @var EntityManager */
-    private $em;
-    /** @var string */
-    private $errorMsg = "";
+    /** @var MessageService */
+    private $ms;
 
-    public function __construct(EntityManager $em)
+    public function __construct(EntityManager $em, MessageService $ms)
     {
         $this->em = $em;   
+        $this->ms = $ms;
     }
 
     public function addThread(Request $request, Response $response, $args): Response
@@ -36,7 +35,7 @@ class ThreadController extends Controller
             "message" => $this->createArgument("string", $body["message"])
         );
 
-        $this->parseArgument($this->errorMsg, $bodyArguments);
+        $this->parseArgument($bodyArguments);
         echo($this->errorMsg);
 
         /** @var Course */
@@ -76,7 +75,7 @@ class ThreadController extends Controller
         $this->em->persist($thread);
         $this->em->flush();
 
-        MessageService::addMessage($this->em, $thread, $createdBy, $body["message"]);
+        $this->ms->addMessage($thread, $createdBy, $body["message"]);
 
         $response = $response->withStatus(201);
         $response->getBody()->write("Successfully created new thread.");
