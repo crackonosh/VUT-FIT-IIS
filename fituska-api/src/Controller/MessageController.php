@@ -15,10 +15,13 @@ class MessageController extends Controller
     private $em;
     /** @var string */
     private $errorMsg = "";
-
-    public function __construct(EntityManager $em)
+    /** @var MessageService */
+    private $ms;
+    
+    public function __construct(EntityManager $em, MessageService $ms)
     {
-        $this->em = $em;   
+        $this->em = $em;
+        $this->ms = $ms;
     }
 
     public function addMessage(Request $request, Response $response, $args): Response
@@ -51,7 +54,7 @@ class MessageController extends Controller
             return $response;
         }
 
-        MessageService::addMessage($this->em, $thread, $author, $body["message"]);
+        $this->ms->addMessage($thread, $author, $body["message"]);
 
         $response->getBody()->write("Successfully created a message.");
         return $response;
