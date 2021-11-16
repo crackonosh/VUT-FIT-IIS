@@ -37,5 +37,19 @@ ___
 Almost same as using composer, but you'll set your "apache directory" to `fituska-api/src/public/` and then run the server
 - then run `php vendor/bin/doctrine orm:schema-tool:update --force --dump-sql` in `fituska-api/` - this creates tables by `fituska-api/src/Domain/` folder into database
 
+___
 ## Development
-- TBD
+In `fituska-api/src/` folder:
+
+##### public
+- `.htaccess` - you shouldn't change this
+- `index.php` - this file contains some middlewares (you probably won't change those) and endpoint definitions 
+
+##### Domain
+Contains files for ORM to database. They're all should be inside `App\Domain` namespace and have getter/setter methods
+
+##### Controller
+Contains controllers, for various endpoints, that has functions for CRUD operations
+
+##### Services
+Contains static helper functions for various controllers.

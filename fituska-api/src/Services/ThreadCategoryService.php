@@ -6,9 +6,18 @@ use Doctrine\ORM\EntityManager;
 
 class ThreadCategoryService
 {
-    public static function isNameUniqueForCourse(EntityManager &$em, string $name, string $course_code): bool
+    /** @var EntityManager */
+    private $em;
+
+    public function __construct(EntityManager $em)
     {
-        $results = $em->getRepository(ThreadCategory::class)->findBy(array("course" => $course_code, "name" => $name));
+        $this->em = $em;
+    }
+
+    public function isNameUniqueForCourse(string $name, string $course_code): bool
+    {
+        $results = $this->em->getRepository(ThreadCategory::class)
+            ->findBy(array("course" => $course_code, "name" => $name));
 
         return !count($results);
     }

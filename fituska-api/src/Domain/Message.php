@@ -2,6 +2,7 @@
 namespace App\Domain;
 
 use DateTime;
+use DateTimeZone;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -45,13 +46,14 @@ class Message
     private $created_on;
 
     public function __construct(
-        int $thread,
+        Thread $thread,
         string $text,
-        int $created_by
+        User $created_by
     ){
         $this->thread = $thread;
         $this->text = $text;
         $this->created_by = $created_by;   
+        $this->created_on = new DateTime('now', new DateTimeZone('Europe/Prague'));
     }
 
     public function getThread(): Thread

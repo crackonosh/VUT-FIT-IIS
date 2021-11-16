@@ -8,18 +8,15 @@ use App\Services\UserService;
 use Slim\Psr7\Request;
 use Slim\Psr7\Response;
 
-require_once __DIR__ . '/../Functions.php';
-
-class UserController
+class UserController extends Controller
 {
-    /** @var EntityManager */
-    private $em;
-    /** @var string */
-    private $errorMsg = "";
+    /** @var UserService */
+    private $us;
 
-    public function __construct(EntityManager $em)
+    public function __construct(EntityManager $em, UserService $us)
     {
         $this->em = $em;
+        $this->us = $us;
     }
 
     public function addUser(Request $request, Response $response): Response
@@ -28,29 +25,31 @@ class UserController
 
 
         $bodyArguments = array(
-            "name" => createArgument("string", $body["name"]),
-            "password" => createArgument("string", $body["password"]),
-            "email" => createArgument("string", $body["email"]),
-            "address" => createArgument("string", $body["address"], true),
-            "phone" => createArgument("string", $body["phone"], true),
-            "role" => createArgument("integer", $body["role"])
+            "name" => $this->createArgument("string", $body["name"]),
+            "password" => $this->createArgument("string", $body["password"]),
+            "email" => $this->createArgument("string", $body["email"]),
+            "address" => $this->createArgument("string", $body["address"], true),
+            "phone" => $this->createArgument("string", $body["phone"], true),
+            "role" => $this->createArgument("integer", $body["role"])
         );
 
-        parseArgument($this->errorMsg, $bodyArguments);
+        $this->parseArgument($bodyArguments);
         echo($this->errorMsg);
 
         // check email validity and if it's unique
-        if (!UserService::isEmailValid($body["email"]))
+        if (!$this->us->isEmailValid($body["email"]))
         {
-            $response = $response->withStatus(403);
             $response->getBody()->write("Email is not valid.");
-            return $response;
+            return $response
+                ->withHeader('Content-type', 'application/json')
+                ->withStatus(403);
         }
-        if (UserService::isEmailTaken($this->em, $body["email"]))
+        if ($this->us->isEmailTaken($body["email"]))
         {
-            $response = $response->withStatus(403);
             $response->getBody()->write("Email already exists in database.");
-            return $response;
+            return $response
+                ->withHeader('Content-type', 'application/json')
+                ->withStatus(403);
         }
 
         /** @var Role */
@@ -58,9 +57,10 @@ class UserController
 
         if ($userRole == NULL)
         {
-            $response = $response->withStatus(404);
             $response->getBody()->write("Unable to assign user role with not existing ID.");
-            return $response;
+            return $response
+                ->withHeader('Content-type', 'application/json')
+                ->withStatus(404);
         }
         
         $user = new User(
@@ -75,9 +75,10 @@ class UserController
         $this->em->persist($user);
         $this->em->flush();
 
-        $response = $response->withStatus(201);
         $response->getBody()->write("Successfully created new user.");
-        return $response;
+        return $response
+            ->withHeader('Content-type', 'application/json')
+            ->withStatus(201);
         
     }
 
@@ -99,7 +100,8 @@ class UserController
         }
         
         $response->getBody()->write(json_encode($msg));
-        return $response;
+        return $response
+            ->withHeader('Content-type', 'application/json');
     }
 
     public function getUserByEmail(Request $request, Response $response, $args): Response
@@ -113,9 +115,10 @@ class UserController
 
         if (count($results) == 0)
         {
-            $response = $response->withStatus(404);
             $response->getBody()->write("No results found.");
-            return $response;
+            return $response
+                ->withHeader('Content-type', 'application/json')
+                ->withStatus(404);
         }
 
         $msg = array();
@@ -133,7 +136,8 @@ class UserController
         }
 
         $response->getBody()->write(json_encode($msg));
-        return $response;
+        return $response
+            ->withHeader('Content-type', 'application/json');
     }
 
     public function getUserByName(Requst $request, Response $response, $args): Response
@@ -177,15 +181,17 @@ class UserController
 
         if (!$user)
         {
-            $response = $response->withStatus(404);
             $response->getBody()->write("Unable to find user with specified ID.");
-            return $response;
+            return $response
+                ->withHeader('Content-type', 'application/json')
+                ->withStatus(404);
         }
         if (!$role)
         {
-            $response = $response->withStatus(404);
             $response->getBody()->write("Unable to find role with specified ID.");
-            return $response;
+            return $response
+                ->withHeader('Content-type', 'application/json')
+                ->withStatus(404);
         }
 
         $user->setRole($role);
@@ -195,6 +201,6 @@ class UserController
 
         $response->getBody()->write("Successfully updated user's role.");
 
-        return $response;
+        return $response->withHeader('Content-type', 'application/json');
     }
 }

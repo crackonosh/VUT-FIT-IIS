@@ -10,8 +10,6 @@ require_once __DIR__ . '/../Functions.php';
 
 class RoleController
 {
-    private $em;
-
     public function __construct(EntityManager $em)
     {
         $this->em = $em;   
@@ -26,9 +24,10 @@ class RoleController
         $this->em->persist($role);
         $this->em->flush();
 
-        $response = $response->withStatus(201);
         $response->getBody()->write("Successfully created new role '$roleName'.");
-        return $response;
+        return $response
+            ->withHeader('Content-type', 'application/json')
+            ->withStatus(201);
     }
 
     public function readRoles(Request $request, Response $response): Response
@@ -47,7 +46,8 @@ class RoleController
         }
 
         $response->getBody()->write(json_encode($msg));
-        return $response;
+        return $response
+            ->withHeader('Content-type', 'application/json');;
     }
 
     public function updateRole(Request $request, Response $response, $args): Response
@@ -59,16 +59,18 @@ class RoleController
         
         if ($role == NULL)
         {
-            $response = $response->withStatus(404);
             $response->getBody()->write("Unable to find role with specified ID.");
-            return $response;
+            return $response
+                ->withHeader('Content-type', 'application/json')
+                ->withStatus(404);
         }
 
         $role->setName($newName);
         $this->em->flush();
 
         $response->getBody()->write("Role successfully updated.");
-        return $response;
+        return $response
+            ->withHeader('Content-type', 'application/json');
     }
 
     public function deleteRole(Request $request, Response $response, $args): Response
@@ -79,15 +81,17 @@ class RoleController
 
         if ($role == NULL)
         {
-            $response = $response->withStatus(404);
             $response->getBody()->write("Role with specified ID not found.");
-            return $response;
+            return $response
+                ->withHeader('Content-type', 'application/json')
+                ->withStatus(404);
         }
 
         $this->em->remove($role);
         $this->em->flush();
 
         $response->getBody()->write("Successfully deleted role.");
-        return $response;
+        return $response
+            ->withHeader('Content-type', 'application/json');
     }
 }

@@ -4,6 +4,7 @@
 error_reporting(E_ALL ^ E_WARNING); 
 
 use App\Controller\CourseController;
+use App\Controller\MessageController;
 use App\Controller\RoleController;
 use App\Controller\UserController;
 use App\Controller\ThreadCategoryController;
@@ -82,8 +83,16 @@ $app->post('/categories/add', ThreadCategoryController::class . ':addThreadCateg
 $app->put('/categories/{id}/update', ThreadCategoryController::class . ':updateThreadCategory'); // only lecturer should be able to change categories
 $app->delete('/categories/{id}/delete', ThreadCategoryController::class . ':deleteThreadCategory'); // this endpoint needs JWT to function correctly (Check that person trying to delete the category is lecturer of course)
 
-/** THREAD CATEGORY */
+/** THREAD ENDPOINTS */
+$app->get('/courses/{code}/threads/get', ThreadController::class . ':getThreadsForCourse');
+$app->get('/threads/title/{title}/get', ThreadController::class . ':getThreadsByTitle');
+$app->get('/threads/id/{id}/get', ThreadController::class . ':getThread'); // add fetching thread msgs
 $app->post('/threads/add', ThreadController::class . ':addThread'); // created by will be taken from JWT
+$app->put('/threads/{id}/close', ThreadController::class . ':closeThread'); // missing JWT and gamification
+$app->delete('/threads/{id}/delete', ThreadController::class . ':deleteThread'); // only author or lecturer
 
+/** THREAD MESSAGE ENDPOINTS */
+// users shouldn't delete/update messages because they'll get points for them ?
+$app->post('/threads/{id}/message/add', MessageController::class . ':addMessage'); // created_by JWT and check if enrolled in course
 
 $app->run();

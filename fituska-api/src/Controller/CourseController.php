@@ -10,18 +10,15 @@ use Slim\Psr7\Response;
 use DateTime;
 use DateTimeZone;
 
-require_once __DIR__ . '/../Functions.php';
-
-class CourseController
+class CourseController extends Controller
 {
-    /** @var EntityManager */
-    private $em;
-    /** @var string */
-    private $errorMsg = "";
+    /** @var CourseService */
+    private $cs;
 
-    public function __construct(EntityManager $em)
+    public function __construct(EntityManager $em, CourseService $cs)
     {
         $this->em = $em;
+        $this->cs = $cs;
     }
 
     public function addCourse(Request $request, Response $response): Response
@@ -29,19 +26,20 @@ class CourseController
         $body = $request->getParsedBody();
 
         $bodyArguments = array(
-            "code" => createArgument("string", $body["code"]),
-            "name" => createArgument("string", $body["name"]),
-            "lecturer" => createArgument("integer", $body["lecturer"]),
+            "code" => $this->createArgument("string", $body["code"]),
+            "name" => $this->createArgument("string", $body["name"]),
+            "lecturer" => $this->createArgument("integer", $body["lecturer"]),
         );
 
-        parseArgument($this->errorMsg, $bodyArguments);
+        $this->parseArgument($bodyArguments);
         echo($this->errorMsg);
 
-        if (CourseService::isCodeUnique($this->em, $body["code"]))
+        if ($this->cs->isCodeUnique($body["code"]))
         {
-            $response = $response->withStatus(403);
             $response->getBody()->write("Course code already exists");
-            return $response;
+            return $response
+                ->withHeader('Content-type', 'application/json')
+                ->withStatus(403);
         }
 
         /** @var User */
@@ -49,9 +47,10 @@ class CourseController
 
         if ($lecturerUser == NULL)
         {
-            $response = $response->withStatus(404);
             $response->getBody()->write("Unable to assign not existing user.");
-            return $response;
+            return $response
+                ->withHeader('Content-type', 'application/json')
+                ->withStatus(404);
         }
 
         $course = new Course(
@@ -63,9 +62,10 @@ class CourseController
         $this->em->persist($course);
         $this->em->flush();
 
-        $response = $response->withStatus(201);
         $response->getBody()->write("Successfully created new course.");
-        return $response;
+        return $response
+            ->withHeader('Content-type', 'application/json')
+            ->withStatus(201);
     }
 
     public function getCourses(Request $request, Response $response): Response
@@ -75,9 +75,10 @@ class CourseController
 
         if (!count($results))
         {
-            $response = $response->withStatus(404);
             $response->getBody()->write("No courses were found.");
-            return $response;
+            return $response
+                ->withHeader('Content-type', 'application/json')
+                ->withStatus(404);
         }
 
         $msg = array();
@@ -110,7 +111,8 @@ class CourseController
         }
 
         $response->getBody()->write(json_encode($msg));
-        return $response;
+        return $response
+            ->withHeader('Content-type', 'application/json');
     }
 
     public function getCourseByCode(Request $request, Response $response, $args): Response
@@ -120,9 +122,10 @@ class CourseController
 
         if (!$course)
         {
-            $response = $response->withStatus(404);
             $response->getBody()->write("Unable to find course with specified code.");
-            return $response;
+            return $response
+                ->withHeader('Content-type', 'application/json')
+                ->withStatus(404);
         }
 
         $lecturerData = array(
@@ -149,7 +152,8 @@ class CourseController
         );
 
         $response->getBody()->write(json_encode($msg));
-        return $response;
+        return $response
+            ->withHeader('Content-type', 'application/json');
     }
 
     public function approveCourse(Request $request, Response $response, $args): Response
@@ -159,16 +163,18 @@ class CourseController
 
         if (!$course)
         {
-            $response = $response->withStatus(404);
             $response->getBody()->write("Unable to find course with specified code.");
-            return $response;
+            return $response
+                ->withHeader('Content-type', 'application/json')
+                ->withStatus(404);
         }
 
-        if (CourseService::isCourseApproved($this->em, $args["code"]))
+        if ($this->cs->isCourseApproved($args["code"]))
         {
-            $response = $response->withStatus(403);
             $response->getBody()->write("Course {$args['code']} is already approved.");
-            return $response;
+            return $response
+                ->withHeader('Content-type', 'application/json')
+                ->withStatus(403);
         }
 
         $course->setApprovedOn(new DateTime('now', new DateTimeZone("Europe/Prague")));
@@ -177,7 +183,8 @@ class CourseController
         $this->em->flush();
 
         $response->getBody()->write("Successfully approved course.");
-        return $response;
+        return $response
+            ->withHeader('Content-type', 'application/json');
     }
 
     public function getApprovedCourses(Request $request, Response $response, $args): Response
@@ -192,9 +199,10 @@ class CourseController
 
         if (count($results) == 0)
         {
-            $response = $response->withStatus(404);
             $response->getBody()->write("No approved courses were found.");
-            return $response;
+            return $response
+                ->withHeader('Content-type', 'application/json')
+                ->withStatus(404);
         }
 
         $msg = array();
@@ -229,7 +237,8 @@ class CourseController
         }
 
         $response->getBody()->write(json_encode($msg));
-        return $response;
+        return $response
+            ->withHeader('Content-type', 'application/json');
     }
 
     public function getNotApprovedCourses(Request $request, Response $response, $args): Response
@@ -238,9 +247,10 @@ class CourseController
 
         if (!count($results))
         {
-            $response = $response->withStatus(404);
             $response->getBody()->write("No not approved courses were found.");
-            return $response;
+            return $response
+                ->withHeader('Content-type', 'application/json')
+                ->withStatus(404);
         }
 
         $msg = array();
@@ -274,6 +284,7 @@ class CourseController
         }
 
         $response->getBody()->write(json_encode($msg));
-        return $response;
+        return $response
+            ->withHeader('Content-type', 'application/json');
     }
 }

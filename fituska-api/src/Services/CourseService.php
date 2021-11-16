@@ -5,16 +5,24 @@ use Doctrine\ORM\EntityManager;
 
 class CourseService
 {
-    public static function isCodeUnique(EntityManager &$em, string $code): bool
+    /** @var EntityManager */
+    private $em;
+
+    public function __construct(EntityManager $em)
     {
-        $result = $em->getRepository(Course::class)->findBy(array("code" => $code));
+        $this->em = $em;
+    }
+
+    public function isCodeUnique(string $code): bool
+    {
+        $result = $this->em->find(Course::class, $code);
 
         return count($result);
     }
 
-    public static function isCourseApproved(EntityManager &$em, string $code): bool
+    public function isCourseApproved(string $code): bool
     {
-        $result = $em->getRepository(Course::class)->findBy(array("code" => $code));
+        $result = $this->em->find(Course::class, $code);
 
         // code is unique so 
         return $result[0]->getApprovedOn() != null;
