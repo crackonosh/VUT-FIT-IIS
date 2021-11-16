@@ -10,14 +10,13 @@ use Slim\Psr7\Response;
 
 class UserController extends Controller
 {
-    /** @var EntityManager */
-    private $em;
-    /** @var string */
-    private $errorMsg = "";
+    /** @var UserService */
+    private $us;
 
-    public function __construct(EntityManager $em)
+    public function __construct(EntityManager $em, UserService $us)
     {
         $this->em = $em;
+        $this->us = $us;
     }
 
     public function addUser(Request $request, Response $response): Response
@@ -34,17 +33,17 @@ class UserController extends Controller
             "role" => $this->createArgument("integer", $body["role"])
         );
 
-        $this->parseArgument($this->errorMsg, $bodyArguments);
+        $this->parseArgument($bodyArguments);
         echo($this->errorMsg);
 
         // check email validity and if it's unique
-        if (!UserService::isEmailValid($body["email"]))
+        if (!$this->us->isEmailValid($body["email"]))
         {
             $response = $response->withStatus(403);
             $response->getBody()->write("Email is not valid.");
             return $response;
         }
-        if (UserService::isEmailTaken($this->em, $body["email"]))
+        if ($this->us->isEmailTaken($body["email"]))
         {
             $response = $response->withStatus(403);
             $response->getBody()->write("Email already exists in database.");
