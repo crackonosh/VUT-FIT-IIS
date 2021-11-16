@@ -11,10 +11,6 @@ use Slim\Psr7\Response;
 
 class MessageController extends Controller
 {
-    /** @var EntityManager */
-    private $em;
-    /** @var string */
-    private $errorMsg = "";
     /** @var MessageService */
     private $ms;
     
@@ -33,7 +29,7 @@ class MessageController extends Controller
             "created_by" => $this->createArgument("integer", $body["created_by"])
         );
 
-        $this->parseArgument($this->errorMsg, $bodyArguments);
+        $this->parseArgument($bodyArguments);
         echo($this->errorMsg);
 
         /** @var Thread */
