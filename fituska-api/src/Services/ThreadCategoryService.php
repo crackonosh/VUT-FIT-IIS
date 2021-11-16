@@ -16,7 +16,8 @@ class ThreadCategoryService
 
     public function isNameUniqueForCourse(string $name, string $course_code): bool
     {
-        $results = $this->em->getRepository(ThreadCategory::class)->findBy(array("course" => $course_code, "name" => $name));
+        $results = $this->em->getRepository(ThreadCategory::class)
+            ->findBy(array("course" => $course_code, "name" => $name));
 
         return !count($results);
     }
