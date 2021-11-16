@@ -38,7 +38,7 @@ class ThreadCategoryController extends Controller
         {
             $response->getBody()->write("Category with given name already exists for this course.");
             return $response
-                ->withHeader('Conent-type', 'application/json')
+                ->withHeader('Content-type', 'application/json')
                 ->withStatus(403);
         }
 
@@ -49,7 +49,7 @@ class ThreadCategoryController extends Controller
         {
             $response->getBody()->write("Unable to assign not existing user.");
             return $response
-                ->withHeader('Conent-type', 'application/json')
+                ->withHeader('Content-type', 'application/json')
                 ->withStatus(404);
         }
 
@@ -60,7 +60,7 @@ class ThreadCategoryController extends Controller
         {
             $response->getBody()->write("Unable to assign not existing course.");
             return $response
-                ->withHeader('Conent-type', 'application/json')
+                ->withHeader('Content-type', 'application/json')
                 ->withStatus(404);
         }
 
@@ -75,7 +75,7 @@ class ThreadCategoryController extends Controller
 
         $response->getBody()->write("Successfully created new thread category.");
         return $response
-            ->withHeader('Conent-type', 'application/json')
+            ->withHeader('Content-type', 'application/json')
             ->withStatus(201);
     }
 
@@ -87,7 +87,7 @@ class ThreadCategoryController extends Controller
         {
             $response->getBody()->write("No thread categories found for given course code.");
             return $response
-                ->withHeader('Conent-type', 'application/json')
+                ->withHeader('Content-type', 'application/json')
                 ->withStatus(404);
         }
 
@@ -105,7 +105,7 @@ class ThreadCategoryController extends Controller
 
         $response->getBody()->write(json_encode($msg));
         return $response
-            ->withHeader('Conent-type', 'application/json');
+            ->withHeader('Content-type', 'application/json');
     }
 
     public function updateThreadCategory(Request $request, Response $response, $args): Response
@@ -126,7 +126,7 @@ class ThreadCategoryController extends Controller
         {
             $response->getBody()->write("Unable to find thread category with given ID.");
             return $response
-                ->withHeader('Conent-type', 'application/json')
+                ->withHeader('Content-type', 'application/json')
                 ->withStatus(404);
         }
 
@@ -137,7 +137,7 @@ class ThreadCategoryController extends Controller
 
         $response->getBody()->write("Successfully updated name of category.");
         return $response
-            ->withHeader('Conent-type', 'application/json');
+            ->withHeader('Content-type', 'application/json');
     }
 
     public function deleteThreadCategory(Request $request, Response $response, $args): Response
@@ -149,7 +149,7 @@ class ThreadCategoryController extends Controller
         {
             $response->getBody()->write("Unable to delete not existing category.");
             return $response
-                ->withHeader('Conent-type', 'application/json')
+                ->withHeader('Content-type', 'application/json')
                 ->withStatus(404);
         }
 
@@ -158,6 +158,6 @@ class ThreadCategoryController extends Controller
 
         $response->getBody()->write("Successfully deleted thread category.");
         return $response
-            ->withHeader('Conent-type', 'application/json');
+            ->withHeader('Content-type', 'application/json');
     }
 }

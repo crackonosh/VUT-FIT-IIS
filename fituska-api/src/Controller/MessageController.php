@@ -38,7 +38,7 @@ class MessageController extends Controller
         {
             $response->getBody()->write("Unable to create message. Thread not found.");
             return $response
-                ->withHeader('Conent-type', 'application/json')
+                ->withHeader('Content-type', 'application/json')
                 ->withStatus(404);
         }
 
@@ -48,7 +48,7 @@ class MessageController extends Controller
         {
             $response->getBody()->write("Unable to create message. User ID not found.");
             return $response
-                ->withHeader('Conent-type', 'application/json')
+                ->withHeader('Content-type', 'application/json')
                 ->withStatus(404);
         }
 
@@ -56,7 +56,7 @@ class MessageController extends Controller
 
         $response->getBody()->write("Successfully created a message.");
         return $response
-            ->withHeader('Conent-type', 'application/json')
+            ->withHeader('Content-type', 'application/json')
             ->withStatus(201);
     }
 }

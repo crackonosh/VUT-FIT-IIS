@@ -95,7 +95,7 @@ class UserController extends Controller
         
         $response->getBody()->write(json_encode($msg));
         return $response
-            ->withHeader('Conent-type', 'application/json');
+            ->withHeader('Content-type', 'application/json');
     }
 
     public function getUserByEmail(Request $request, Response $response, $args): Response
@@ -111,7 +111,7 @@ class UserController extends Controller
         {
             $response->getBody()->write("No results found.");
             return $response
-                ->withHeader('Conent-type', 'application/json')
+                ->withHeader('Content-type', 'application/json')
                 ->withStatus(404);
         }
 
@@ -131,7 +131,7 @@ class UserController extends Controller
 
         $response->getBody()->write(json_encode($msg));
         return $response
-            ->withHeader('Conent-type', 'application/json');
+            ->withHeader('Content-type', 'application/json');
     }
 
     public function changeRole(Request $request, Response $response, $args): Response
@@ -145,14 +145,14 @@ class UserController extends Controller
         {
             $response->getBody()->write("Unable to find user with specified ID.");
             return $response
-                ->withHeader('Conent-type', 'application/json')
+                ->withHeader('Content-type', 'application/json')
                 ->withStatus(404);
         }
         if (!$role)
         {
             $response->getBody()->write("Unable to find role with specified ID.");
             return $response
-                ->withHeader('Conent-type', 'application/json')
+                ->withHeader('Content-type', 'application/json')
                 ->withStatus(404);
         }
 
@@ -163,6 +163,6 @@ class UserController extends Controller
 
         $response->getBody()->write("Successfully updated user's role.");
         return $response
-            ->withHeader('Conent-type', 'application/json');
+            ->withHeader('Content-type', 'application/json');
     }
 }

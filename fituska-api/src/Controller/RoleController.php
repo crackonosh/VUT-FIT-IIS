@@ -26,7 +26,7 @@ class RoleController
 
         $response->getBody()->write("Successfully created new role '$roleName'.");
         return $response
-            ->withHeader('Conent-type', 'application/json')
+            ->withHeader('Content-type', 'application/json')
             ->withStatus(201);
     }
 
@@ -47,7 +47,7 @@ class RoleController
 
         $response->getBody()->write(json_encode($msg));
         return $response
-            ->withHeader('Conent-type', 'application/json');;
+            ->withHeader('Content-type', 'application/json');;
     }
 
     public function updateRole(Request $request, Response $response, $args): Response
@@ -61,7 +61,7 @@ class RoleController
         {
             $response->getBody()->write("Unable to find role with specified ID.");
             return $response
-                ->withHeader('Conent-type', 'application/json')
+                ->withHeader('Content-type', 'application/json')
                 ->withStatus(404);
         }
 
@@ -70,7 +70,7 @@ class RoleController
 
         $response->getBody()->write("Role successfully updated.");
         return $response
-            ->withHeader('Conent-type', 'application/json');
+            ->withHeader('Content-type', 'application/json');
     }
 
     public function deleteRole(Request $request, Response $response, $args): Response
@@ -83,7 +83,7 @@ class RoleController
         {
             $response->getBody()->write("Role with specified ID not found.");
             return $response
-                ->withHeader('Conent-type', 'application/json')
+                ->withHeader('Content-type', 'application/json')
                 ->withStatus(404);
         }
 
@@ -92,6 +92,6 @@ class RoleController
 
         $response->getBody()->write("Successfully deleted role.");
         return $response
-            ->withHeader('Conent-type', 'application/json');
+            ->withHeader('Content-type', 'application/json');
     }
 }
