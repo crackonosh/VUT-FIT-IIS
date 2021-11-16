@@ -21,7 +21,8 @@ class UserService
     public function isEmailTaken(string $email): bool
     {
         /** @var User[] */
-        $result = $this->em->getRepository(User::class)->findBy(array("email" => "$email"));
+        $result = $this->em->getRepository(User::class)
+            ->findBy(array("email" => "$email"));
 
         return count($result);
     }
