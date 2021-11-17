@@ -82,6 +82,12 @@ class UserController extends Controller
         
     }
 
+    public function changeRole(Request $request, Response $response, $args): Response
+    {
+        
+        return $response;
+    }
+
     public function getUsers(Request $request, Response $response): Response
     {
         $results = $this->em->getRepository(User::class)->findAll();
@@ -134,6 +140,38 @@ class UserController extends Controller
             ->withHeader('Content-type', 'application/json');
     }
 
+    public function getUserByName(Requst $request, Response $response, $args): Response
+    {
+        $user = $this->em->createQeuryBuilder()
+            ->select("u")
+            ->from("App\Domain\User", "u")
+            ->where("u.name LIKE '%" . $args["name"] . "%'");
+
+        $result = $user->getQuery()->getArrayResult();
+
+        if (count($results) == 0)
+        {
+            $response = $response->withStatus(404);
+            $response->getBody()->write("No results found.");
+            return $response;
+        }
+
+        $msg = array();
+        /** @var user */
+        foreach ($result as $result)
+        {
+            $tmp = array(
+                "id" => $result["id"],
+                "email" => $result["email"],
+                "phone" => $result["phone"],
+                "address" => $result["address"]
+            );
+            array_push($msg, $tmp);
+        }
+
+        $response->getBody()->write(json_encode($msg));
+    }
+
     public function changeRole(Request $request, Response $response, $args): Response
     {
         /** @var User */
@@ -162,7 +200,7 @@ class UserController extends Controller
         $this->em->flush();
 
         $response->getBody()->write("Successfully updated user's role.");
-        return $response
-            ->withHeader('Content-type', 'application/json');
+
+        return $response->withHeader('Content-type', 'application/json');
     }
 }
