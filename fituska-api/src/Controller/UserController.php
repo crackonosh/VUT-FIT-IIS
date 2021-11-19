@@ -164,6 +164,8 @@ class UserController extends Controller
         }
 
         $response->getBody()->write(json_encode($msg));
+        return $response
+            ->withHeader('Content-type', 'application/json');
     }
 
     public function changeRole(Request $request, Response $response, $args): Response
