@@ -5,6 +5,7 @@
 define('APP_ROOT', __DIR__);
 
 return [
+    'jwt-key' => 'superstrongkey:peepogiggle:',
     // change this to false if shipping to production
     'displayErrorDetails' => true,
     'determineRouteBeforeAppMiddleware' => false,
