@@ -1,5 +1,6 @@
 <?php
 
+use App\Services\AuthService;
 use Fig\Http\Message\StatusCodeInterface;
 use Slim\Psr7\Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
@@ -24,10 +25,12 @@ return function (Request $request, RequestHandler $handler) use ($app): Response
 
     $token = explode(' ', $authHeader[0])[1];
 
-    $key = $app->getContainer()->get('settings')['jwt-key'];
+    //$key = $app->getContainer()->get('settings')['jwt-key'];
+    $as = new AuthService();
     try {
-        $jwt = JWT::decode($token, new Key($key, 'HS256'));
-    } catch (Exception $e)
+        $jwt = $as->decodeJWT($token);
+    }
+    catch (Exception $e)
     {
         $response = new Response(StatusCodeInterface::STATUS_FORBIDDEN);
 

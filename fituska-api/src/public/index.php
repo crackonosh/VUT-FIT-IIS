@@ -23,7 +23,7 @@ $container = $app->getContainer();
 $app->addBodyParsingMiddleware(
     include_once __DIR__ . '/../Middleware/BodyParsingMiddleware.php'
 );
-$app->add(include_once __DIR__ . '/../Middleware/JwtMiddleware.php');
+//$app->add(include_once __DIR__ . '/../Middleware/JwtMiddleware.php');
 
 $displayErrorDetails = $container->get('settings')['displayErrorDetails'];
 $errorMiddleware = $app->addErrorMiddleware($displayErrorDetails, true, true);
@@ -34,6 +34,11 @@ if (!$displayErrorDetails)
         include_once __DIR__ . '/../Handler/HttpNotFoundHandler.php'
     );
 }
+
+/** SIGNUP/LOGIN ENDPOINTS */
+$app->post('/signup', UserController::class . ':addUser');
+$app->post('/login', UserController::class . ':loginUser');
+
 
 /** ROLE ENDPOINTS */
 // those endpoints should be working only if admin
@@ -46,7 +51,6 @@ $app->delete('/roles/{id}', RoleController::class . ':deleteRole');
 $app->get('/users', UserController::class . ':getUsers');
 $app->get('/users/email/{email}', UserController::class . ':getUserByEmail');
 $app->get('/users/name/{name}', UserController::class . ':getUserByName');
-$app->post('/users/add', UserController::class . ':addUser');
 $app->put('/users/{userID}/role/{roleID}', UserController::class . ':changeRole'); // only moderator/admin should be able to change roles of others
 
 /** COURSE ENDPOINTS */

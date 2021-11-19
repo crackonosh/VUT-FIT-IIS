@@ -4,6 +4,7 @@ namespace App\Controller;
 use Doctrine\ORM\EntityManager;
 use App\Domain\User;
 use App\Domain\Role;
+use App\Services\AuthService;
 use App\Services\UserService;
 use Slim\Psr7\Request;
 use Slim\Psr7\Response;
@@ -12,17 +13,53 @@ class UserController extends Controller
 {
     /** @var UserService */
     private $us;
+    /** @var AuthService */
+    private $as;
 
-    public function __construct(EntityManager $em, UserService $us)
+    public function __construct(EntityManager $em, UserService $us, AuthService $as)
     {
         $this->em = $em;
         $this->us = $us;
+        $this->as = $as;
+    }
+
+    public function loginUser(Request $request, Response $response): Response
+    {
+        $body = $request->getParsedBody();
+
+        $bodyArguments = array(
+            "password" => $this->createArgument("string", $body["password"]),
+            "email" => $this->createArgument("string", $body["email"]),
+        );
+
+        $this->parseArgument($bodyArguments);
+        echo($this->errorMsg);
+
+        /** @var User[] */
+        $user = $this->em->getRepository(User::class)->findBy(array("email" => "{$body['email']}"));
+        
+        if (
+            !$user[0] ||
+            $user[0]->getPassword() != $this->us->hashPassword($body['password'])
+        ){
+            $response->getBody()->write("Invalid credentials");
+            return $response
+                ->withHeader('Content-type', 'application/json')
+                ->withStatus(403);
+        }
+
+        $jwt = $this->as->encodeJWT($user[0]->getID(), $user[0]->getRole()->getName());
+
+        $response->getBody()->write(json_encode(array(
+            "jwt" => $jwt
+        )));
+        return $response
+            ->withHeader('Content-type', 'application/json');
     }
 
     public function addUser(Request $request, Response $response): Response
     {
         $body = $request->getParsedBody();
-
 
         $bodyArguments = array(
             "name" => $this->createArgument("string", $body["name"]),
@@ -64,6 +101,7 @@ class UserController extends Controller
 
         $password = $this->us->hashPassword($body['password']);
         
+        /** @var User */
         $user = new User(
             $body["name"],
             $password,
