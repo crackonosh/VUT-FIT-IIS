@@ -39,7 +39,6 @@ if (!$displayErrorDetails)
 $app->post('/signup', UserController::class . ':addUser');
 $app->post('/login', UserController::class . ':loginUser');
 
-
 /** ROLE ENDPOINTS */
 // those endpoints should be working only if admin
 $app->get('/roles', RoleController::class . ':readRoles');
