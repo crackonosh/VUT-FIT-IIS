@@ -27,4 +27,12 @@ class UserService
 
         return count($result);
     }
+    
+    public function hashPassword(string $password): string
+    {
+        return explode(
+            '$',
+            crypt($password, '$5$rounds=42069$super_secure_salt_you_know_smugZ')
+        )[4];
+    }
 }
