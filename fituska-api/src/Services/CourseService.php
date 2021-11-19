@@ -2,6 +2,7 @@
 namespace App\Services;
 
 use Doctrine\ORM\EntityManager;
+use App\Domain\Course;
 
 class CourseService
 {
@@ -24,6 +25,6 @@ class CourseService
     {
         $result = $this->em->find(Course::class, $code);
 
-        return $result[0]->getApprovedOn() != null;
+        return $result->getApprovedOn() != null;
     }
 }
