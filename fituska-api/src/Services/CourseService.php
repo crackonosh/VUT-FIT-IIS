@@ -24,7 +24,6 @@ class CourseService
     {
         $result = $this->em->find(Course::class, $code);
 
-        // code is unique so 
         return $result[0]->getApprovedOn() != null;
     }
 }
