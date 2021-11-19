@@ -82,12 +82,6 @@ class UserController extends Controller
         
     }
 
-    public function changeRole(Request $request, Response $response, $args): Response
-    {
-        
-        return $response;
-    }
-
     public function getUsers(Request $request, Response $response): Response
     {
         $results = $this->em->getRepository(User::class)->findAll();
@@ -140,14 +134,14 @@ class UserController extends Controller
             ->withHeader('Content-type', 'application/json');
     }
 
-    public function getUserByName(Requst $request, Response $response, $args): Response
+    public function getUserByName(Request $request, Response $response, $args): Response
     {
-        $user = $this->em->createQeuryBuilder()
+        $user = $this->em->createQueryBuilder()
             ->select("u")
             ->from("App\Domain\User", "u")
             ->where("u.name LIKE '%" . $args["name"] . "%'");
 
-        $result = $user->getQuery()->getArrayResult();
+        $results = $user->getQuery()->getArrayResult();
 
         if (count($results) == 0)
         {
@@ -158,7 +152,7 @@ class UserController extends Controller
 
         $msg = array();
         /** @var user */
-        foreach ($result as $result)
+        foreach ($results as $result)
         {
             $tmp = array(
                 "id" => $result["id"],
