@@ -145,9 +145,10 @@ class UserController extends Controller
 
         if (count($results) == 0)
         {
-            $response = $response->withStatus(404);
             $response->getBody()->write("No results found.");
-            return $response;
+            return $response
+                ->withHeader('Content-type', 'application/json')
+                ->withStatus(404);
         }
 
         $msg = array();
