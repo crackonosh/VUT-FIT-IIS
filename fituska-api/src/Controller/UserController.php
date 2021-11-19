@@ -29,8 +29,7 @@ class UserController extends Controller
             "password" => $this->createArgument("string", $body["password"]),
             "email" => $this->createArgument("string", $body["email"]),
             "address" => $this->createArgument("string", $body["address"], true),
-            "phone" => $this->createArgument("string", $body["phone"], true),
-            "role" => $this->createArgument("integer", $body["role"])
+            "phone" => $this->createArgument("string", $body["phone"], true)
         );
 
         $this->parseArgument($bodyArguments);
@@ -53,7 +52,7 @@ class UserController extends Controller
         }
 
         /** @var Role */
-        $userRole = $this->em->find(Role::class, $body["role"]);
+        $userRole = $this->em->find(Role::class, 2); // TODO: 2 equals to member right now
 
         if ($userRole == NULL)
         {
@@ -62,10 +61,12 @@ class UserController extends Controller
                 ->withHeader('Content-type', 'application/json')
                 ->withStatus(404);
         }
+
+        $password = $this->us->hashPassword($body['password']);
         
         $user = new User(
             $body["name"],
-            $body["password"],
+            $password,
             $body["email"],
             $body["address"],
             $body["phone"],
