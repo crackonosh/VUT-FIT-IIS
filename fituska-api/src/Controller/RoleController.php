@@ -6,8 +6,6 @@ use App\Domain\Role;
 use Slim\Psr7\Request;
 use Slim\Psr7\Response;
 
-require_once __DIR__ . '/../Functions.php';
-
 class RoleController
 {
     public function __construct(EntityManager $em)
