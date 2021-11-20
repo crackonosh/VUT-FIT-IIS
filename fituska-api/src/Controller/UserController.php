@@ -231,6 +231,19 @@ class UserController extends Controller
 
     public function changeRole(Request $request, Response $response, $args): Response
     {
+        $jwtRole = $request->getAttribute('jwt')->role;
+
+        if ($jwtRole != 'admin')
+        {
+            $response->getBody()->write(json_encode(array(
+                "message" => "Only user with admin role is able to change other's role."
+            )));
+
+            return $response
+                ->withHeader('Content-type', 'application/json')
+                ->withStatus(403);
+        }
+
         /** @var User */
         $user = $this->em->find(User::class, $args["userID"]);
         /** @var Role */
