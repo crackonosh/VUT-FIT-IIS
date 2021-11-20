@@ -83,9 +83,9 @@ class Thread
         return $this->id;
     }
 
-    public function getCourseCode(): string
+    public function getCourse(): Course
     {
-        return $this->course_code;
+        return $this->course;
     }
 
     public function getTitle(): string
@@ -113,7 +113,7 @@ class Thread
         return $this->closed_by;
     }
 
-    public function setClosedBy(int $closed_by): void
+    public function setClosedBy(User $closed_by): void
     {
         $this->closed_by = $closed_by;
     }
