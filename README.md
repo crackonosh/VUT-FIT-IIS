@@ -59,7 +59,7 @@ ___
 All endpoints should be forwarded to `localhost:8000/{endpoint}` where `{endpoint}` is endpoint specified in next chapters
 
 <details>
-<summary>login/signup</summary>
+<summary><b>login/signup</b></summary>
 
 - `/signup` - `[POST]` creates new user account
 
@@ -85,7 +85,7 @@ All endpoints should be forwarded to `localhost:8000/{endpoint}` where `{endpoin
 
 ### Public endpoints
 <details>
-<summary>users</summary>
+<summary><b>users</b></summary>
 
 - `/users/{id}/get` get user by id
 - `/users/email/{email}/get` - get users by email
@@ -94,7 +94,7 @@ All endpoints should be forwarded to `localhost:8000/{endpoint}` where `{endpoin
 </details>
 
 <details>
-<summary>courses</summary>
+<summary><b>courses</b></summary>
 
 - `/courses/get` - get all courses
 - `/courses/get/approved` - get all approved courses (this should be used most probably by users to browse)
@@ -103,7 +103,7 @@ All endpoints should be forwarded to `localhost:8000/{endpoint}` where `{endpoin
 </details>
 
 <details>
-<summary>threads</summary>
+<summary><b>threads</b></summary>
 
 - `/courses/{coude}/threads/get` - get threads for course with specified course code
 - `/threads/title/{title}/get` - get thread by title
@@ -114,7 +114,7 @@ All endpoints should be forwarded to `localhost:8000/{endpoint}` where `{endpoin
 
 ### Protected endpoints
 <details>
-<summary>roles</summary>
+<summary><b>roles</b></summary>
 
 This endpoint should be only accessed by user with role that has name `admin`
 - `/roles` - get all available roles
@@ -125,7 +125,7 @@ This endpoint should be only accessed by user with role that has name `admin`
 </details>
 
 <details>
-<summary>users</summary>
+<summary><b>users</b></summary>
 
 - `/users` - gets all users (probably won't be necessary?)
 - `/users/{userID}/role/{roleID}` - `[PUT]` update role of user with specified id (only user with admin role is able to change those)
@@ -133,7 +133,7 @@ This endpoint should be only accessed by user with role that has name `admin`
 </details>
 
 <details>
-<summary>courses</summary>
+<summary><b>courses</b></summary>
 
 - `/courses/get/not-approved` - gets all yet not approved courses (only if user role equals to 'moderator' or 'admin')
 - `/courses/add` - `[POST]` add new course
@@ -150,7 +150,7 @@ This endpoint should be only accessed by user with role that has name `admin`
 </details>
 
 <details>
-<summary>thread categories</summary>
+<summary><b>thread categories</b></summary>
 
 All of those endpoints are for lecturer of course only
 - `/courses/{code}/get/categories` - get all thread categories for specified course with course code
@@ -176,7 +176,7 @@ All of those endpoints are for lecturer of course only
 </details>
 
 <details>
-<summary>threads</summary>
+<summary><b>threads</b></summary>
 
 - `/threads/add` - `[POST]` add new thread (only for enrolled students (not yet done) or lecturer of course)
 
@@ -196,7 +196,7 @@ All of those endpoints are for lecturer of course only
 </details>
 
 <details>
-<summary>thread messages</summary>
+<summary><b>thread messages</b></summary>
 
 Because users should get points for correct answers they shouldn't be able to change/delete their messages
 - `/threads/{id}/messages/add` - `[POST]` add new message to thread
