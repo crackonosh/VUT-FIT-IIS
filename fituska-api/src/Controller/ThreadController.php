@@ -30,7 +30,6 @@ class ThreadController extends Controller
         $bodyArguments = array(
             "course_code" => $this->createArgument("string", $body["course_code"]),
             "title" => $this->createArgument("string", $body["title"]),
-            "created_by" => $this->createArgument("integer", $body["created_by"]),
             "category" => $this->createArgument("integer", $body["category"], true),
             "message" => $this->createArgument("string", $body["message"])
         );
@@ -51,7 +50,7 @@ class ThreadController extends Controller
 
         /** @var User */
         // perform check if lecturer or enrolled student in course
-        $createdBy = $this->em->find(User::class, $body['created_by']);
+        $createdBy = $this->em->find(User::class, $request->getAttribute('jwt')->sub);
 
         if (!$createdBy)
         {
@@ -210,6 +209,30 @@ class ThreadController extends Controller
         // add setClosedBy that needs JWT for fetching user
         $thread->setClosedOn(new DateTime('now', new DateTimeZone("Europe/Prague")));
 
+        /** @var User */
+        $user = $this->em->find(User::class, $request->getAttribute('jwt')->sub);
+        if (!$user)
+        {
+            $response->getBody()->write(json_encode(array(
+                "message" => "Unable to close thread with not existing user account"
+            )));
+
+            return $response
+                ->withHeader('Content-type', 'application/json')
+                ->withStatus(403);
+        }
+
+        if ($user->getID() != $thread->getCourse()->getLecturer()->getID())
+        {
+            $response->getBody()->write(json_encode(array(
+                "message" => "Only lecturer of course is able to close it's threads."
+            )));
+
+            return $response
+                ->withHeader('Content-type', 'application/json')
+                ->withStatus(403);
+        }
+
         // ADD SOMETHING FOR GAMIFICATION
 
         $this->em->persist($thread);
@@ -232,7 +255,18 @@ class ThreadController extends Controller
                 ->withStatus(404);
         }
 
-        // add check for author/lecturer from JWT
+        if (
+            $request->getAttribute('jwt')->sub != $thread->getCreatedBy()->getID() ||
+            $request->getAttribute('jwt')->sub != $thread->getCourse()->getLecturer()->getID()
+        ){
+            $response->getBody()->write(json_encode(array(
+                "message" => "Only author of thread or lecturer of course is able to delete thread."
+            )));
+
+            return $response
+                ->withHeader('Content-type', 'application/json')
+                ->withStatus(403);
+        }
 
         $this->em->remove($thread);
         $this->em->flush();
