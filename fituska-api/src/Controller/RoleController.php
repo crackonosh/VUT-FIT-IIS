@@ -15,6 +15,21 @@ class RoleController
 
     public function addRole(Request $request, Response $response, $args): Response
     {
+        $jwtRole = $request->getAttribute('jwt')->role;
+
+        if ($jwtRole != 'admin')
+        {
+            $response->getBody()->write(json_encode(
+                array(
+                    "message" => "Only admin is able to read roles."
+                )
+            ));
+
+            return $response
+                ->withHeader('Content-type', 'application/json')
+                ->withStatus(403);
+        }
+
         $roleName = $args["name"];
 
         $role = New Role($roleName);
@@ -30,6 +45,22 @@ class RoleController
 
     public function readRoles(Request $request, Response $response): Response
     {
+        $jwtRole = $request->getAttribute('jwt')->role;
+
+        if ($jwtRole != 'admin')
+        {
+            $response->getBody()->write(json_encode(
+                array(
+                    "message" => "Only admin is able to read roles."
+                )
+            ));
+
+            return $response
+                ->withHeader('Content-type', 'application/json')
+                ->withStatus(403);
+        }
+
+
         $roles = $this->em->getRepository(Role::class)->findBy(array(), array("id" => "asc"));
 
         $msg = array();
@@ -50,6 +81,21 @@ class RoleController
 
     public function updateRole(Request $request, Response $response, $args): Response
     {
+        $jwtRole = $request->getAttribute('jwt')->role;
+
+        if ($jwtRole != 'admin')
+        {
+            $response->getBody()->write(json_encode(
+                array(
+                    "message" => "Only admin is able to read roles."
+                )
+            ));
+
+            return $response
+                ->withHeader('Content-type', 'application/json')
+                ->withStatus(403);
+        }
+
         $roleID = $args["id"];
         $newName = $args["name"];
 
@@ -73,6 +119,21 @@ class RoleController
 
     public function deleteRole(Request $request, Response $response, $args): Response
     {
+        $jwtRole = $request->getAttribute('jwt')->role;
+
+        if ($jwtRole != 'admin')
+        {
+            $response->getBody()->write(json_encode(
+                array(
+                    "message" => "Only admin is able to read roles."
+                )
+            ));
+
+            return $response
+                ->withHeader('Content-type', 'application/json')
+                ->withStatus(403);
+        }
+
         $roleID = $args["id"];
 
         $role = $this->em->find(Role::class, $roleID);
