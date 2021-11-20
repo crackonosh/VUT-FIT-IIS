@@ -103,7 +103,7 @@ class Course
         return $this->approved_by;
     }
 
-    public function setApprovedBy(int $approved_by): void
+    public function setApprovedBy(User $approved_by): void
     {
         $this->approved_by = $approved_by;
     }
