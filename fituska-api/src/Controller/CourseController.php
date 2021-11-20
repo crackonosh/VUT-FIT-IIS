@@ -9,7 +9,6 @@ use Slim\Psr7\Request;
 use Slim\Psr7\Response;
 use DateTime;
 use DateTimeZone;
-use JsonException;
 
 class CourseController extends Controller
 {
