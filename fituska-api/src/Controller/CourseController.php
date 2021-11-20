@@ -180,6 +180,21 @@ class CourseController extends Controller
         }
 
         $course->setApprovedOn(new DateTime('now', new DateTimeZone("Europe/Prague")));
+        
+        $approver = $this->em->find(User::class, $request->getAttribute('jwt')->sub);
+
+        if (!$approver)
+        {
+            $response->getBody()->write(json_encode(array(
+                "message" => "Unable to approve course from non existing user."
+            )));
+
+            return $response
+                ->withHeader('Content-type', 'application/json')
+                ->withStatus(403);
+        }
+
+        $course->setApprovedBy($approver);
 
         $this->em->persist($course);
         $this->em->flush();
