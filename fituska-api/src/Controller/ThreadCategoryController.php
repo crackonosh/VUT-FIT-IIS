@@ -27,7 +27,6 @@ class ThreadCategoryController extends Controller
 
         $bodyArguments = array(
             "name" => $this->createArgument("string", $body["name"]),
-            "created_by" => $this->createArgument("integer", $body["created_by"]),
             "course_code" => $this->createArgument("string", $body["course_code"])
         );
 
@@ -43,7 +42,7 @@ class ThreadCategoryController extends Controller
         }
 
         /** @var User */
-        $user = $this->em->find(User::class, $body["created_by"]); // should be taken from JWT
+        $user = $this->em->find(User::class, $request->getAttribute('jwt')->sub);
 
         if (!$user)
         {
@@ -62,6 +61,17 @@ class ThreadCategoryController extends Controller
             return $response
                 ->withHeader('Content-type', 'application/json')
                 ->withStatus(404);
+        }
+
+        if ($course->getLecturer()->getID() != $user->getID())
+        {
+            $response->getBody()->write(json_encode(array(
+                "message" => "Only lecturer of course is able to add thread categories."
+            )));
+
+            return $response
+                ->withHeader('Content-type', 'application/json')
+                ->withStatus(403);
         }
 
         $tCategory = new ThreadCategory(
@@ -154,6 +164,19 @@ class ThreadCategoryController extends Controller
                 ->withStatus(404);
         }
 
+        $lecturerID = $tCategory->getCourse()->getLecturer()->getID();
+
+        if ($lecturerID != $request->getAttribute('jwt')->sub)
+        {
+            $response->getBody()->write(json_encode(array(
+                "message" => "Only lecturer of course is able to update it's thread categories."
+            )));
+
+            return $response
+                ->withHeader('Content-type', 'application/json')
+                ->withStatus(403);
+        }
+
         $tCategory->setName($body["name"]);
 
         $this->em->persist($tCategory);
@@ -175,6 +198,19 @@ class ThreadCategoryController extends Controller
             return $response
                 ->withHeader('Content-type', 'application/json')
                 ->withStatus(404);
+        }
+
+        $lecturerID = $tCategory->getCourse()->getLecturer()->getID();
+
+        if ($lecturerID != $request->getAttribute('jwt')->sub)
+        {
+            $response->getBody()->write(json_encode(array(
+                "message" => "Only lecturer of course is able to delete it's thread categories."
+            )));
+
+            return $response
+                ->withHeader('Content-type', 'application/json')
+                ->withStatus(403);
         }
 
         $this->em->remove($tCategory);
