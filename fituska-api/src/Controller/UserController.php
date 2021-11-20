@@ -137,7 +137,33 @@ class UserController extends Controller
             ->withHeader('Content-type', 'application/json');
     }
 
-    public function getUserByEmail(Request $request, Response $response, $args): Response
+    public function getUser(Request $request, Response $response, $args): Response
+    {
+        /** @var User */
+        $user = $this->em->find(User::class, $args['id']);
+
+        if (!$user)
+        {
+            $response->getBody()->write("Unable to find user with specified ID.");
+            return $response
+                ->withHeader('Content-type', 'application/json')
+                ->withStatus(404);
+        }
+
+        $msg = array(
+            "id" => $user->getID(),
+            "name" => $user->getName(),
+            "email" => $user->getEmail(),
+            "phone" => $user->getPhone(),
+            "address" => $user->getAddress()
+        );
+
+        $response->getBody()->write(json_encode($msg));
+        return $response
+            ->withHeader('Content-type', 'application-json');
+    }
+
+    public function getUsersByEmail(Request $request, Response $response, $args): Response
     {
         $user = $this->em->createQueryBuilder()
             ->select("u")
@@ -161,9 +187,6 @@ class UserController extends Controller
             $tmp = array(
                 "id" => $result["id"],
                 "name" => $result["name"],
-                "email" => $result["email"],
-                "phone" => $result["phone"],
-                "address" => $result["address"]
             );
             array_push($msg, $tmp);
         }
@@ -173,7 +196,7 @@ class UserController extends Controller
             ->withHeader('Content-type', 'application/json');
     }
 
-    public function getUserByName(Request $request, Response $response, $args): Response
+    public function getUsersByName(Request $request, Response $response, $args): Response
     {
         $user = $this->em->createQueryBuilder()
             ->select("u")
@@ -196,9 +219,7 @@ class UserController extends Controller
         {
             $tmp = array(
                 "id" => $result["id"],
-                "email" => $result["email"],
-                "phone" => $result["phone"],
-                "address" => $result["address"]
+                "name" => $result['name'],
             );
             array_push($msg, $tmp);
         }
