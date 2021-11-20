@@ -82,44 +82,55 @@ All endpoints should be forwarded to `localhost:8000/{endpoint}` where `{endpoin
 ### Public endpoints
 <details>
 <summary>users</summary>
+
 - `/users/{id}/get` get user by id
 - `/users/email/{email}/get` - get users by email
 - `/users/name/{name}/get` - get users by name
+
 </details>
 
 <details>
 <summary>courses</summary>
+
 - `/courses/get` - get all courses
 - `/courses/get/approved` - get all approved courses (this should be used most probably by users to browse)
 - `/courses/{code}/get` - get course by unique course code
+
 </details>
 
 <details>
 <summary>threads</summary>
+
 - `/courses/{coude}/threads/get` - get threads for course with specified course code
 - `/threads/title/{title}/get` - get thread by title
 - `/threads/id/{id}/get` - get thread and all it's messages (not yet implemented) by thread id
+
 </details>
 
 
 ### Protected endpoints
 <details>
 <summary>roles</summary>
+
 This endpoint should be only accessed by user with role that has name `admin`
 - `/roles` - get all available roles
 - `/roles/add/{name}` - `[POST]` add new role with specified name
 - `/roles/{id}/{name}` - `[PUT]` update existing role with id to new name
 - `/roles/{id}` - `[DELETE]` delete role with ID
+
 </details>
 
 <details>
 <summary>users</summary>
+
 - `/users` - gets all users (probably won't be necessary?)
 - `/users/{userID}/role/{roleID}` - `[PUT]` update role of user with specified id (only user with admin role is able to change those)
+
 </details>
 
 <details>
 <summary>courses</summary>
+
 - `/courses/get/not-approved` - gets all yet not approved courses (only if user role equals to 'moderator' or 'admin')
 - `/courses/add` - `[POST]` add new course
 
@@ -131,10 +142,12 @@ This endpoint should be only accessed by user with role that has name `admin`
 ```
 
 - `/courses/{code}/approve` - `[PUT]` approves course with specified course code (only if user's role is 'moderator' or 'admin')
+
 </details>
 
 <details>
 <summary>thread categories</summary>
+
 All of those endpoints are for lecturer of course only
 - `/courses/{code}/get/categories` - get all thread categories for specified course with course code
 - `/categories/add` - `[POST]` add new thread category for course
@@ -155,10 +168,12 @@ All of those endpoints are for lecturer of course only
 ```
 
 - `/categories/{id}/delete` - `[DELETE]` delete existing category with specified id
+
 </details>
 
 <details>
 <summary>threads</summary>
+
 - `/threads/add` - `[POST]` add new thread (only for enrolled students (not yet done) or lecturer of course)
 
 ```json
@@ -173,10 +188,12 @@ All of those endpoints are for lecturer of course only
 - `/threads/{id}/close` - `[PUT]` close existing thread, can be only done by lecturer of course (waiting for gamification features)
 
 - `/threads/{id}/delete` - `[DELETE]` delete thread with specified id (only for author of thread or lecturer of course)
+
 </details>
 
 <details>
 <summary>thread messages</summary>
+
 Because users should get points for correct answers they shouldn't be able to change/delete their messages
 - `/threads/{id}/messages/add` - `[POST]` add new message to thread
 
@@ -185,4 +202,5 @@ Because users should get points for correct answers they shouldn't be able to ch
     "message": "string"
 }
 ```
+
 </details>
