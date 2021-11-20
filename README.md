@@ -58,7 +58,9 @@ ___
 ## Endpoints
 All endpoints should be forwarded to `localhost:8000/{endpoint}` where `{endpoint}` is endpoint specified in next chapters
 
-##### login/signup
+<details>
+<summary>login/signup</summary>
+
 - `/signup` - `[POST]` creates new user account
 
 ```json
@@ -78,6 +80,8 @@ All endpoints should be forwarded to `localhost:8000/{endpoint}` where `{endpoin
     "email": "string",
 }
 ```
+
+</details>
 
 ### Public endpoints
 <details>
