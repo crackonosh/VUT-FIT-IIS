@@ -81,6 +81,30 @@ class ThreadCategoryController extends Controller
 
     public function readThreadCategories(Request $request, Response $response, $args): Response
     {
+        /** @var Course */
+        $course = $this->em->find(Course::class, $args['coude']);
+        if (!$course)
+        {
+            $response->getBody()->write(json_encode(array(
+                "message" => "Unable to read thread categories for not existing course."
+            )));
+
+            return $response
+                ->withHeader('Content-type', 'application/json')
+                ->withStatus(404);
+        }
+
+        if ($course->getLecturer()->getID() != $request->getAttribute('jwt')->sub)
+        {
+            $response->getBody()->write(json_encode(array(
+                "message" => "Only lecturer of course is able to list thread categories."
+            )));
+
+            return $response
+                ->withHeader('Content-type', 'application/json')
+                ->withStatus(403);
+        }
+
         $results = $this->em->getRepository(ThreadCategory::class)->findBy(array("course" => $args["code"]));
 
         if (!count($results))
