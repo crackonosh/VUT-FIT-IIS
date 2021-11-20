@@ -9,6 +9,7 @@ use Slim\Psr7\Request;
 use Slim\Psr7\Response;
 use DateTime;
 use DateTimeZone;
+use JsonException;
 
 class CourseController extends Controller
 {
@@ -27,8 +28,7 @@ class CourseController extends Controller
 
         $bodyArguments = array(
             "code" => $this->createArgument("string", $body["code"]),
-            "name" => $this->createArgument("string", $body["name"]),
-            "lecturer" => $this->createArgument("integer", $body["lecturer"]),
+            "name" => $this->createArgument("string", $body["name"])
         );
 
         $this->parseArgument($bodyArguments);
@@ -43,7 +43,10 @@ class CourseController extends Controller
         }
 
         /** @var User */
-        $lecturerUser = $this->em->find(User::class, $body["lecturer"]);
+        $lecturerUser = $this->em->find(
+            User::class,
+            $request->getAttribute('jwt')->sub
+        );
 
         if ($lecturerUser == NULL)
         {
@@ -243,6 +246,19 @@ class CourseController extends Controller
 
     public function getNotApprovedCourses(Request $request, Response $response, $args): Response
     {
+        $jwtRole = $request->getAttribute('jwt')->role;
+
+        if ($jwtRole != 'moderator' || $jwtRole != 'admin')
+        {
+            $response->getBody()->write(json_encode(array(
+                "message" => "Only user with 'moderator' or 'admin' role is able to list not approved courses."
+            )));
+
+            return $response
+                ->withHeader('Content-type', 'application/json')
+                ->withStatus(403);
+        }
+
         $results = $this->em->getRepository(Course::class)->findBy(array("approved_on" => null));
 
         if (!count($results))
