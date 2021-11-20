@@ -60,7 +60,6 @@ class RoleController
                 ->withStatus(403);
         }
 
-
         $roles = $this->em->getRepository(Role::class)->findBy(array(), array("id" => "asc"));
 
         $msg = array();
