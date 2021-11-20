@@ -25,8 +25,7 @@ class MessageController extends Controller
         $body = $request->getParsedBody();
 
         $bodyArguments = array(
-            "message" => $this->createArgument("string", $body["message"]),
-            "created_by" => $this->createArgument("integer", $body["created_by"])
+            "message" => $this->createArgument("string", $body["message"])
         );
 
         $this->parseArgument($bodyArguments);
@@ -42,14 +41,23 @@ class MessageController extends Controller
                 ->withStatus(404);
         }
 
+        $authorID = $request->getAttribute('jwt')->sub;
         /** @var User */
-        $author = $this->em->find(User::class, $body["created_by"]);
+        $author = $this->em->find(User::class, $authorID);
         if (!$author)
         {
             $response->getBody()->write("Unable to create message. User ID not found.");
             return $response
                 ->withHeader('Content-type', 'application/json')
                 ->withStatus(404);
+        }
+
+        if ($this->ms->hasMessageInThread($thread, $author))
+        {
+            $response->getBody()->write("Already written a message to a thread.");
+            return $response
+                ->withHeader('Content-type', 'application/json')
+                ->withStatus(403);
         }
 
         $this->ms->addMessage($thread, $author, $body["message"]);

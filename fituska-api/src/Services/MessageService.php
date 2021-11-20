@@ -2,13 +2,13 @@
 namespace App\Services;
 
 use App\Domain\Message;
-use Doctrine\ORM\EntityManager;
 use App\Domain\Thread;
 use App\Domain\User;
+use Doctrine\ORM\EntityManager;
 
 class MessageService
 {
-    /** @var EntityManage */
+    /** @var EntityManager */
     private $em;
 
     public function __construct(EntityManager $em)
@@ -16,7 +16,7 @@ class MessageService
         $this->em = $em;   
     }
 
-    public function addMessage(Thread $thread, User $author, string $message)
+    public function addMessage(Thread $thread, User $author, string $message): void
     {
         $message = new Message(
             $thread,
@@ -26,5 +26,14 @@ class MessageService
 
         $this->em->persist($message);
         $this->em->flush($message);
+    }
+
+    public function hasMessageInThread(Thread $thread, User $author)
+    {
+        $results = $this->em->getRepository(Message::class)->findBy(
+            array("thread" => $thread, "created_by" => $author)
+        );
+
+        return count($results);
     }
 }
