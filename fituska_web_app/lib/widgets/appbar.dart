@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 AppBar buildAppBar(BuildContext context) {
   return AppBar(
     automaticallyImplyLeading: false,
+    backgroundColor: Colors.blueAccent,
     title: TextButton(
         onPressed: () => Navigator.of(context).pushNamed("/"),
         style: TextButton.styleFrom(
