@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class FituskaStart extends StatelessWidget {
+class LeaderboardScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var screen = SafeArea(
@@ -18,8 +18,7 @@ class FituskaStart extends StatelessWidget {
                   )),
               actions: <Widget>[
                 TextButton(
-                    onPressed: () =>
-                        Navigator.of(context).pushNamed("/leaderboard"),
+                    onPressed: () => Navigator.of(context).pushNamed("/"),
                     style: TextButton.styleFrom(
                       primary: Colors.white,
                     ),
@@ -36,19 +35,17 @@ class FituskaStart extends StatelessWidget {
               ],
             ),
             body: Center(
-                child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: const <Widget>[
-                Padding(
-                  padding: EdgeInsets.all(8.0),
-                  child: Text("Kurzy",
-                      style: TextStyle(
-                        fontSize: 40.0,
-                        fontWeight: FontWeight.bold,
-                      )),
-                ),
-              ],
-            ))));
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: const <Widget>[
+                  Padding(
+                      padding: EdgeInsets.all(8.0),
+                      child: Text("Žebříček",
+                          style: TextStyle(
+                              fontSize: 40.0, fontWeight: FontWeight.bold)))
+                ],
+              ),
+            )));
     return screen;
   }
 }
