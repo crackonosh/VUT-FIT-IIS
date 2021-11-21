@@ -5,6 +5,7 @@ class RegisterScreen extends StatelessWidget {
   final Map<String, String> _authData = {
     'login': '',
     'password': '',
+    'email': '',
   };
 
   final _form = GlobalKey<FormState>();
@@ -60,6 +61,16 @@ class RegisterScreen extends StatelessWidget {
                                 color: Colors.lightBlue, fontSize: 12.0)),
                         onSaved: (value) {
                           _authData['password'] = value!;
+                        },
+                      ),
+                      TextFormField(
+                        obscureText: true,
+                        decoration: const InputDecoration(
+                            labelText: "Email",
+                            labelStyle: TextStyle(
+                                color: Colors.lightBlue, fontSize: 12.0)),
+                        onSaved: (value) {
+                          _authData['email'] = value!;
                         },
                       ),
                     ],
