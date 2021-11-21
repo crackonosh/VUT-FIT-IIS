@@ -1,3 +1,4 @@
+import 'package:fituska_web_app/widgets/appbar.dart';
 import 'package:flutter/material.dart';
 
 class LoginScreen extends StatelessWidget {
@@ -12,36 +13,7 @@ class LoginScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     var screen = SafeArea(
       child: Scaffold(
-        appBar: AppBar(
-          automaticallyImplyLeading: false,
-          title: TextButton(
-              onPressed: () => Navigator.of(context).pushNamed("/"),
-              style: TextButton.styleFrom(
-                primary: Colors.white,
-              ),
-              child: const Text(
-                "Fituška 2.0",
-                style: TextStyle(fontSize: 25),
-              )),
-          actions: <Widget>[
-            TextButton(
-                onPressed: () =>
-                    Navigator.of(context).pushNamed("/leaderboard"),
-                style: TextButton.styleFrom(
-                  primary: Colors.white,
-                ),
-                child: const Text(
-                  "Žebříček",
-                  style: TextStyle(fontSize: 25),
-                )),
-            IconButton(
-                onPressed: () => Navigator.of(context).pushNamed("/login"),
-                icon: const Icon(
-                  Icons.account_circle,
-                  size: 25,
-                )),
-          ],
-        ),
+        appBar: buildAppBar(context),
         body: Center(
             child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -101,7 +73,9 @@ class LoginScreen extends StatelessWidget {
                     padding: const EdgeInsets.only(
                         left: 24.0, top: 48.0, right: 24.0, bottom: 8.0),
                     child: GestureDetector(
-                        onTap: () {},
+                        onTap: () {
+                          Navigator.of(context).pushNamed("/user");
+                        },
                         child: Container(
                           alignment: Alignment.center,
                           height: 48.0,

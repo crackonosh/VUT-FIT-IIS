@@ -7,6 +7,7 @@ import 'screens/fituska.dart';
 import 'screens/login.dart';
 import 'screens/register.dart';
 import 'screens/leaderboard.dart';
+import 'screens/user_page.dart';
 
 void main() => runApp(Fituska());
 
@@ -26,6 +27,7 @@ class Fituska extends StatelessWidget {
           "/login": (ctx) => LoginScreen(),
           "/register": (ctx) => RegisterScreen(),
           "/leaderboard": (ctx) => LeaderboardScreen(),
+          "/user": (ctx) => ProfilePage()
         },
       ),
     );

@@ -4,8 +4,5 @@ class Course {
   String id;
   String name;
 
-  Course({
-    this.id = "",
-    this.name = ""
-  });
+  Course({this.id = "", this.name = ""});
 }
