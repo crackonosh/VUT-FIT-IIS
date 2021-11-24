@@ -56,6 +56,11 @@ class Message
         $this->created_on = new DateTime('now', new DateTimeZone('Europe/Prague'));
     }
 
+    public function getID()
+    {
+        return $this->id;
+    }
+
     public function getThread(): Thread
     {
         return $this->thread;
