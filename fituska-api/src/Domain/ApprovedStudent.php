@@ -60,6 +60,11 @@ class ApprovedStudent
         $this->status = false;
     }
 
+    public function getID(): int
+    {
+        return $this->id;
+    }
+
     public function getStudent(): User
     {
         return $this->student;
