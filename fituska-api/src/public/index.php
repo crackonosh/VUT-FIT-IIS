@@ -97,7 +97,7 @@ $app->group('', function (RouteCollectorProxy $group) {
     $group->delete('/threads/{id}/delete', ThreadController::class . ':deleteThread');
 
     /** THREAD MESSAGE ENDPOINTS */
-    $group->post('/threads/{id}/message/add', MessageController::class . ':addMessage'); // created_by JWT and check if enrolled in course
+    $group->post('/threads/{id}/message/add', MessageController::class . ':addMessage'); // message attachments
 
 })->add(include_once __DIR__ . '/../Middleware/JwtMiddleware.php');
 /********************** PROTECTED ENDPOINTS **************************/
