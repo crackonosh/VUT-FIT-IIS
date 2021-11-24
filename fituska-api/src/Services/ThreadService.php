@@ -15,8 +15,10 @@ class ThreadService
         /** @var Message */
         foreach ($msgs as $msg)
         {
+            $role = $msg->getThread()->getCourse()->getLecturer()->getID() == $msg->getCreatedBy()->getID() ? 'lecturer' : 'student';
             $tmp = array(
                 'text' => $msg->getText(),
+                'role' => $role,
                 'author' => array(
                     'id' => $msg->getCreatedBy()->getID(),
                     'name' => $msg->getCreatedBy()->getName()
