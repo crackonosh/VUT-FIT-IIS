@@ -139,22 +139,11 @@ class ThreadController extends Controller
         $course = $this->em->find(Course::class, $args["code"]);
         if (!$course)
         {
-            $response->getBody()->write("Unable to find threads for non existing course code.");
-            return $response
-                ->withHeader('Content-type', 'application/json')
-                ->withStatus(404);
+            return $this->return403response("Unable to find threads for non existing course code.");
         }
 
         /** @var Thread[] */
         $threads = $this->em->getRepository(Thread::class)->findBy(array("course" => $course));
-
-        if(count($threads) == 0)
-        {
-            $response->getBody()->write("No thread found for this course.");
-            return $response
-                ->withHeader('Content-type', 'application/json')
-                ->withStatus(404);
-        }
 
         $msg = array();
         foreach ($threads as $thread) {
@@ -188,7 +177,9 @@ class ThreadController extends Controller
 
         if (count($results) == 0)
         {
-            $response->getBody()->write("No results found.");
+            $response->getBody()->write(json_encode(array(
+                "message" => "No results found."
+            )));
             return $response
                 ->withHeader('Content-type', 'application/json')
                 ->withStatus(404);
@@ -220,38 +211,23 @@ class ThreadController extends Controller
         $thread = $this->em->find(Thread::class, $args["id"]);
         if (!$thread)
         {
-            $response->getBody()->write("Unable to close thread for specified ID. No thread found.");
-            return $response
-                ->withHeader('Content-type', 'application/json')
-                ->withStatus(404);
+            return $this->return403response("Unable to close thread for specified ID. No thread found.");
         }
 
-        // add setClosedBy that needs JWT for fetching user
         $thread->setClosedOn(new DateTime('now', new DateTimeZone("Europe/Prague")));
 
         /** @var User */
         $user = $this->em->find(User::class, $request->getAttribute('jwt')->sub);
         if (!$user)
         {
-            $response->getBody()->write(json_encode(array(
-                "message" => "Unable to close thread with not existing user account"
-            )));
-
-            return $response
-                ->withHeader('Content-type', 'application/json')
-                ->withStatus(403);
+            return $this->return403response("Unable to close thread with not existing user account");
         }
-
         if ($user->getID() != $thread->getCourse()->getLecturer()->getID())
         {
-            $response->getBody()->write(json_encode(array(
-                "message" => "Only lecturer of course is able to close it's threads."
-            )));
-
-            return $response
-                ->withHeader('Content-type', 'application/json')
-                ->withStatus(403);
+            return $this->return403response("Only lecturer of course is able to close it's threads.");
         }
+
+        $thread->setClosedBy($user);
 
         // ADD SOMETHING FOR GAMIFICATION
 
@@ -269,23 +245,14 @@ class ThreadController extends Controller
         $thread = $this->em->find(Thread::class, $args["id"]);
         if (!$thread)
         {
-            $response->getBody()->write("Unable to delete thread for specified ID. No thread found.");
-            return $response
-                ->withHeader('Content-type', 'application/json')
-                ->withStatus(404);
+            return $this->return403response("Unable to delete thread for specified ID. No thread found.");
         }
 
         if (
             $request->getAttribute('jwt')->sub != $thread->getCreatedBy()->getID() ||
             $request->getAttribute('jwt')->sub != $thread->getCourse()->getLecturer()->getID()
         ){
-            $response->getBody()->write(json_encode(array(
-                "message" => "Only author of thread or lecturer of course is able to delete thread."
-            )));
-
-            return $response
-                ->withHeader('Content-type', 'application/json')
-                ->withStatus(403);
+            return $this->return403response("Only author of thread or lecturer of course is able to delete thread.");
         }
 
         $this->em->remove($thread);
