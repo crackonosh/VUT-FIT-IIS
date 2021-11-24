@@ -6,7 +6,7 @@ use App\Domain\Role;
 use Slim\Psr7\Request;
 use Slim\Psr7\Response;
 
-class RoleController
+class RoleController extends Controller
 {
     public function __construct(EntityManager $em)
     {
@@ -19,15 +19,7 @@ class RoleController
 
         if ($jwtRole != 'admin')
         {
-            $response->getBody()->write(json_encode(
-                array(
-                    "message" => "Only admin is able to read roles."
-                )
-            ));
-
-            return $response
-                ->withHeader('Content-type', 'application/json')
-                ->withStatus(403);
+            return $this->return403response("Only admin is able to read roles.");
         }
 
         $roleName = $args["name"];
@@ -37,7 +29,9 @@ class RoleController
         $this->em->persist($role);
         $this->em->flush();
 
-        $response->getBody()->write("Successfully created new role '$roleName'.");
+        $response->getBody()->write(json_encode(array(
+            "message" => "Successfully created new role '$roleName'."
+        )));
         return $response
             ->withHeader('Content-type', 'application/json')
             ->withStatus(201);
@@ -49,15 +43,7 @@ class RoleController
 
         if ($jwtRole != 'admin')
         {
-            $response->getBody()->write(json_encode(
-                array(
-                    "message" => "Only admin is able to read roles."
-                )
-            ));
-
-            return $response
-                ->withHeader('Content-type', 'application/json')
-                ->withStatus(403);
+            return $this->return403response("Only admin is able to read roles.");
         }
 
         $roles = $this->em->getRepository(Role::class)->findBy(array(), array("id" => "asc"));
@@ -84,15 +70,7 @@ class RoleController
 
         if ($jwtRole != 'admin')
         {
-            $response->getBody()->write(json_encode(
-                array(
-                    "message" => "Only admin is able to read roles."
-                )
-            ));
-
-            return $response
-                ->withHeader('Content-type', 'application/json')
-                ->withStatus(403);
+            return $this->return403response("Only admin is able to update roles.");
         }
 
         $roleID = $args["id"];
@@ -102,16 +80,15 @@ class RoleController
         
         if ($role == NULL)
         {
-            $response->getBody()->write("Unable to find role with specified ID.");
-            return $response
-                ->withHeader('Content-type', 'application/json')
-                ->withStatus(404);
+            return $this->return403response("Unable to find role with specified ID.");
         }
 
         $role->setName($newName);
         $this->em->flush();
 
-        $response->getBody()->write("Role successfully updated.");
+        $response->getBody()->write(json_encode(array(
+            "message" => "Role successfully updated."
+        )));
         return $response
             ->withHeader('Content-type', 'application/json');
     }
@@ -122,15 +99,7 @@ class RoleController
 
         if ($jwtRole != 'admin')
         {
-            $response->getBody()->write(json_encode(
-                array(
-                    "message" => "Only admin is able to read roles."
-                )
-            ));
-
-            return $response
-                ->withHeader('Content-type', 'application/json')
-                ->withStatus(403);
+            return $this->return403response("Only admin is able to read roles.");
         }
 
         $roleID = $args["id"];
@@ -139,16 +108,15 @@ class RoleController
 
         if ($role == NULL)
         {
-            $response->getBody()->write("Role with specified ID not found.");
-            return $response
-                ->withHeader('Content-type', 'application/json')
-                ->withStatus(404);
+            return $this->return403response("Role with specified ID not found.");
         }
 
         $this->em->remove($role);
         $this->em->flush();
 
-        $response->getBody()->write("Successfully deleted role.");
+        $response->getBody()->write(json_encode(array(
+            "message" => "Successfully deleted role."
+        )));
         return $response
             ->withHeader('Content-type', 'application/json');
     }
