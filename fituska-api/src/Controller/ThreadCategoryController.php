@@ -35,43 +35,26 @@ class ThreadCategoryController extends Controller
 
         if (!$this->tcs->isNameUniqueForCourse($body["name"], $body["course_code"]))
         {
-            $response->getBody()->write("Category with given name already exists for this course.");
-            return $response
-                ->withHeader('Content-type', 'application/json')
-                ->withStatus(403);
+            return $this->return403response("Category with given name already exists for this course.");
         }
 
         /** @var User */
         $user = $this->em->find(User::class, $request->getAttribute('jwt')->sub);
-
         if (!$user)
         {
-            $response->getBody()->write("Unable to assign not existing user.");
-            return $response
-                ->withHeader('Content-type', 'application/json')
-                ->withStatus(404);
+            return $this->return403response("Unable to assign not existing user.");
         }
 
         /** @var Course */
         $course = $this->em->find(Course::class, $body["course_code"]);
-
         if (!$course)
         {
-            $response->getBody()->write("Unable to assign not existing course.");
-            return $response
-                ->withHeader('Content-type', 'application/json')
-                ->withStatus(404);
+            return $this->return403response("Unable to assign not existing course.");
         }
 
         if ($course->getLecturer()->getID() != $user->getID())
         {
-            $response->getBody()->write(json_encode(array(
-                "message" => "Only lecturer of course is able to add thread categories."
-            )));
-
-            return $response
-                ->withHeader('Content-type', 'application/json')
-                ->withStatus(403);
+            return $this->return403response("Only lecturer of course is able to add thread categories.");
         }
 
         $tCategory = new ThreadCategory(
@@ -83,7 +66,9 @@ class ThreadCategoryController extends Controller
         $this->em->persist($tCategory);
         $this->em->flush();
 
-        $response->getBody()->write("Successfully created new thread category.");
+        $response->getBody()->write(json_encode(array(
+            "message" => "Successfully created new thread category."
+        )));
         return $response
             ->withHeader('Content-type', 'application/json')
             ->withStatus(201);
@@ -106,24 +91,10 @@ class ThreadCategoryController extends Controller
 
         if ($course->getLecturer()->getID() != $request->getAttribute('jwt')->sub)
         {
-            $response->getBody()->write(json_encode(array(
-                "message" => "Only lecturer of course is able to list thread categories."
-            )));
-
-            return $response
-                ->withHeader('Content-type', 'application/json')
-                ->withStatus(403);
+            return $this->return403response("Only lecturer of course is able to list thread categories.");
         }
 
         $results = $this->em->getRepository(ThreadCategory::class)->findBy(array("course" => $args["code"]));
-
-        if (!count($results))
-        {
-            $response->getBody()->write("No thread categories found for given course code.");
-            return $response
-                ->withHeader('Content-type', 'application/json')
-                ->withStatus(404);
-        }
 
         $msg = array();
         /** @var ThreadCategory */
@@ -158,23 +129,14 @@ class ThreadCategoryController extends Controller
 
         if (!$tCategory)
         {
-            $response->getBody()->write("Unable to find thread category with given ID.");
-            return $response
-                ->withHeader('Content-type', 'application/json')
-                ->withStatus(404);
+            return $this->return403response("Unable to find thread category with given ID.");
         }
 
         $lecturerID = $tCategory->getCourse()->getLecturer()->getID();
 
         if ($lecturerID != $request->getAttribute('jwt')->sub)
         {
-            $response->getBody()->write(json_encode(array(
-                "message" => "Only lecturer of course is able to update it's thread categories."
-            )));
-
-            return $response
-                ->withHeader('Content-type', 'application/json')
-                ->withStatus(403);
+            return $this->return403response("Only lecturer of course is able to update it's thread categories.");
         }
 
         $tCategory->setName($body["name"]);
@@ -182,7 +144,9 @@ class ThreadCategoryController extends Controller
         $this->em->persist($tCategory);
         $this->em->flush();
 
-        $response->getBody()->write("Successfully updated name of category.");
+        $response->getBody()->write(json_encode(array(
+            "message" => "Successfully updated name of category."
+        )));
         return $response
             ->withHeader('Content-type', 'application/json');
     }
@@ -194,29 +158,22 @@ class ThreadCategoryController extends Controller
 
         if (!$tCategory)
         {
-            $response->getBody()->write("Unable to delete not existing category.");
-            return $response
-                ->withHeader('Content-type', 'application/json')
-                ->withStatus(404);
+            return $this->return403response("Unable to delete not existing category.");
         }
 
         $lecturerID = $tCategory->getCourse()->getLecturer()->getID();
 
         if ($lecturerID != $request->getAttribute('jwt')->sub)
         {
-            $response->getBody()->write(json_encode(array(
-                "message" => "Only lecturer of course is able to delete it's thread categories."
-            )));
-
-            return $response
-                ->withHeader('Content-type', 'application/json')
-                ->withStatus(403);
+            return $this->return403response("Only lecturer of course is able to delete it's thread categories.");
         }
 
         $this->em->remove($tCategory);
         $this->em->flush();
 
-        $response->getBody()->write("Successfully deleted thread category.");
+        $response->getBody()->write(json_encode(array(
+            "message" => "Successfully deleted thread category."
+        )));
         return $response
             ->withHeader('Content-type', 'application/json');
     }
