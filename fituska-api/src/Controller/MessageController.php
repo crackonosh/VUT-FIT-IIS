@@ -35,10 +35,7 @@ class MessageController extends Controller
         $thread = $this->em->find(Thread::class, $args["id"]);
         if (!$thread)
         {
-            $response->getBody()->write("Unable to create message. Thread not found.");
-            return $response
-                ->withHeader('Content-type', 'application/json')
-                ->withStatus(404);
+            return $this->return403response("Unable to create message. Thread not found.");
         }
 
         $authorID = $request->getAttribute('jwt')->sub;
@@ -46,23 +43,19 @@ class MessageController extends Controller
         $author = $this->em->find(User::class, $authorID);
         if (!$author)
         {
-            $response->getBody()->write("Unable to create message. User ID not found.");
-            return $response
-                ->withHeader('Content-type', 'application/json')
-                ->withStatus(404);
+            return $this->return403response("Unable to create message. User ID not found.");
         }
 
         if ($this->ms->hasMessageInThread($thread, $author))
         {
-            $response->getBody()->write("Already written a message to a thread.");
-            return $response
-                ->withHeader('Content-type', 'application/json')
-                ->withStatus(403);
+            return $this->return403response("Already written a message to a thread.");
         }
 
         $this->ms->addMessage($thread, $author, $body["message"]);
 
-        $response->getBody()->write("Successfully created a message.");
+        $response->getBody()->write(json_encode(array(
+            "message" => "Successfully created a message."
+        )));
         return $response
             ->withHeader('Content-type', 'application/json')
             ->withStatus(201);
