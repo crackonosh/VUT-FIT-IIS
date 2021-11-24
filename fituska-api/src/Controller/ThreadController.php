@@ -6,6 +6,7 @@ use App\Domain\User;
 use App\Domain\Thread;
 use App\Domain\ThreadCategory;
 use App\Services\MessageService;
+use App\Services\ThreadService;
 use DateTime;
 use DateTimeZone;
 use Doctrine\ORM\EntityManager;
@@ -16,11 +17,14 @@ class ThreadController extends Controller
 {
     /** @var MessageService */
     private $ms;
+    /** @var ThreadService */
+    private $ts;
 
-    public function __construct(EntityManager $em, MessageService $ms)
+    public function __construct(EntityManager $em, MessageService $ms, ThreadService $ts)
     {
         $this->em = $em;   
         $this->ms = $ms;
+        $this->ts = $ts;
     }
 
     public function addThread(Request $request, Response $response, $args): Response
@@ -105,7 +109,7 @@ class ThreadController extends Controller
                 "id" => $thread->getCreatedBy()->getID(),
                 "name" => $thread->getCreatedBy()->getName()
             ),
-            "messages" => array()
+            "messages" => $this->ts->prepareMessagesForResponse($thread->getMessages())
         );
 
         $response->getBody()->write(json_encode($msg));
