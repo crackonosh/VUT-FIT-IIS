@@ -1,14 +1,16 @@
 <?php
 
 // leave this here if you don't wanna get mad about `uSe CoNtInUe 2 hur dur dur` warning msgs (might break something :pausechamp:) :loudasleeper:
-error_reporting(E_ALL ^ E_WARNING); 
+error_reporting(E_ALL ^ E_WARNING);
 
+use App\Controller\ApprovedStudentController;
 use App\Controller\CourseController;
 use App\Controller\MessageController;
 use App\Controller\RoleController;
 use App\Controller\UserController;
 use App\Controller\ThreadCategoryController;
 use App\Controller\ThreadController;
+use Slim\App;
 use Slim\Exception\HttpNotFoundException;
 use Slim\Factory\AppFactory;
 use Slim\Routing\RouteCollectorProxy;
@@ -76,6 +78,12 @@ $app->group('', function (RouteCollectorProxy $group) {
     $group->get('/courses/get/not-approved', CourseController::class . ':getNotApprovedCourses');
     $group->post('/courses/add', CourseController::class . ':addCourse');
     $group->put('/courses/{code}/approve', CourseController::class . ':approveCourse');
+
+    /** STUDENT APPLICATION ENDPOINTS */
+    $group->get('/courses/{code}/applications/get', ApprovedStudentController::class .':getApplications');
+    $group->post('/courses/{code}/application/add', ApprovedStudentController::class . ':addApplication');
+    $group->put('/applications/approve', ApprovedStudentController::class . ':approveApplication');
+    $group->put('/applications/revoke', ApprovedStudentController::class . ':revokeApplication');
 
     /** THREAD CATEGORY ENDPOINTS */
     $group->get('/courses/{code}/get/categories', ThreadCategoryController::class . ':readThreadCategories');
