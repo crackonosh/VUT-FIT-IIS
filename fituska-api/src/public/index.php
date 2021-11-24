@@ -26,7 +26,6 @@ $container = $app->getContainer();
 $app->addBodyParsingMiddleware(
     include_once __DIR__ . '/../Middleware/BodyParsingMiddleware.php'
 );
-//$app->add(include_once __DIR__ . '/../Middleware/JwtMiddleware.php');
 
 $displayErrorDetails = $container->get('settings')['displayErrorDetails'];
 $errorMiddleware = $app->addErrorMiddleware($displayErrorDetails, true, true);
