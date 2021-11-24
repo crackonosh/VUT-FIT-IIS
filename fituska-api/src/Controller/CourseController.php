@@ -35,10 +35,7 @@ class CourseController extends Controller
 
         if ($this->cs->isCodeUnique($body["code"]))
         {
-            $response->getBody()->write("Course code already exists");
-            return $response
-                ->withHeader('Content-type', 'application/json')
-                ->withStatus(403);
+            return $this->return403response("Course code already exists.");
         }
 
         /** @var User */
@@ -49,10 +46,7 @@ class CourseController extends Controller
 
         if ($lecturerUser == NULL)
         {
-            $response->getBody()->write("Unable to assign not existing user.");
-            return $response
-                ->withHeader('Content-type', 'application/json')
-                ->withStatus(404);
+            return $this->return403response("Unable to assign not existing user.");
         }
 
         $course = new Course(
@@ -64,7 +58,9 @@ class CourseController extends Controller
         $this->em->persist($course);
         $this->em->flush();
 
-        $response->getBody()->write("Successfully created new course.");
+        $response->getBody()->write(json_encode(array(
+            "message" => "Successfully created new course."
+        )));
         return $response
             ->withHeader('Content-type', 'application/json')
             ->withStatus(201);
@@ -75,13 +71,6 @@ class CourseController extends Controller
         /** @var Course[] */
         $results = $this->em->getRepository(Course::class)->findAll();
 
-        if (!count($results))
-        {
-            $response->getBody()->write("No courses were found.");
-            return $response
-                ->withHeader('Content-type', 'application/json')
-                ->withStatus(404);
-        }
 
         $msg = array();
         foreach ($results as $course)
@@ -124,10 +113,7 @@ class CourseController extends Controller
 
         if (!$course)
         {
-            $response->getBody()->write("Unable to find course with specified code.");
-            return $response
-                ->withHeader('Content-type', 'application/json')
-                ->withStatus(404);
+            return $this->return403response("Unable to find course with specified code.");
         }
 
         $lecturerData = array(
@@ -165,18 +151,12 @@ class CourseController extends Controller
 
         if (!$course)
         {
-            $response->getBody()->write("Unable to find course with specified code.");
-            return $response
-                ->withHeader('Content-type', 'application/json')
-                ->withStatus(404);
+            return $this->return403response("Unable to find course with specified code.");
         }
 
         if ($this->cs->isCourseApproved($args["code"]))
         {
-            $response->getBody()->write("Course {$args['code']} is already approved.");
-            return $response
-                ->withHeader('Content-type', 'application/json')
-                ->withStatus(403);
+            return $this->return403response("Course {$args['code']} is already approved.");
         }
 
         $course->setApprovedOn(new DateTime('now', new DateTimeZone("Europe/Prague")));
@@ -185,13 +165,7 @@ class CourseController extends Controller
 
         if (!$approver)
         {
-            $response->getBody()->write(json_encode(array(
-                "message" => "Unable to approve course from non existing user."
-            )));
-
-            return $response
-                ->withHeader('Content-type', 'application/json')
-                ->withStatus(403);
+            return $this->return403response("Unable to approve course from non existing user.");
         }
 
         $course->setApprovedBy($approver);
@@ -199,7 +173,9 @@ class CourseController extends Controller
         $this->em->persist($course);
         $this->em->flush();
 
-        $response->getBody()->write("Successfully approved course.");
+        $response->getBody()->write(json_encode(array(
+            "message" => "Successfully approved course."
+        )));
         return $response
             ->withHeader('Content-type', 'application/json');
     }
@@ -213,14 +189,6 @@ class CourseController extends Controller
             ->where("c.approved_on IS NOT NULL");
 
         $results = $courses->getQuery()->getArrayResult();
-
-        if (count($results) == 0)
-        {
-            $response->getBody()->write("No approved courses were found.");
-            return $response
-                ->withHeader('Content-type', 'application/json')
-                ->withStatus(404);
-        }
 
         $msg = array();
         /** @var Course */
@@ -264,24 +232,10 @@ class CourseController extends Controller
 
         if ($jwtRole != 'moderator' || $jwtRole != 'admin')
         {
-            $response->getBody()->write(json_encode(array(
-                "message" => "Only user with 'moderator' or 'admin' role is able to list not approved courses."
-            )));
-
-            return $response
-                ->withHeader('Content-type', 'application/json')
-                ->withStatus(403);
+            return $this->return403response("Only user with 'moderator' or 'admin' role is able to list not approved courses.");
         }
 
         $results = $this->em->getRepository(Course::class)->findBy(array("approved_on" => null));
-
-        if (!count($results))
-        {
-            $response->getBody()->write("No not approved courses were found.");
-            return $response
-                ->withHeader('Content-type', 'application/json')
-                ->withStatus(404);
-        }
 
         $msg = array();
         /** @var Course */
