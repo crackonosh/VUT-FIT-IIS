@@ -42,10 +42,7 @@ class UserController extends Controller
             !$user[0] ||
             $user[0]->getPassword() != $this->us->hashPassword($body['password'])
         ){
-            $response->getBody()->write("Invalid credentials");
-            return $response
-                ->withHeader('Content-type', 'application/json')
-                ->withStatus(403);
+            return $this->return403response("Invalid credentials.");
         }
 
         $jwt = $this->as->encodeJWT($user[0]->getID(), $user[0]->getRole()->getName());
@@ -75,17 +72,11 @@ class UserController extends Controller
         // check email validity and if it's unique
         if (!$this->us->isEmailValid($body["email"]))
         {
-            $response->getBody()->write("Email is not valid.");
-            return $response
-                ->withHeader('Content-type', 'application/json')
-                ->withStatus(403);
+            return $this->return403response("Email is not valid.");
         }
         if ($this->us->isEmailTaken($body["email"]))
         {
-            $response->getBody()->write("Email already exists in database.");
-            return $response
-                ->withHeader('Content-type', 'application/json')
-                ->withStatus(403);
+            return $this->return403response("Email already exists in database.");
         }
 
         /** @var Role */
@@ -93,10 +84,7 @@ class UserController extends Controller
 
         if ($userRole == NULL)
         {
-            $response->getBody()->write("Unable to assign user role with not existing ID.");
-            return $response
-                ->withHeader('Content-type', 'application/json')
-                ->withStatus(404);
+            return $this->return403response("Unable to assign user role with not existing ID.");
         }
 
         $password = $this->us->hashPassword($body['password']);
@@ -114,7 +102,9 @@ class UserController extends Controller
         $this->em->persist($user);
         $this->em->flush();
 
-        $response->getBody()->write("Successfully created new user.");
+        $response->getBody()->write(json_encode(array(
+            "message" => "Successfully created new user."
+        )));
         return $response
             ->withHeader('Content-type', 'application/json')
             ->withStatus(201);
@@ -123,6 +113,11 @@ class UserController extends Controller
 
     public function getUsers(Request $request, Response $response): Response
     {
+        if ($request->getAttribute('jwt')->role != 'admin')
+        {
+            return $this->return403response("Only admin is able to list all users.");
+        }
+
         $results = $this->em->getRepository(User::class)->findAll();
         
         $msg = array();
@@ -172,14 +167,6 @@ class UserController extends Controller
 
         $results = $user->getQuery()->getArrayResult();
 
-        if (count($results) == 0)
-        {
-            $response->getBody()->write("No results found.");
-            return $response
-                ->withHeader('Content-type', 'application/json')
-                ->withStatus(404);
-        }
-
         $msg = array();
         /** @var User */
         foreach ($results as $result)
@@ -205,14 +192,6 @@ class UserController extends Controller
 
         $results = $user->getQuery()->getArrayResult();
 
-        if (count($results) == 0)
-        {
-            $response->getBody()->write("No results found.");
-            return $response
-                ->withHeader('Content-type', 'application/json')
-                ->withStatus(404);
-        }
-
         $msg = array();
         /** @var user */
         foreach ($results as $result)
@@ -235,13 +214,7 @@ class UserController extends Controller
 
         if ($jwtRole != 'admin')
         {
-            $response->getBody()->write(json_encode(array(
-                "message" => "Only user with admin role is able to change other's role."
-            )));
-
-            return $response
-                ->withHeader('Content-type', 'application/json')
-                ->withStatus(403);
+            return $this->return403response("Only user with admin role is able to change other's role.");
         }
 
         /** @var User */
@@ -251,17 +224,11 @@ class UserController extends Controller
 
         if (!$user)
         {
-            $response->getBody()->write("Unable to find user with specified ID.");
-            return $response
-                ->withHeader('Content-type', 'application/json')
-                ->withStatus(404);
+            return $this->return403response("Unable to find user with specified ID.");
         }
         if (!$role)
         {
-            $response->getBody()->write("Unable to find role with specified ID.");
-            return $response
-                ->withHeader('Content-type', 'application/json')
-                ->withStatus(404);
+            return $this->return403response("Unable to find role with specified ID.");
         }
 
         $user->setRole($role);
@@ -269,7 +236,9 @@ class UserController extends Controller
         $this->em->persist($user);
         $this->em->flush();
 
-        $response->getBody()->write("Successfully updated user's role.");
+        $response->getBody()->write(json_encode(array(
+            "message" => "Successfully updated user's role."
+        )));
 
         return $response->withHeader('Content-type', 'application/json');
     }
