@@ -53,10 +53,10 @@ class ApprovedStudent
 
     public function __construct(
         User $student,
-        Course $course_code
+        Course $course
     ){
         $this->student = $student;
-        $this->course_code = $course_code;
+        $this->course = $course;
         $this->status = false;
     }
 
