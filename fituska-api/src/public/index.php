@@ -80,10 +80,10 @@ $app->group('', function (RouteCollectorProxy $group) {
     $group->put('/courses/{code}/approve', CourseController::class . ':approveCourse');
 
     /** STUDENT APPLICATION ENDPOINTS */
-    $group->get('/courses/{code}/applications/get', ApprovedStudentController::class .':getApplications');
+    $group->get('/courses/{code}/applications/get', ApprovedStudentController::class . ':getApplications');
     $group->post('/courses/{code}/application/add', ApprovedStudentController::class . ':addApplication');
-    $group->put('/applications/approve', ApprovedStudentController::class . ':approveApplication');
-    $group->put('/applications/revoke', ApprovedStudentController::class . ':revokeApplication');
+    $group->put('/applications/{id}/approve', ApprovedStudentController::class . ':approveApplication');
+    $group->put('/applications/{id}/revoke', ApprovedStudentController::class . ':revokeApplication');
 
     /** THREAD CATEGORY ENDPOINTS */
     $group->get('/courses/{code}/get/categories', ThreadCategoryController::class . ':readThreadCategories');
