@@ -79,6 +79,7 @@ $app->group('', function (RouteCollectorProxy $group) {
 
     /** THREAD CATEGORY ENDPOINTS */
     $group->get('/courses/{code}/get/categories', ThreadCategoryController::class . ':readThreadCategories');
+    $group->post('/categories/add', ThreadCategoryController::class . ':addThreadCategory');
     $group->put('/categories/{id}/update', ThreadCategoryController::class . ':updateThreadCategory');
     $group->delete('/categories/{id}/delete', ThreadCategoryController::class . ':deleteThreadCategory');
 
