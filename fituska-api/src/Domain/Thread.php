@@ -3,6 +3,7 @@ namespace App\Domain;
 
 use DateTime;
 use DateTimeZone;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -65,6 +66,12 @@ class Thread
      */
     private $category;
 
+    /**
+     * @ORM\OneToMany(targetEntity="Message", mappedBy="thread")
+     * @var Message[]
+     */
+    private $messages;
+
     public function __construct(
         Course $course,
         string $title,
@@ -76,6 +83,7 @@ class Thread
         $this->created_by = $created_by;
         $this->category = $category;
         $this->created_on = new DateTime('now', new DateTimeZone("Europe/Prague"));
+        $this->messages = new ArrayCollection();
     }
 
     public function getID(): int
@@ -136,5 +144,13 @@ class Thread
     public function setCategory(ThreadCategory $category): void
     {
         $this->category = $category;
+    }
+
+    /**
+     * @return Message[]
+     */
+    public function getMessages()
+    {
+        return $this->messages;
     }
 }
