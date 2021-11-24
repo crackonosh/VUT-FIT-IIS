@@ -33,15 +33,15 @@ class MessageVote
     private $voter;
 
     /**
-     * @ORM\Column(type="boolean")
-     * @var bool
+     * @ORM\Column(type="int")
+     * @var int
      */
     private $score;
 
     public function __construct(
         int $message,
         int $voter,
-        bool $score
+        int $score
     ){
         $this->message = $message;
         $this->voter = $voter;
@@ -58,12 +58,12 @@ class MessageVote
         return $this->voter;
     }
 
-    public function getScore(): bool
+    public function getScore(): int
     {
         return $this->score;
     }
 
-    public function setScore(bool $score): void
+    public function setScore(int $score): void
     {
         $this->score = $score;
     }
