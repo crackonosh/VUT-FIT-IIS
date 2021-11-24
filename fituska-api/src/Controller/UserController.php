@@ -108,7 +108,6 @@ class UserController extends Controller
         return $response
             ->withHeader('Content-type', 'application/json')
             ->withStatus(201);
-        
     }
 
     public function getUsers(Request $request, Response $response): Response
