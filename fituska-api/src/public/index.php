@@ -58,7 +58,7 @@ $app->get('/courses/{code}/get', CourseController::class . ':getCourseByCode');
 // thread endpoints
 $app->get('/courses/{code}/threads/get', ThreadController::class . ':getThreadsForCourse');
 $app->get('/threads/title/{title}/get', ThreadController::class . ':getThreadsByTitle');
-$app->get('/threads/id/{id}/get', ThreadController::class . ':getThread'); // add fetching thread msgs
+$app->get('/threads/id/{id}/get', ThreadController::class . ':getThread');
 /********************** PUBLIC ENDPOINTS *****************************/
 
 
