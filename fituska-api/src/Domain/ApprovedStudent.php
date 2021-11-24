@@ -49,11 +49,11 @@ class ApprovedStudent
      * @ORM\JoinColumn(onDelete="CASCADE", referencedColumnName="code", nullable=false)
      * @var string
      */
-    private $course_code;
+    private $course;
 
     public function __construct(
-        int $student,
-        string $course_code
+        User $student,
+        Course $course_code
     ){
         $this->student = $student;
         $this->course_code = $course_code;
