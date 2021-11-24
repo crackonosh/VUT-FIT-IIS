@@ -3,6 +3,7 @@ namespace App\Controller;
 
 use App\Domain\Thread;
 use App\Domain\User;
+use App\Services\ApprovedStudentService;
 use App\Services\MessageService;
 use Doctrine\ORM\EntityManager;
 use Slim\Psr7\Request;
@@ -13,11 +14,14 @@ class MessageController extends Controller
 {
     /** @var MessageService */
     private $ms;
+    /** @var ApprovedStudentService */
+    private $ass;
     
-    public function __construct(EntityManager $em, MessageService $ms)
+    public function __construct(EntityManager $em, MessageService $ms, ApprovedStudentService $ass)
     {
         $this->em = $em;
         $this->ms = $ms;
+        $this->ass = $ass;
     }
 
     public function addMessage(Request $request, Response $response, $args): Response
@@ -41,14 +45,17 @@ class MessageController extends Controller
         $authorID = $request->getAttribute('jwt')->sub;
         /** @var User */
         $author = $this->em->find(User::class, $authorID);
-        if (!$author)
-        {
-            return $this->return403response("Unable to create message. User ID not found.");
+
+        if (
+            $thread->getCourse()->getLecturer() != $authorID &&
+            !$this->ass->isApproved($author, $thread->getCourse())
+        ){
+            return $this->return403response("Only course lecturer and enrolled students are able to add messages to thread.");
         }
 
         if ($this->ms->hasMessageInThread($thread, $author))
         {
-            return $this->return403response("Already written a message to a thread.");
+            return $this->return403response("Already written a message to this thread.");
         }
 
         $this->ms->addMessage($thread, $author, $body["message"]);
