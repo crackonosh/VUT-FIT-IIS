@@ -3,6 +3,7 @@ namespace App\Domain;
 
 use DateTime;
 use DateTimeZone;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -50,6 +51,12 @@ class Course
      */
     private $approved_on;
 
+    /**
+     * @ORM\OneToMany(targetEntity="ApprovedStudent", mappedBy="course")
+     * @var ApprovedStudent[]
+     */
+    private $applications;
+
     public function __construct(
         string $code,
         string $name,
@@ -59,6 +66,7 @@ class Course
         $this->name = $name;
         $this->lecturer = $lecturer;
         $this->created_on = new DateTime('now', new DateTimeZone("Europe/Prague"));
+        $this->applications = new ArrayCollection();
     }
 
     public function __toArray(): array
@@ -116,5 +124,13 @@ class Course
     public function setApprovedOn(DateTime $approved_on): void
     {
         $this->approved_on = $approved_on;
+    }
+
+    /**
+     * @return ApprovedStudent[]
+     */
+    public function getApplications()
+    {
+        return $this->applications;
     }
 }
