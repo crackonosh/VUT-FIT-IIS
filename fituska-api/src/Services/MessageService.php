@@ -2,6 +2,7 @@
 namespace App\Services;
 
 use App\Domain\Message;
+use App\Domain\MessageVote;
 use App\Domain\Thread;
 use App\Domain\User;
 use Doctrine\ORM\EntityManager;
@@ -35,5 +36,11 @@ class MessageService
         );
 
         return count($results);
+    }
+    
+    public function countVotesForMessage(Message $message): int
+    {
+        return count($this->em->getRepository(MessageVote::class)
+            ->findBy(array('message' => $message->getID())));
     }
 }
