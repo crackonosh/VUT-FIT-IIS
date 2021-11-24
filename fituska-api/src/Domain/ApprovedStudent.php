@@ -47,7 +47,7 @@ class ApprovedStudent
     /**
      * @ORM\ManyToOne(targetEntity="Course")
      * @ORM\JoinColumn(onDelete="CASCADE", referencedColumnName="code", nullable=false)
-     * @var string
+     * @var Course
      */
     private $course;
 
@@ -65,9 +65,9 @@ class ApprovedStudent
         return $this->student;
     }
 
-    public function getCourseCode(): string
+    public function getCourse(): Course
     {
-        return $this->course_code;
+        return $this->course;
     }
 
     public function getApprovedBy(): ?User
