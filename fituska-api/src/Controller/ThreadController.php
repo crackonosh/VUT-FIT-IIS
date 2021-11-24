@@ -5,6 +5,8 @@ use App\Domain\Course;
 use App\Domain\User;
 use App\Domain\Thread;
 use App\Domain\ThreadCategory;
+use App\Services\ApprovedStudentService;
+use App\Services\CourseService;
 use App\Services\MessageService;
 use App\Services\ThreadService;
 use DateTime;
@@ -19,12 +21,21 @@ class ThreadController extends Controller
     private $ms;
     /** @var ThreadService */
     private $ts;
+    /** @var CourseService */
+    private $cs;
+    /** @var ApprovedStudentService */
+    private $ass;
 
-    public function __construct(EntityManager $em, MessageService $ms, ThreadService $ts)
-    {
+    public function __construct(
+        EntityManager $em,
+        MessageService $ms,
+        ThreadService $ts,
+        ApprovedStudentService $ass
+    ){
         $this->em = $em;   
         $this->ms = $ms;
         $this->ts = $ts;
+        $this->ass = $ass;
     }
 
     public function addThread(Request $request, Response $response, $args): Response
@@ -46,29 +57,34 @@ class ThreadController extends Controller
 
         if (!$course)
         {
-            $response->getBody()->write("Unable to create thread in not existing course.");
-            return $response
-                ->withHeader('Content-type', 'application/json')
-                ->withStatus(404);
+            return $this->return403response("Unable to create thread in not existing course.");
         }
 
         /** @var User */
-        // perform check if lecturer or enrolled student in course
         $createdBy = $this->em->find(User::class, $request->getAttribute('jwt')->sub);
-
         if (!$createdBy)
         {
-            $response->getBody()->write("Unable to assign not existing user.");
-            return $response
-                ->withHeader('Content-type', 'application/json')
-                ->withStatus(404);
+            return $this->return403response("Unable to assign not existing user.");
+        }
+        if (
+            $course->getLecturer() != $createdBy->getID() &&
+            $this->ass->isApproved($createdBy, $course)
+        )
+        {
+            return $this->return403response("Only course lecturer and approved enrolled students are able to create new threads.");
         }
 
         /** @var Category */
-        // add check that category is from current Course
         $category = NULL;
         if ($body['category'])
+        {
+            /** @var ThreadCategory */
             $category = $this->em->find(ThreadCategory::class, $body['category']);
+            if ($category->getCourse()->getCode() != $course->getCode())
+            {
+                return $this->return403response("Unable to use thread category that is defined for different course.");
+            }
+        }
         
         $thread = new Thread(
             $course,
