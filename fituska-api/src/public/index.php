@@ -92,7 +92,7 @@ $app->group('', function (RouteCollectorProxy $group) {
     $group->delete('/categories/{id}/delete', ThreadCategoryController::class . ':deleteThreadCategory');
 
     /** THREAD ENDPOINTS */
-    $group->post('/threads/add', ThreadController::class . ':addThread'); // add support for enrolled students/lecturer and message attachments
+    $group->post('/threads/add', ThreadController::class . ':addThread'); // message attachments
     $group->put('/threads/{id}/close', ThreadController::class . ':closeThread'); // missing gamification
     $group->delete('/threads/{id}/delete', ThreadController::class . ':deleteThread');
 
