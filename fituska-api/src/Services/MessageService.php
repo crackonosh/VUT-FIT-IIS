@@ -17,7 +17,7 @@ class MessageService
         $this->em = $em;   
     }
 
-    public function addMessage(Thread $thread, User $author, string $message): void
+    public function addMessage(Thread $thread, User $author, string $message): Message
     {
         $message = new Message(
             $thread,
@@ -27,6 +27,8 @@ class MessageService
 
         $this->em->persist($message);
         $this->em->flush($message);
+
+        return $message;
     }
 
     public function hasMessageInThread(Thread $thread, User $author)
@@ -51,5 +53,26 @@ class MessageService
                 'message' => $message->getID(),
                 'voter' => $voter->getID()
             )));
+    }
+
+    /**
+     * @param array $attachments containing key-value pairs for file type and file content
+     * @return array containing filenames of processed files
+     */
+    public function processAttachments(array $attachments): array
+    {
+        $tmp = array();
+        foreach($attachments as $a)
+        {
+            $filename = hash('sha256', $a['content']) . ".{$a['type']}";
+            $file = base64_decode($a['content']);
+            $path = __DIR__ . "/../public/images/";
+
+            if (file_put_contents($path . $filename, $file))
+            {
+                array_push($tmp, $filename);
+            }
+        }
+        return $tmp;
     }
 }

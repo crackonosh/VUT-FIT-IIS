@@ -2,6 +2,7 @@
 namespace App\Controller;
 
 use App\Domain\Message;
+use App\Domain\MessageAttachment;
 use App\Domain\MessageVote;
 use App\Domain\Thread;
 use App\Domain\User;
@@ -31,7 +32,8 @@ class MessageController extends Controller
         $body = $request->getParsedBody();
 
         $bodyArguments = array(
-            "message" => $this->createArgument("string", $body["message"])
+            "message" => $this->createArgument("string", $body["message"]),
+            "attachments" => $this->createArgument("array", $body['attachments'])
         );
 
         $this->parseArgument($bodyArguments);
@@ -67,7 +69,21 @@ class MessageController extends Controller
             return $this->return403response("Already written a message to this thread.");
         }
 
-        $this->ms->addMessage($thread, $author, $body["message"]);
+        $attachments = $this->ms->processAttachments($body['attachments']);
+
+        $msg = $this->ms->addMessage($thread, $author, $body["message"]);
+
+        foreach ($attachments as $filename)
+        {
+            $msgAtt = new MessageAttachment(
+                $filename,
+                $msg
+            );
+            $this->em->persist($msgAtt);
+        }
+        
+        // save all attachments
+        $this->em->flush();
 
         $response->getBody()->write(json_encode(array(
             "message" => "Successfully created a message."
