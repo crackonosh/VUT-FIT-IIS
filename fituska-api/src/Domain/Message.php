@@ -94,4 +94,12 @@ class Message
     {
         return $this->created_on;
     }
+    
+    /**
+     * @return MessageAttachments[]
+     */
+    public function getAttachments()
+    {
+        return $this->attachments;
+    }
 }
