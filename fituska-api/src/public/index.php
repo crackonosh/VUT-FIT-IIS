@@ -95,7 +95,7 @@ $app->group('', function (RouteCollectorProxy $group) {
     $group->delete('/threads/{id}/delete', ThreadController::class . ':deleteThread');
 
     /** THREAD MESSAGE ENDPOINTS */
-    $group->post('/threads/{id}/message/add', MessageController::class . ':addMessage'); // message attachments
+    $group->post('/threads/{id}/message/add', MessageController::class . ':addMessage');
 
 
     // NEEDS TESTING
