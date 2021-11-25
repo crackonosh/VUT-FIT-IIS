@@ -2,6 +2,7 @@
 namespace App\Controller;
 
 use App\Domain\Message;
+use App\Domain\MessageVote;
 use App\Domain\Thread;
 use App\Domain\User;
 use App\Services\ApprovedStudentService;
@@ -147,6 +148,49 @@ class MessageController extends Controller
         $response->getBody()->write(json_encode(array(
             "message" => "Successfully compensated {$succ} messages from {$msgsCount}."
         )));
-        return $response;
+        return $response
+            ->withHeader('Content-type', 'application/json');
+    }
+
+    public function addVote(Request $request, Response $response, $args): Response
+    {
+        /** @var Message */
+        $message = $this->em->find(Message::class, $args['id']);
+        if (!$message)
+        {
+            return $this->return403response("Unable to vote for not-existing message.");
+        }
+
+        /** @var User */
+        $voter = $this->em->find(User::class, $request->getAttribute('jwt')->sub);
+        if (!$this->ass->isApproved($voter, $message->getThread()->getcwd))
+        {
+            return $this->return403response("Only enrolled students are able to vote for messages.");
+        }
+
+        if ($message->getThread()->getClosedBy() != NULL)
+        {
+            return $this->return403response("Unable to vote for message in closed thread.");
+        }
+
+        if ($this->ms->votedForMessage($message, $voter))
+        {
+            return $this->return403response("You already voted for this message.");
+        }
+
+        $msgVote = new MessageVote(
+            $message,
+            $voter
+        );
+
+        $this->em->persist($msgVote);
+        $this->em->flush();
+
+        $response->getBody()->write(json_encode(array(
+            "message" => "Successfully voted for message."
+        )));
+        return $response
+            ->withHeader('Content-type', 'application/json')
+            ->withStatus(201);
     }
 }

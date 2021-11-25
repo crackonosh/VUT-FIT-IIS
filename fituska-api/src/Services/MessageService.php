@@ -43,4 +43,13 @@ class MessageService
         return count($this->em->getRepository(MessageVote::class)
             ->findBy(array('message' => $message->getID())));
     }
+
+    public function votedForMessage(Message $message, User $voter): bool
+    {
+        return count($this->em->getRepository(MessageVote::class)
+            ->findBy(array(
+                'message' => $message->getID(),
+                'voter' => $voter->getID()
+            )));
+    }
 }
