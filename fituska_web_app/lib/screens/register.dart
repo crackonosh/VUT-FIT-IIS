@@ -1,5 +1,12 @@
-import 'package:fituska_web_app/widgets/appbar.dart';
+import 'dart:async';
+
+import 'package:fituska_web_app/screens/fituska.dart';
 import 'package:flutter/material.dart';
+
+import 'package:provider/provider.dart';
+
+import 'package:fituska_web_app/widgets/appbar.dart';
+import 'package:fituska_web_app/providers/auth.dart';
 
 class RegisterScreen extends StatelessWidget {
   final Map<String, String> _authData = {
@@ -9,6 +16,21 @@ class RegisterScreen extends StatelessWidget {
   };
 
   final _form = GlobalKey<FormState>();
+
+  Future<void> _submit(BuildContext context) async {
+    final isValid = _form.currentState!.validate();
+    if (!isValid) {
+      return;
+    } else {
+      _form.currentState!.save();
+      print(_authData['login']);
+      print(_authData['password']);
+      try {
+        await Provider.of<Auth>(context, listen: false).signup(
+            _authData["login"], _authData["password"], _authData["email"]);
+      } catch (error) {}
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -64,7 +86,6 @@ class RegisterScreen extends StatelessWidget {
                         },
                       ),
                       TextFormField(
-                        obscureText: true,
                         decoration: const InputDecoration(
                             labelText: "Email",
                             labelStyle: TextStyle(
@@ -83,7 +104,9 @@ class RegisterScreen extends StatelessWidget {
                     padding: const EdgeInsets.only(
                         left: 24.0, top: 48.0, right: 24.0, bottom: 8.0),
                     child: GestureDetector(
-                        onTap: () {},
+                        onTap: () {
+                          _submit(context);
+                        },
                         child: Container(
                           alignment: Alignment.center,
                           height: 48.0,
@@ -114,6 +137,8 @@ class RegisterScreen extends StatelessWidget {
         )),
       ),
     );
+    final auth = Provider.of<Auth>(context, listen: true);
+    //return auth.isAuth ? FituskaStart() : screen;
     return screen;
   }
 }
