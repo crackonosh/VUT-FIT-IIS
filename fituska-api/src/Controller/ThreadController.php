@@ -214,22 +214,15 @@ class ThreadController extends Controller
             return $this->return403response("Unable to close thread for specified ID. No thread found.");
         }
 
-        $thread->setClosedOn(new DateTime('now', new DateTimeZone("Europe/Prague")));
-
         /** @var User */
         $user = $this->em->find(User::class, $request->getAttribute('jwt')->sub);
-        if (!$user)
-        {
-            return $this->return403response("Unable to close thread with not existing user account");
-        }
         if ($user->getID() != $thread->getCourse()->getLecturer()->getID())
         {
             return $this->return403response("Only lecturer of course is able to close it's threads.");
         }
 
+        $thread->setClosedOn(new DateTime('now', new DateTimeZone("Europe/Prague")));
         $thread->setClosedBy($user);
-
-        // ADD SOMETHING FOR GAMIFICATION
 
         $this->em->persist($thread);
         $this->em->flush();
