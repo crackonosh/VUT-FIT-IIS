@@ -47,7 +47,7 @@ class Message
     private $created_on;
 
     /**
-     * @ORM\OneToMany(targetEntity="MessageAttachments", mappedBy="message")
+     * @ORM\OneToMany(targetEntity="MessageAttachment", mappedBy="message")
      * @var MessageAttachment[]
      */
     private $attachments;
