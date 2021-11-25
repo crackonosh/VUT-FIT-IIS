@@ -1,7 +1,6 @@
 <?php
 namespace App\Domain;
 
-use Doctrine\Common\Cache\VoidCache;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -32,20 +31,12 @@ class MessageVote
      */
     private $voter;
 
-    /**
-     * @ORM\Column(type="int")
-     * @var int
-     */
-    private $score;
-
     public function __construct(
-        int $message,
-        int $voter,
-        int $score
+        Message $message,
+        User $voter
     ){
         $this->message = $message;
         $this->voter = $voter;
-        $this->score = $score;
     }
 
     public function getMessage(): Message
@@ -56,15 +47,5 @@ class MessageVote
     public function getVoter(): User
     {
         return $this->voter;
-    }
-
-    public function getScore(): int
-    {
-        return $this->score;
-    }
-
-    public function setScore(int $score): void
-    {
-        $this->score = $score;
     }
 }
