@@ -10,6 +10,7 @@
     * [Using composer](#using-composer)
     * [Using XAMP MAMP](#using-xamp-mamp)
 * [Development](#development)
+* [Endpoints](#endpoints)
 
 ## Requirements
 - `composer`
@@ -88,7 +89,7 @@ All endpoints should be forwarded to `localhost:8000/{endpoint}` where `{endpoin
 <summary><b>users</b></summary>
 
 - `/users/{id}/get` get user by id
-- `/users/email/{email}/get` - get users by email
+- `/users/email/{email}/get` - get users by email (maybe delete this shit?)
 - `/users/name/{name}/get` - get users by name
 
 </details>
@@ -106,7 +107,7 @@ All endpoints should be forwarded to `localhost:8000/{endpoint}` where `{endpoin
 <summary><b>threads</b></summary>
 
 - `/courses/{coude}/threads/get` - get threads for course with specified course code
-- `/threads/title/{title}/get` - get thread by title
+- `/threads/title/{title}/get` - get threads by title
 - `/threads/id/{id}/get` - get thread and all it's messages (not yet implemented) by thread id
 
 </details>
@@ -150,6 +151,16 @@ This endpoint should be only accessed by user with role that has name `admin`
 </details>
 
 <details>
+<summary><b>student application for course</b></summary>
+
+- `/courses/{code}/applications/get` - gets all applications for course (for lecturer only)
+- `/courses/{code}/application/add` - `[POST]` add new application for course
+- `/applications/{id}/approve` - `[PUT]` approve student's application (for lecturer onyl)
+- `/applications/{id}/revoke` - `[PUT]` revoke student's application (for lecturer onyl)
+
+</details>
+
+<details>
 <summary><b>thread categories</b></summary>
 
 All of those endpoints are for lecturer of course only
@@ -178,18 +189,25 @@ All of those endpoints are for lecturer of course only
 <details>
 <summary><b>threads</b></summary>
 
-- `/threads/add` - `[POST]` add new thread (only for enrolled students (not yet done) or lecturer of course)
+- `/threads/add` - `[POST]` add new thread (only for enrolled students or lecturer of course)
 
 ```json
 {
     "course_code": "string",
     "title": "string",
     "category": "int",
-    "message": "string" // will have message attachments in the future
+    "message": "string",
+    "attachments": [
+        {
+            "type": "string", // jpg, png, ...
+            "content": "string" // base64 string without the `data:image/jpeg;base64,` bullshit
+        },
+        // ...
+    ]
 }
 ```
 
-- `/threads/{id}/close` - `[PUT]` close existing thread, can be only done by lecturer of course (waiting for gamification features)
+- `/threads/{id}/close` - `[PUT]` close existing thread, can be only done by lecturer of course
 
 - `/threads/{id}/delete` - `[DELETE]` delete thread with specified id (only for author of thread or lecturer of course)
 
@@ -199,12 +217,41 @@ All of those endpoints are for lecturer of course only
 <summary><b>thread messages</b></summary>
 
 Because users should get points for correct answers they shouldn't be able to change/delete their messages
+
 - `/threads/{id}/messages/add` - `[POST]` add new message to thread
 
 ```json
 {
-    "message": "string"
+    "message": "string",
+    "attachments": [
+        {
+            "type": "string", // jpg, png, ...
+            "content": "string" // base64 string without the `data:image/jpeg;base64,` bullshit
+        },
+        // ...
+    ]
 }
 ```
 
+- `/messages/compensate` - `[POST]` compensate votes for messages with no votes (for lecturer only - is used after closing thread)
+
+```json
+{
+    "messages": [
+        {
+            "id": "int",
+            "vote": "int" // number to incerement score
+        },
+        // ...
+    ]
+}
+```
+
+ - `/messages/{id}/update-score` - `[PUT]` update score of author of message with given ID (for lecturer only - is used after closing thread)
+
+ - `/messages/{id}/vote` - `[POST]` vote for message (for enrolled students only, lecturer maybe works also but I don't even care anymore)
+
 </details>
+
+### images endpoint
+To get images from server use `/src/public/images/{filename}` endpoint
