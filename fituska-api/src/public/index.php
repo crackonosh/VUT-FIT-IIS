@@ -10,7 +10,6 @@ use App\Controller\RoleController;
 use App\Controller\UserController;
 use App\Controller\ThreadCategoryController;
 use App\Controller\ThreadController;
-use Slim\App;
 use Slim\Exception\HttpNotFoundException;
 use Slim\Factory\AppFactory;
 use Slim\Routing\RouteCollectorProxy;
@@ -92,11 +91,16 @@ $app->group('', function (RouteCollectorProxy $group) {
 
     /** THREAD ENDPOINTS */
     $group->post('/threads/add', ThreadController::class . ':addThread'); // message attachments
-    $group->put('/threads/{id}/close', ThreadController::class . ':closeThread'); // missing gamification
+    $group->put('/threads/{id}/close', ThreadController::class . ':closeThread');
     $group->delete('/threads/{id}/delete', ThreadController::class . ':deleteThread');
 
     /** THREAD MESSAGE ENDPOINTS */
     $group->post('/threads/{id}/message/add', MessageController::class . ':addMessage'); // message attachments
+
+
+    // NEEDS TESTING
+    $group->post('/messages/compensate', MessageController::class . ':compensateMessages');
+    $group->put('/messages/{id}/update-score', MessageController::class . ':updateScoreForMessage');
 
 })->add(include_once __DIR__ . '/../Middleware/JwtMiddleware.php');
 /********************** PROTECTED ENDPOINTS **************************/
