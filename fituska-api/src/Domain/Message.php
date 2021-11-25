@@ -3,6 +3,7 @@ namespace App\Domain;
 
 use DateTime;
 use DateTimeZone;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -45,6 +46,12 @@ class Message
      */
     private $created_on;
 
+    /**
+     * @ORM\OneToMany(targetEntity="MessageAttachments", mappedBy="message")
+     * @var MessageAttachment[]
+     */
+    private $attachments;
+
     public function __construct(
         Thread $thread,
         string $text,
@@ -54,6 +61,7 @@ class Message
         $this->text = $text;
         $this->created_by = $created_by;   
         $this->created_on = new DateTime('now', new DateTimeZone('Europe/Prague'));
+        $this->attachments = new ArrayCollection();
     }
 
     public function getID()
