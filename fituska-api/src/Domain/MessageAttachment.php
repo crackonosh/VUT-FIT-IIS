@@ -32,7 +32,7 @@ class MessageAttachment
 
     public function __construct(
         string $name,
-        int $message
+        Message $message
     ){
         $this->name = $name;
         $this->message = $message;
