@@ -2,6 +2,7 @@
 namespace App\Controller;
 
 use App\Domain\Course;
+use App\Domain\MessageAttachment;
 use App\Domain\User;
 use App\Domain\Thread;
 use App\Domain\ThreadCategory;
@@ -46,7 +47,8 @@ class ThreadController extends Controller
             "course_code" => $this->createArgument("string", $body["course_code"]),
             "title" => $this->createArgument("string", $body["title"]),
             "category" => $this->createArgument("integer", $body["category"], true),
-            "message" => $this->createArgument("string", $body["message"])
+            "message" => $this->createArgument("string", $body["message"]),
+            "attachments" => $this->createArgument("array", $body['attachments'])
         );
 
         $this->parseArgument($bodyArguments);
@@ -96,7 +98,21 @@ class ThreadController extends Controller
         $this->em->persist($thread);
         $this->em->flush();
 
-        $this->ms->addMessage($thread, $createdBy, $body["message"]);
+        $attachments = $this->ms->processAttachments($body['attachments']);
+
+        $msg = $this->ms->addMessage($thread, $createdBy, $body["message"]);
+
+        foreach ($attachments as $filename)
+        {
+            $msgAtt = new MessageAttachment(
+                $filename,
+                $msg
+            );
+            $this->em->persist($msgAtt);
+        }
+
+        // save all attachments
+        $this->em->flush();
 
         $response->getBody()->write("Successfully created new thread.");
         return $response
