@@ -241,7 +241,7 @@ Because users should get points for correct answers they shouldn't be able to ch
     "messages": [
         {
             "id": "int",
-            "vote": "int" // number to incerement score
+            "votes": "int" // number to incerement score
         },
         // ...
     ]

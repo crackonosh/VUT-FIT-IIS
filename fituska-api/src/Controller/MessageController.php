@@ -102,6 +102,11 @@ class MessageController extends Controller
             return $this->return403response("Unable to update score to not-existing message.");
         }
 
+        if (!$message->getThread()->getClosedOn())
+        {
+            return $this->return403response("Unable to update score for message in a thread that is not closed.");
+        }
+
         $lecturerID = $message->getThread()->getCourse()->getLecturer()->getID();
         $jwtID = $request->getAttribute('jwt')->sub;
         if ($lecturerID != $jwtID)
@@ -179,7 +184,7 @@ class MessageController extends Controller
 
         /** @var User */
         $voter = $this->em->find(User::class, $request->getAttribute('jwt')->sub);
-        if (!$this->ass->isApproved($voter, $message->getThread()->getcwd))
+        if (!$this->ass->isApproved($voter, $message->getThread()->getCourse()))
         {
             return $this->return403response("Only enrolled students are able to vote for messages.");
         }

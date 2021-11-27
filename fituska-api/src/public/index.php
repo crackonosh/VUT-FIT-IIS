@@ -105,12 +105,9 @@ $app->group('', function (RouteCollectorProxy $group) {
 
     /** THREAD MESSAGE ENDPOINTS */
     $group->post('/threads/{id}/message/add', MessageController::class . ':addMessage');
-
-
-    // NEEDS TESTING
+    $group->post('/messages/{id}/vote', MessageController::class . ':addVote');
     $group->post('/messages/compensate', MessageController::class . ':compensateMessages');
     $group->put('/messages/{id}/update-score', MessageController::class . ':updateScoreForMessage');
-    $group->post('/messages/{id}/vote', MessageController::class . ':addVote');
 
 })->add(include_once __DIR__ . '/../Middleware/JwtMiddleware.php');
 /********************** PROTECTED ENDPOINTS **************************/
