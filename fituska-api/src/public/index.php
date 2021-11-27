@@ -14,16 +14,10 @@ use App\Middleware\MyRoutingMiddleware;
 use Slim\Exception\HttpNotFoundException;
 use Slim\Factory\AppFactory;
 use Slim\Routing\RouteCollectorProxy;
-use Psr\Http\Message\ResponseInterface as Response;
-use Psr\Http\Message\ServerRequestInterface as Request;
-use Psr\Http\Server\RequestHandlerInterface;
 use Slim\Exception\HttpMethodNotAllowedException;
-use Slim\Routing\RouteContext;
-
 
 require __DIR__ . '/../../vendor/autoload.php';
 
-// Set container to create App with on AppFactory
 AppFactory::setContainer(require __DIR__ . '/../../bootstrap.php');
 $app = AppFactory::create();
 $container = $app->getContainer();
@@ -41,29 +35,11 @@ if (!$displayErrorDetails)
         HttpNotFoundException::class,
         include_once __DIR__ . '/../Handler/HttpNotFoundHandler.php'
     );
-    $errorMiddleware->setErrorHandler(
-        HttpMethodNotAllowedException::class,
-        include_once __DIR__ . '/../Handler/HttpMethodNotAllowedHandler.php'
-    );
 }
-
-$app->add(function (Request $request, RequestHandlerInterface $handler): Response {
-    $routeContext = RouteContext::fromRequest($request);
-    $routingResults = $routeContext->getRoutingResults();
-    $methods = $routingResults->getAllowedMethods();
-    $requestHeaders = $request->getHeaderLine('Access-Control-Request-Headers');
-
-    $response = $handler->handle($request);
-
-    $response = $response->withHeader('Access-Control-Allow-Origin', '*');
-    $response = $response->withHeader('Access-Control-Allow-Methods', implode(',', $methods));
-    $response = $response->withHeader('Access-Control-Allow-Headers', $requestHeaders);
-
-    // Optional: Allow Ajax CORS requests with Authorization header
-    // $response = $response->withHeader('Access-Control-Allow-Credentials', 'true');
-
-    return $response;
-});
+$errorMiddleware->setErrorHandler(
+    HttpMethodNotAllowedException::class,
+    include_once __DIR__ . '/../Handler/HttpMethodNotAllowedHandler.php'
+);
 
 
 
