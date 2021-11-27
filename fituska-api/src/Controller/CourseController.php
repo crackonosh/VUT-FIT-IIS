@@ -230,7 +230,7 @@ class CourseController extends Controller
     {
         $jwtRole = $request->getAttribute('jwt')->role;
 
-        if ($jwtRole != 'moderator' || $jwtRole != 'admin')
+        if ($jwtRole != 'moderator' && $jwtRole != 'admin')
         {
             return $this->return403response("Only user with 'moderator' or 'admin' role is able to list not approved courses.");
         }
