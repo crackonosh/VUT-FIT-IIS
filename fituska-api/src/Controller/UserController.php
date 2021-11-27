@@ -80,7 +80,7 @@ class UserController extends Controller
         }
 
         /** @var Role */
-        $userRole = $this->em->find(Role::class, 2); // TODO: 2 equals to member right now
+        $userRole = $this->em->find(Role::class, 3); // TODO: 3 equals to member right now
 
         if ($userRole == NULL)
         {
