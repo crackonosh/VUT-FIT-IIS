@@ -69,7 +69,8 @@ All endpoints should be forwarded to `localhost:8000/{endpoint}` where `{endpoin
     "name": "string",
     "password": "string",
     "email": "string",
-    "role": "int" // this should correspond to default member role ID in database
+    "phone": "string", // optional
+    "addresss": "string" // optional
 }
 ```
 
