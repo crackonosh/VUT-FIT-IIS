@@ -69,7 +69,7 @@ class ThreadController extends Controller
             return $this->return403response("Unable to assign not existing user.");
         }
         if (
-            $course->getLecturer() != $createdBy->getID() &&
+            $course->getLecturer()->getID() != $createdBy->getID() &&
             $this->ass->isApproved($createdBy, $course)
         )
         {
