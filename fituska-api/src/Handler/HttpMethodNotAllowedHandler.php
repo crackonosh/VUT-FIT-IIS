@@ -14,11 +14,11 @@ return function (Request $request, Throwable $e, bool $displayErrorDetails) {
         $requestHeaders = $request->getHeaderLine('Access-Control-Request-Headers');
 
         return (new Response())
-            ->withHeader('Access-Control-Allow-Origin', '*')
-            ->withHeader('Access-Control-Allow-Methods', implode(',', $methods))
+            ->withHeader('Access-Control-Allow-Methods', implode(',', $methods) . ', OPTIONS')
             ->withHeader('Access-Control-Allow-Headers', $requestHeaders)
             ->withHeader('Access-Control-Allow-Credentials', 'true');
     }
     
-    return new Response(StatusCodeInterface::STATUS_METHOD_NOT_ALLOWED);
+    $response = new Response(StatusCodeInterface::STATUS_METHOD_NOT_ALLOWED);
+    return $response;
 };
