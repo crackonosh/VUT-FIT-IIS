@@ -114,7 +114,9 @@ class ThreadController extends Controller
         // save all attachments
         $this->em->flush();
 
-        $response->getBody()->write("Successfully created new thread.");
+        $response->getBody()->write(json_encode(array(
+            "message" => "Successfully created new thread."
+        )));
         return $response
             ->withHeader('Content-type', 'application/json')
             ->withStatus(201);
