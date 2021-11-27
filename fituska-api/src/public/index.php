@@ -1,8 +1,9 @@
 <?php
 
 // leave this here if you don't wanna get mad about `uSe CoNtInUe 2 hur dur dur` warning msgs (might break something :pausechamp:) :loudasleeper:
-error_reporting(E_ALL ^ E_WARNING); 
+error_reporting(E_ALL ^ E_WARNING);
 
+use App\Controller\ApprovedStudentController;
 use App\Controller\CourseController;
 use App\Controller\MessageController;
 use App\Controller\RoleController;
@@ -11,6 +12,7 @@ use App\Controller\ThreadCategoryController;
 use App\Controller\ThreadController;
 use Slim\Exception\HttpNotFoundException;
 use Slim\Factory\AppFactory;
+use Slim\Routing\RouteCollectorProxy;
 
 require __DIR__ . '/../../vendor/autoload.php';
 
@@ -23,7 +25,6 @@ $container = $app->getContainer();
 $app->addBodyParsingMiddleware(
     include_once __DIR__ . '/../Middleware/BodyParsingMiddleware.php'
 );
-//$app->add(include_once __DIR__ . '/../Middleware/JwtMiddleware.php');
 
 $displayErrorDetails = $container->get('settings')['displayErrorDetails'];
 $errorMiddleware = $app->addErrorMiddleware($displayErrorDetails, true, true);
@@ -35,49 +36,75 @@ if (!$displayErrorDetails)
     );
 }
 
+
 /** SIGNUP/LOGIN ENDPOINTS */
 $app->post('/signup', UserController::class . ':addUser');
 $app->post('/login', UserController::class . ':loginUser');
 
 
-/** ROLE ENDPOINTS */
-// those endpoints should be working only if admin
-$app->get('/roles', RoleController::class . ':readRoles');
-$app->post('/roles/add/{name}', RoleController::class . ':addRole');
-$app->put('/roles/{id}/{name}', RoleController::class . ':updateRole');
-$app->delete('/roles/{id}', RoleController::class . ':deleteRole');
+/********************** PUBLIC ENDPOINTS *****************************/
+// user endpoints
+$app->get('/users/{id}/get', UserController::class . ':getUser');
+$app->get('/users/email/{email}/get', UserController::class . ':getUsersByEmail'); // maybe delete this endpoint?
+$app->get('/users/name/{name}/get', UserController::class . ':getUsersByName');
 
-/** USER ENDPOINTS */
-$app->get('/users', UserController::class . ':getUsers');
-$app->get('/users/email/{email}', UserController::class . ':getUserByEmail');
-$app->get('/users/name/{name}', UserController::class . ':getUserByName');
-$app->put('/users/{userID}/role/{roleID}', UserController::class . ':changeRole'); // only moderator/admin should be able to change roles of others
-
-/** COURSE ENDPOINTS */
-// public endpoints
+// course endpoints
 $app->get('/courses/get', CourseController::class . ':getCourses');
-$app->get('/courses/{code}/get', CourseController::class . ':getCourseByCode');
 $app->get('/courses/get/approved', CourseController::class . ':getApprovedCourses');
-$app->get('/courses/get/not-approved', CourseController::class . ':getNotApprovedCourses'); // only for moderators+
-$app->post('/courses/add', CourseController::class . ':addCourse');
-$app->put('/courses/{code}/approve', CourseController::class . ':approveCourse'); // this endpoint needs JWT to function correctly ("approved_by" should be taken as ID from Authorization header, now it sets "approved_on" only)
+$app->get('/courses/{code}/get', CourseController::class . ':getCourseByCode');
 
-/** THREAD CATEGORY ENDPOINTS */
-$app->get('/courses/{code}/get/categories', ThreadCategoryController::class . ':readThreadCategories');
-$app->post('/categories/add', ThreadCategoryController::class . ':addThreadCategory'); // only lecturer should be able to add category to course (his ID will be taken from JWT afterwards)
-$app->put('/categories/{id}/update', ThreadCategoryController::class . ':updateThreadCategory'); // only lecturer should be able to change categories
-$app->delete('/categories/{id}/delete', ThreadCategoryController::class . ':deleteThreadCategory'); // this endpoint needs JWT to function correctly (Check that person trying to delete the category is lecturer of course)
-
-/** THREAD ENDPOINTS */
+// thread endpoints
 $app->get('/courses/{code}/threads/get', ThreadController::class . ':getThreadsForCourse');
 $app->get('/threads/title/{title}/get', ThreadController::class . ':getThreadsByTitle');
-$app->get('/threads/id/{id}/get', ThreadController::class . ':getThread'); // add fetching thread msgs
-$app->post('/threads/add', ThreadController::class . ':addThread'); // created by will be taken from JWT
-$app->put('/threads/{id}/close', ThreadController::class . ':closeThread'); // missing JWT and gamification
-$app->delete('/threads/{id}/delete', ThreadController::class . ':deleteThread'); // only author or lecturer
+$app->get('/threads/id/{id}/get', ThreadController::class . ':getThread');
+/********************** PUBLIC ENDPOINTS *****************************/
 
-/** THREAD MESSAGE ENDPOINTS */
-// users shouldn't delete/update messages because they'll get points for them ?
-$app->post('/threads/{id}/message/add', MessageController::class . ':addMessage'); // created_by JWT and check if enrolled in course
+
+/********************** PROTECTED ENDPOINTS **************************/
+$app->group('', function (RouteCollectorProxy $group) {
+    /** ROLE ENDPOINTS */
+    $group->get('/roles', RoleController::class . ':readRoles');
+    $group->post('/roles/add/{name}', RoleController::class . ':addRole');
+    $group->put('/roles/{id}/{name}', RoleController::class . ':updateRole');
+    $group->delete('/roles/{id}', RoleController::class . ':deleteRole');
+
+    /** USER ENDPOINTS */
+    $group->get('/users', UserController::class . ':getUsers');
+    $group->put('/users/{userID}/role/{roleID}', UserController::class . ':changeRole');
+
+    /** COURSE ENDPOINTS */
+    $group->get('/courses/get/not-approved', CourseController::class . ':getNotApprovedCourses');
+    $group->post('/courses/add', CourseController::class . ':addCourse');
+    $group->put('/courses/{code}/approve', CourseController::class . ':approveCourse');
+
+    /** STUDENT APPLICATION ENDPOINTS */
+    $group->get('/courses/{code}/applications/get', ApprovedStudentController::class . ':getApplications');
+    $group->post('/courses/{code}/application/add', ApprovedStudentController::class . ':addApplication');
+    $group->put('/applications/{id}/approve', ApprovedStudentController::class . ':approveApplication');
+    $group->put('/applications/{id}/revoke', ApprovedStudentController::class . ':revokeApplication');
+
+    /** THREAD CATEGORY ENDPOINTS */
+    $group->get('/courses/{code}/get/categories', ThreadCategoryController::class . ':readThreadCategories');
+    $group->post('/categories/add', ThreadCategoryController::class . ':addThreadCategory');
+    $group->put('/categories/{id}/update', ThreadCategoryController::class . ':updateThreadCategory');
+    $group->delete('/categories/{id}/delete', ThreadCategoryController::class . ':deleteThreadCategory');
+
+    /** THREAD ENDPOINTS */
+    $group->post('/threads/add', ThreadController::class . ':addThread');
+    $group->put('/threads/{id}/close', ThreadController::class . ':closeThread');
+    $group->delete('/threads/{id}/delete', ThreadController::class . ':deleteThread');
+
+    /** THREAD MESSAGE ENDPOINTS */
+    $group->post('/threads/{id}/message/add', MessageController::class . ':addMessage');
+
+
+    // NEEDS TESTING
+    $group->post('/messages/compensate', MessageController::class . ':compensateMessages');
+    $group->put('/messages/{id}/update-score', MessageController::class . ':updateScoreForMessage');
+    $group->post('/messages/{id}/vote', MessageController::class . ':addVote');
+
+})->add(include_once __DIR__ . '/../Middleware/JwtMiddleware.php');
+/********************** PROTECTED ENDPOINTS **************************/
+
 
 $app->run();

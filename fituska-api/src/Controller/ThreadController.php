@@ -2,10 +2,14 @@
 namespace App\Controller;
 
 use App\Domain\Course;
+use App\Domain\MessageAttachment;
 use App\Domain\User;
 use App\Domain\Thread;
 use App\Domain\ThreadCategory;
+use App\Services\ApprovedStudentService;
+use App\Services\CourseService;
 use App\Services\MessageService;
+use App\Services\ThreadService;
 use DateTime;
 use DateTimeZone;
 use Doctrine\ORM\EntityManager;
@@ -16,11 +20,23 @@ class ThreadController extends Controller
 {
     /** @var MessageService */
     private $ms;
+    /** @var ThreadService */
+    private $ts;
+    /** @var CourseService */
+    private $cs;
+    /** @var ApprovedStudentService */
+    private $ass;
 
-    public function __construct(EntityManager $em, MessageService $ms)
-    {
+    public function __construct(
+        EntityManager $em,
+        MessageService $ms,
+        ThreadService $ts,
+        ApprovedStudentService $ass
+    ){
         $this->em = $em;   
         $this->ms = $ms;
+        $this->ts = $ts;
+        $this->ass = $ass;
     }
 
     public function addThread(Request $request, Response $response, $args): Response
@@ -30,9 +46,9 @@ class ThreadController extends Controller
         $bodyArguments = array(
             "course_code" => $this->createArgument("string", $body["course_code"]),
             "title" => $this->createArgument("string", $body["title"]),
-            "created_by" => $this->createArgument("integer", $body["created_by"]),
             "category" => $this->createArgument("integer", $body["category"], true),
-            "message" => $this->createArgument("string", $body["message"])
+            "message" => $this->createArgument("string", $body["message"]),
+            "attachments" => $this->createArgument("array", $body['attachments'])
         );
 
         $this->parseArgument($bodyArguments);
@@ -43,29 +59,34 @@ class ThreadController extends Controller
 
         if (!$course)
         {
-            $response->getBody()->write("Unable to create thread in not existing course.");
-            return $response
-                ->withHeader('Content-type', 'application/json')
-                ->withStatus(404);
+            return $this->return403response("Unable to create thread in not existing course.");
         }
 
         /** @var User */
-        // perform check if lecturer or enrolled student in course
-        $createdBy = $this->em->find(User::class, $body['created_by']);
-
+        $createdBy = $this->em->find(User::class, $request->getAttribute('jwt')->sub);
         if (!$createdBy)
         {
-            $response->getBody()->write("Unable to assign not existing user.");
-            return $response
-                ->withHeader('Content-type', 'application/json')
-                ->withStatus(404);
+            return $this->return403response("Unable to assign not existing user.");
+        }
+        if (
+            $course->getLecturer() != $createdBy->getID() &&
+            $this->ass->isApproved($createdBy, $course)
+        )
+        {
+            return $this->return403response("Only course lecturer and approved enrolled students are able to create new threads.");
         }
 
         /** @var Category */
-        // add check that category is from current Course
         $category = NULL;
         if ($body['category'])
+        {
+            /** @var ThreadCategory */
             $category = $this->em->find(ThreadCategory::class, $body['category']);
+            if ($category->getCourse()->getCode() != $course->getCode())
+            {
+                return $this->return403response("Unable to use thread category that is defined for different course.");
+            }
+        }
         
         $thread = new Thread(
             $course,
@@ -77,7 +98,21 @@ class ThreadController extends Controller
         $this->em->persist($thread);
         $this->em->flush();
 
-        $this->ms->addMessage($thread, $createdBy, $body["message"]);
+        $attachments = $this->ms->processAttachments($body['attachments']);
+
+        $msg = $this->ms->addMessage($thread, $createdBy, $body["message"]);
+
+        foreach ($attachments as $filename)
+        {
+            $msgAtt = new MessageAttachment(
+                $filename,
+                $msg
+            );
+            $this->em->persist($msgAtt);
+        }
+
+        // save all attachments
+        $this->em->flush();
 
         $response->getBody()->write("Successfully created new thread.");
         return $response
@@ -106,7 +141,7 @@ class ThreadController extends Controller
                 "id" => $thread->getCreatedBy()->getID(),
                 "name" => $thread->getCreatedBy()->getName()
             ),
-            "messages" => array()
+            "messages" => $this->ts->prepareMessagesForResponse($thread->getMessages())
         );
 
         $response->getBody()->write(json_encode($msg));
@@ -120,22 +155,11 @@ class ThreadController extends Controller
         $course = $this->em->find(Course::class, $args["code"]);
         if (!$course)
         {
-            $response->getBody()->write("Unable to find threads for non existing course code.");
-            return $response
-                ->withHeader('Content-type', 'application/json')
-                ->withStatus(404);
+            return $this->return403response("Unable to find threads for non existing course code.");
         }
 
         /** @var Thread[] */
         $threads = $this->em->getRepository(Thread::class)->findBy(array("course" => $course));
-
-        if(count($threads) == 0)
-        {
-            $response->getBody()->write("No thread found for this course.");
-            return $response
-                ->withHeader('Content-type', 'application/json')
-                ->withStatus(404);
-        }
 
         $msg = array();
         foreach ($threads as $thread) {
@@ -169,7 +193,9 @@ class ThreadController extends Controller
 
         if (count($results) == 0)
         {
-            $response->getBody()->write("No results found.");
+            $response->getBody()->write(json_encode(array(
+                "message" => "No results found."
+            )));
             return $response
                 ->withHeader('Content-type', 'application/json')
                 ->withStatus(404);
@@ -201,16 +227,18 @@ class ThreadController extends Controller
         $thread = $this->em->find(Thread::class, $args["id"]);
         if (!$thread)
         {
-            $response->getBody()->write("Unable to close thread for specified ID. No thread found.");
-            return $response
-                ->withHeader('Content-type', 'application/json')
-                ->withStatus(404);
+            return $this->return403response("Unable to close thread for specified ID. No thread found.");
         }
 
-        // add setClosedBy that needs JWT for fetching user
-        $thread->setClosedOn(new DateTime('now', new DateTimeZone("Europe/Prague")));
+        /** @var User */
+        $user = $this->em->find(User::class, $request->getAttribute('jwt')->sub);
+        if ($user->getID() != $thread->getCourse()->getLecturer()->getID())
+        {
+            return $this->return403response("Only lecturer of course is able to close it's threads.");
+        }
 
-        // ADD SOMETHING FOR GAMIFICATION
+        $thread->setClosedOn(new DateTime('now', new DateTimeZone("Europe/Prague")));
+        $thread->setClosedBy($user);
 
         $this->em->persist($thread);
         $this->em->flush();
@@ -226,13 +254,15 @@ class ThreadController extends Controller
         $thread = $this->em->find(Thread::class, $args["id"]);
         if (!$thread)
         {
-            $response->getBody()->write("Unable to delete thread for specified ID. No thread found.");
-            return $response
-                ->withHeader('Content-type', 'application/json')
-                ->withStatus(404);
+            return $this->return403response("Unable to delete thread for specified ID. No thread found.");
         }
 
-        // add check for author/lecturer from JWT
+        if (
+            $request->getAttribute('jwt')->sub != $thread->getCreatedBy()->getID() ||
+            $request->getAttribute('jwt')->sub != $thread->getCourse()->getLecturer()->getID()
+        ){
+            return $this->return403response("Only author of thread or lecturer of course is able to delete thread.");
+        }
 
         $this->em->remove($thread);
         $this->em->flush();

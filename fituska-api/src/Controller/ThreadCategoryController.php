@@ -27,7 +27,6 @@ class ThreadCategoryController extends Controller
 
         $bodyArguments = array(
             "name" => $this->createArgument("string", $body["name"]),
-            "created_by" => $this->createArgument("integer", $body["created_by"]),
             "course_code" => $this->createArgument("string", $body["course_code"])
         );
 
@@ -36,32 +35,26 @@ class ThreadCategoryController extends Controller
 
         if (!$this->tcs->isNameUniqueForCourse($body["name"], $body["course_code"]))
         {
-            $response->getBody()->write("Category with given name already exists for this course.");
-            return $response
-                ->withHeader('Content-type', 'application/json')
-                ->withStatus(403);
+            return $this->return403response("Category with given name already exists for this course.");
         }
 
         /** @var User */
-        $user = $this->em->find(User::class, $body["created_by"]); // should be taken from JWT
-
+        $user = $this->em->find(User::class, $request->getAttribute('jwt')->sub);
         if (!$user)
         {
-            $response->getBody()->write("Unable to assign not existing user.");
-            return $response
-                ->withHeader('Content-type', 'application/json')
-                ->withStatus(404);
+            return $this->return403response("Unable to assign not existing user.");
         }
 
         /** @var Course */
         $course = $this->em->find(Course::class, $body["course_code"]);
-
         if (!$course)
         {
-            $response->getBody()->write("Unable to assign not existing course.");
-            return $response
-                ->withHeader('Content-type', 'application/json')
-                ->withStatus(404);
+            return $this->return403response("Unable to assign not existing course.");
+        }
+
+        if ($course->getLecturer()->getID() != $user->getID())
+        {
+            return $this->return403response("Only lecturer of course is able to add thread categories.");
         }
 
         $tCategory = new ThreadCategory(
@@ -73,7 +66,9 @@ class ThreadCategoryController extends Controller
         $this->em->persist($tCategory);
         $this->em->flush();
 
-        $response->getBody()->write("Successfully created new thread category.");
+        $response->getBody()->write(json_encode(array(
+            "message" => "Successfully created new thread category."
+        )));
         return $response
             ->withHeader('Content-type', 'application/json')
             ->withStatus(201);
@@ -81,15 +76,25 @@ class ThreadCategoryController extends Controller
 
     public function readThreadCategories(Request $request, Response $response, $args): Response
     {
-        $results = $this->em->getRepository(ThreadCategory::class)->findBy(array("course" => $args["code"]));
-
-        if (!count($results))
+        /** @var Course */
+        $course = $this->em->find(Course::class, $args['coude']);
+        if (!$course)
         {
-            $response->getBody()->write("No thread categories found for given course code.");
+            $response->getBody()->write(json_encode(array(
+                "message" => "Unable to read thread categories for not existing course."
+            )));
+
             return $response
                 ->withHeader('Content-type', 'application/json')
                 ->withStatus(404);
         }
+
+        if ($course->getLecturer()->getID() != $request->getAttribute('jwt')->sub)
+        {
+            return $this->return403response("Only lecturer of course is able to list thread categories.");
+        }
+
+        $results = $this->em->getRepository(ThreadCategory::class)->findBy(array("course" => $args["code"]));
 
         $msg = array();
         /** @var ThreadCategory */
@@ -124,10 +129,14 @@ class ThreadCategoryController extends Controller
 
         if (!$tCategory)
         {
-            $response->getBody()->write("Unable to find thread category with given ID.");
-            return $response
-                ->withHeader('Content-type', 'application/json')
-                ->withStatus(404);
+            return $this->return403response("Unable to find thread category with given ID.");
+        }
+
+        $lecturerID = $tCategory->getCourse()->getLecturer()->getID();
+
+        if ($lecturerID != $request->getAttribute('jwt')->sub)
+        {
+            return $this->return403response("Only lecturer of course is able to update it's thread categories.");
         }
 
         $tCategory->setName($body["name"]);
@@ -135,7 +144,9 @@ class ThreadCategoryController extends Controller
         $this->em->persist($tCategory);
         $this->em->flush();
 
-        $response->getBody()->write("Successfully updated name of category.");
+        $response->getBody()->write(json_encode(array(
+            "message" => "Successfully updated name of category."
+        )));
         return $response
             ->withHeader('Content-type', 'application/json');
     }
@@ -147,16 +158,22 @@ class ThreadCategoryController extends Controller
 
         if (!$tCategory)
         {
-            $response->getBody()->write("Unable to delete not existing category.");
-            return $response
-                ->withHeader('Content-type', 'application/json')
-                ->withStatus(404);
+            return $this->return403response("Unable to delete not existing category.");
+        }
+
+        $lecturerID = $tCategory->getCourse()->getLecturer()->getID();
+
+        if ($lecturerID != $request->getAttribute('jwt')->sub)
+        {
+            return $this->return403response("Only lecturer of course is able to delete it's thread categories.");
         }
 
         $this->em->remove($tCategory);
         $this->em->flush();
 
-        $response->getBody()->write("Successfully deleted thread category.");
+        $response->getBody()->write(json_encode(array(
+            "message" => "Successfully deleted thread category."
+        )));
         return $response
             ->withHeader('Content-type', 'application/json');
     }

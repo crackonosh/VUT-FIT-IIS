@@ -54,6 +54,12 @@ class User
      */
     private $role;
 
+    /**
+     * @ORM\Column(type="integer")
+     * @var int
+     */
+    private $score;
+
     public function __construct(
         string $name,
         string $password,
@@ -68,6 +74,7 @@ class User
         $this->address = $address;
         $this->phone = $phone;
         $this->role = $role;   
+        $this->score = 0;
     }
 
     public function __toArray(): array
@@ -77,7 +84,8 @@ class User
             "name" => $this->name,
             "email" => $this->email,
             "address" => $this->address,
-            "phone" => $this->phone
+            "phone" => $this->phone,
+            "score" => $this->score
         );
     } 
 
@@ -144,5 +152,20 @@ class User
     public function setRole(Role $role): void
     {
         $this->role = $role;
+    }
+
+    public function getScore(): int
+    {
+        return $this->score;
+    }
+
+    /** 
+     * Increments the current score
+     * 
+     * @param int $increment how much the score will be incremented
+     */
+    public function setScore(int $increment)
+    {
+        $this->score += $increment;
     }
 }

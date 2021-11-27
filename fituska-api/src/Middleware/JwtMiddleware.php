@@ -5,8 +5,6 @@ use Fig\Http\Message\StatusCodeInterface;
 use Slim\Psr7\Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Server\RequestHandlerInterface as RequestHandler;
-use Firebase\JWT\JWT;
-use Firebase\JWT\Key;
 
 return function (Request $request, RequestHandler $handler) use ($app): Response
 {

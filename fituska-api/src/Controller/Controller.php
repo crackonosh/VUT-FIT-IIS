@@ -2,6 +2,7 @@
 namespace App\Controller;
 
 use Doctrine\ORM\EntityManager;
+use Slim\Psr7\Response;
 
 abstract class Controller
 {
@@ -31,5 +32,16 @@ abstract class Controller
             
             $this->errorMsg .= "Argument '$argName' expected types are: '" . $arg["expectedType"] . "', but '" . gettype($arg["value"]) . "' given.\n";
         }
+    }
+
+    protected function return403response(string $msg): Response
+    {
+        $response = new Response(403);
+
+        $response->getBody()->write(json_encode(array(
+            "message" => $msg
+        )));
+
+        return $response->withHeader('Content-type', 'application/json');
     }
 }

@@ -26,6 +26,12 @@ class ApprovedStudent
     private $student;
 
     /**
+     * @ORM\Column(type="boolean")
+     * @var bool
+     */
+    private $status;
+
+    /**
      * @ORM\ManyToOne(targetEntity="User")
      * @ORM\JoinColumn(onDelete="CASCADE")
      * @var User
@@ -41,16 +47,22 @@ class ApprovedStudent
     /**
      * @ORM\ManyToOne(targetEntity="Course")
      * @ORM\JoinColumn(onDelete="CASCADE", referencedColumnName="code", nullable=false)
-     * @var string
+     * @var Course
      */
-    private $course_code;
+    private $course;
 
     public function __construct(
-        int $student,
-        string $course_code
+        User $student,
+        Course $course
     ){
         $this->student = $student;
-        $this->course_code = $course_code;
+        $this->course = $course;
+        $this->status = false;
+    }
+
+    public function getID(): int
+    {
+        return $this->id;
     }
 
     public function getStudent(): User
@@ -58,9 +70,9 @@ class ApprovedStudent
         return $this->student;
     }
 
-    public function getCourseCode(): string
+    public function getCourse(): Course
     {
-        return $this->course_code;
+        return $this->course;
     }
 
     public function getApprovedBy(): ?User
@@ -68,9 +80,19 @@ class ApprovedStudent
         return $this->approved_by;
     }
 
-    public function setApprovedBy(int $approved_by): void
+    public function setApprovedBy(User $approved_by): void
     {
         $this->approved_by = $approved_by;
+    }
+
+    public function getStatus(): bool
+    {
+        return $this->status;
+    }
+
+    public function setStatus(bool $status): void
+    {
+        $this->status = $status;
     }
 
     public function getApprovedOn(): ?DateTime

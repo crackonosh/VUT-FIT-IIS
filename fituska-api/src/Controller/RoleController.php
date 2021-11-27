@@ -6,9 +6,7 @@ use App\Domain\Role;
 use Slim\Psr7\Request;
 use Slim\Psr7\Response;
 
-require_once __DIR__ . '/../Functions.php';
-
-class RoleController
+class RoleController extends Controller
 {
     public function __construct(EntityManager $em)
     {
@@ -17,6 +15,13 @@ class RoleController
 
     public function addRole(Request $request, Response $response, $args): Response
     {
+        $jwtRole = $request->getAttribute('jwt')->role;
+
+        if ($jwtRole != 'admin')
+        {
+            return $this->return403response("Only admin is able to read roles.");
+        }
+
         $roleName = $args["name"];
 
         $role = New Role($roleName);
@@ -24,7 +29,9 @@ class RoleController
         $this->em->persist($role);
         $this->em->flush();
 
-        $response->getBody()->write("Successfully created new role '$roleName'.");
+        $response->getBody()->write(json_encode(array(
+            "message" => "Successfully created new role '$roleName'."
+        )));
         return $response
             ->withHeader('Content-type', 'application/json')
             ->withStatus(201);
@@ -32,6 +39,13 @@ class RoleController
 
     public function readRoles(Request $request, Response $response): Response
     {
+        $jwtRole = $request->getAttribute('jwt')->role;
+
+        if ($jwtRole != 'admin')
+        {
+            return $this->return403response("Only admin is able to read roles.");
+        }
+
         $roles = $this->em->getRepository(Role::class)->findBy(array(), array("id" => "asc"));
 
         $msg = array();
@@ -52,6 +66,13 @@ class RoleController
 
     public function updateRole(Request $request, Response $response, $args): Response
     {
+        $jwtRole = $request->getAttribute('jwt')->role;
+
+        if ($jwtRole != 'admin')
+        {
+            return $this->return403response("Only admin is able to update roles.");
+        }
+
         $roleID = $args["id"];
         $newName = $args["name"];
 
@@ -59,38 +80,43 @@ class RoleController
         
         if ($role == NULL)
         {
-            $response->getBody()->write("Unable to find role with specified ID.");
-            return $response
-                ->withHeader('Content-type', 'application/json')
-                ->withStatus(404);
+            return $this->return403response("Unable to find role with specified ID.");
         }
 
         $role->setName($newName);
         $this->em->flush();
 
-        $response->getBody()->write("Role successfully updated.");
+        $response->getBody()->write(json_encode(array(
+            "message" => "Role successfully updated."
+        )));
         return $response
             ->withHeader('Content-type', 'application/json');
     }
 
     public function deleteRole(Request $request, Response $response, $args): Response
     {
+        $jwtRole = $request->getAttribute('jwt')->role;
+
+        if ($jwtRole != 'admin')
+        {
+            return $this->return403response("Only admin is able to read roles.");
+        }
+
         $roleID = $args["id"];
 
         $role = $this->em->find(Role::class, $roleID);
 
         if ($role == NULL)
         {
-            $response->getBody()->write("Role with specified ID not found.");
-            return $response
-                ->withHeader('Content-type', 'application/json')
-                ->withStatus(404);
+            return $this->return403response("Role with specified ID not found.");
         }
 
         $this->em->remove($role);
         $this->em->flush();
 
-        $response->getBody()->write("Successfully deleted role.");
+        $response->getBody()->write(json_encode(array(
+            "message" => "Successfully deleted role."
+        )));
         return $response
             ->withHeader('Content-type', 'application/json');
     }
