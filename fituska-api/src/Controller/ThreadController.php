@@ -64,15 +64,10 @@ class ThreadController extends Controller
 
         /** @var User */
         $createdBy = $this->em->find(User::class, $request->getAttribute('jwt')->sub);
-        if (!$createdBy)
-        {
-            return $this->return403response("Unable to assign not existing user.");
-        }
         if (
             $course->getLecturer()->getID() != $createdBy->getID() &&
-            $this->ass->isApproved($createdBy, $course)
-        )
-        {
+            !$this->ass->isApproved($createdBy, $course)
+        ){
             return $this->return403response("Only course lecturer and approved enrolled students are able to create new threads.");
         }
 
@@ -245,7 +240,9 @@ class ThreadController extends Controller
         $this->em->persist($thread);
         $this->em->flush();
 
-        $response->getBody()->write("Successfully closed a thread.");
+        $response->getBody()->write(json_encode(array(
+            "message" => "Successfully closed a thread."
+        )));
         return $response
             ->withHeader('Content-type', 'application/json');
     }
@@ -269,7 +266,9 @@ class ThreadController extends Controller
         $this->em->remove($thread);
         $this->em->flush();
 
-        $response->getBody()->write("Successfully deleted a thread.");
+        $response->getBody()->write(json_encode(array(
+            "message" => "Successfully deleted a thread."
+        )));
         return $response
             ->withHeader('Content-type', 'application/json');
     }
