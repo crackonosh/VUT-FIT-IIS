@@ -17,6 +17,7 @@ use Slim\Routing\RouteCollectorProxy;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Server\RequestHandlerInterface;
+use Slim\Exception\HttpMethodNotAllowedException;
 use Slim\Routing\RouteContext;
 
 
@@ -39,6 +40,10 @@ if (!$displayErrorDetails)
     $errorMiddleware->setErrorHandler(
         HttpNotFoundException::class,
         include_once __DIR__ . '/../Handler/HttpNotFoundHandler.php'
+    );
+    $errorMiddleware->setErrorHandler(
+        HttpMethodNotAllowedException::class,
+        include_once __DIR__ . '/../Handler/HttpMethodNotAllowedHandler.php'
     );
 }
 
