@@ -77,7 +77,7 @@ class ThreadCategoryController extends Controller
     public function readThreadCategories(Request $request, Response $response, $args): Response
     {
         /** @var Course */
-        $course = $this->em->find(Course::class, $args['coude']);
+        $course = $this->em->find(Course::class, $args['code']);
         if (!$course)
         {
             $response->getBody()->write(json_encode(array(
