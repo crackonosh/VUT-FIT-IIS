@@ -10,7 +10,6 @@ use App\Controller\RoleController;
 use App\Controller\UserController;
 use App\Controller\ThreadCategoryController;
 use App\Controller\ThreadController;
-use App\Middleware\MyRoutingMiddleware;
 use Slim\Exception\HttpNotFoundException;
 use Slim\Factory\AppFactory;
 use Slim\Routing\RouteCollectorProxy;
@@ -112,7 +111,5 @@ $app->group('', function (RouteCollectorProxy $group) {
 })->add(include_once __DIR__ . '/../Middleware/JwtMiddleware.php');
 /********************** PROTECTED ENDPOINTS **************************/
 
-
-$app->add(new MyRoutingMiddleware($app->getRouteResolver(), $app->getRouteCollector()->getRouteParser()));
 
 $app->run();
