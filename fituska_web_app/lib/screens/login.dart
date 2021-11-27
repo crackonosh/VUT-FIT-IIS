@@ -50,7 +50,7 @@ class LoginScreen extends StatelessWidget {
                       TextFormField(
                         validator: (value) {
                           if (value!.length < 8) {
-                            return "Heslo musí mít á a více znaků";
+                            return "Heslo musí mít a více znaků";
                           }
                           return null;
                         },
