@@ -10,6 +10,7 @@ use App\Controller\RoleController;
 use App\Controller\UserController;
 use App\Controller\ThreadCategoryController;
 use App\Controller\ThreadController;
+use App\Services\SetupService;
 use Slim\Exception\HttpNotFoundException;
 use Slim\Factory\AppFactory;
 use Slim\Routing\RouteCollectorProxy;
@@ -42,6 +43,8 @@ $errorMiddleware->setErrorHandler(
     include_once __DIR__ . '/../Handler/HttpMethodNotAllowedHandler.php'
 );
 
+// used for data setup when newly deployed to server
+$app->get('/setup', SetupService::class . ':setup');
 
 /** SIGNUP/LOGIN ENDPOINTS */
 $app->post('/signup', UserController::class . ':addUser');
