@@ -1,8 +1,6 @@
 <?php
 namespace App\Services;
 
-use DateTime;
-use DateTimeZone;
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
 
@@ -17,7 +15,8 @@ class AuthService
             'iss' => 'http://fituska.org',
             'sub' => $sub,
             'role' => $role,
-            'issued_at' => new DateTime('now', new DateTimeZone('Europe/Prague'))
+            'exp' => time() + 1800,
+            'issued_at' => time()
         );
 
         return JWT::encode($payload, $this->key);
