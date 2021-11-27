@@ -153,7 +153,8 @@ class UserController extends Controller
             "name" => $user->getName(),
             "email" => $user->getEmail(),
             "phone" => $user->getPhone(),
-            "address" => $user->getAddress()
+            "address" => $user->getAddress(),
+            "score" => $user->getScore()
         );
 
         $response->getBody()->write(json_encode($msg));
