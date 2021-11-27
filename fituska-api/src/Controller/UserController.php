@@ -35,20 +35,24 @@ class UserController extends Controller
         $this->parseArgument($bodyArguments);
         echo($this->errorMsg);
 
-        /** @var User[] */
-        $user = $this->em->getRepository(User::class)->findBy(array("email" => "{$body['email']}"));
+        /** @var User */
+        $user = $this->em->getRepository(User::class)->findOneBy(array("email" => "{$body['email']}"));
         
         if (
-            !$user[0] ||
-            $user[0]->getPassword() != $this->us->hashPassword($body['password'])
+            !$user||
+            $user->getPassword() != $this->us->hashPassword($body['password'])
         ){
             return $this->return403response("Invalid credentials.");
         }
 
-        $jwt = $this->as->encodeJWT($user[0]->getID(), $user[0]->getRole()->getName());
+        $jwt = $this->as->encodeJWT($user->getID(), $user->getRole()->getName());
 
         $response->getBody()->write(json_encode(array(
-            "jwt" => $jwt
+            "jwt" => $jwt,
+            "exp" => time() + 1800,
+            "user" => array(
+                'id' => $user->getID()
+            )
         )));
         return $response
             ->withHeader('Content-type', 'application/json');
@@ -80,7 +84,7 @@ class UserController extends Controller
         }
 
         /** @var Role */
-        $userRole = $this->em->find(Role::class, 3); // TODO: 3 equals to member right now
+        $userRole = $this->em->find(Role::class, 3);
 
         if ($userRole == NULL)
         {
