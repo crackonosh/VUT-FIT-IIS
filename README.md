@@ -47,7 +47,7 @@ In `fituska-api/src/` folder:
 - `index.php` - this file contains some middlewares (you probably won't change those) and endpoint definitions 
 
 ##### Domain
-Contains files for ORM to database. They're all should be inside `App\Domain` namespace and have getter/setter methods
+Contains files for ORM to database. They all should be inside `App\Domain` namespace and have getter/setter methods
 
 ##### Controller
 Contains controllers, for various endpoints, that has functions for CRUD operations
