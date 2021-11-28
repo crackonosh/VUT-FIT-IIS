@@ -138,6 +138,7 @@ class ThreadController extends Controller
                 "id" => $thread->getCreatedBy()->getID(),
                 "name" => $thread->getCreatedBy()->getName()
             ),
+            "category" => $thread->getCategory()->getName(),
             "messages" => $this->ts->prepareMessagesForResponse($thread->getMessages())
         );
 
@@ -167,6 +168,7 @@ class ThreadController extends Controller
                     "id" => $thread->getCreatedBy()->getID(),
                     "name" => $thread->getCreatedBy()->getName()
                 ),
+                "category" => $thread->getCategory()->getName(),
                 "is_closed" => $thread->getClosedOn() == NULL ? false : true
             );
             array_push($msg, $tmp);
@@ -205,6 +207,7 @@ class ThreadController extends Controller
                 "id" => $result["id"],
                 "title" => $result["title"],
                 "is_closed" => $result["closed_on"] == NULL ? false : true,
+                "category" => $thread->getCategory()->getName(),
                 "author" => array(
                     "id" => $result["created_by"]["id"],
                     "name" => $result["created_by"]["name"]
