@@ -15,13 +15,28 @@ class UserPanel extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
-              TextButton(onPressed: () => Navigator.of(context).pushNamed("/course-create"), child: const Text("Registrovat na kurz")),
-              TextButton(onPressed: () => Navigator.of(context).pushNamed("/course-create"), child: const Text("Vytvořit kurz")),
-              TextButton(onPressed: () => Navigator.of(context).pushNamed("/course-list"), child: const Text("Spravovat kurzy")),
+              TextButton(
+                  onPressed: () =>
+                      Navigator.of(context).pushNamed("/course-create"),
+                  child: const Text("Registrovat na kurz")),
+              TextButton(
+                  onPressed: () =>
+                      Navigator.of(context).pushNamed("/course-create"),
+                  child: const Text("Vytvořit kurz")),
+              TextButton(
+                  onPressed: () =>
+                      Navigator.of(context).pushNamed("/course-list"),
+                  child: const Text("Spravovat kurzy")),
               if (auth.role == "admin" || auth.role == "moderator")
-                TextButton(onPressed: () => Navigator.of(context).pushNamed("/course-management"), child: const Text("Spravovat kurzy - ADMIN")),
+                TextButton(
+                    onPressed: () =>
+                        Navigator.of(context).pushNamed("/course-management"),
+                    child: const Text("Spravovat kurzy - ADMIN")),
               if (auth.role == "admin")
-                TextButton(onPressed: () => Navigator.of(context).pushNamed("/user-managment"), child: const Text("Spravovat Uživatele")),
+                TextButton(
+                    onPressed: () =>
+                        Navigator.of(context).pushNamed("/user-list"),
+                    child: const Text("Spravovat Uživatele")),
             ],
           ),
         ),
