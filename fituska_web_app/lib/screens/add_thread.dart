@@ -1,3 +1,4 @@
+import 'package:fituska_web_app/models/category.dart';
 import 'package:fituska_web_app/providers/auth.dart';
 import 'package:fituska_web_app/providers/courses.dart';
 import 'package:fituska_web_app/providers/categories.dart';
@@ -12,10 +13,10 @@ import 'dart:convert';
 
 class AddThreadScreen extends StatefulWidget {
   const AddThreadScreen({Key? key}) : super(key: key);
-  static const routeName = "/user-management";
+  static const routeName = "/add_thread";
 
   @override
-  State<AddThreadScreenr> createState() => _AddThreadScreenState();
+  State<AddThreadScreen> createState() => _AddThreadScreenState();
 }
 
 class _AddThreadScreenState extends State<AddThreadScreen> {
@@ -29,10 +30,19 @@ class _AddThreadScreenState extends State<AddThreadScreen> {
   final api = "164.68.102.86";
   final _form = GlobalKey<FormState>();
 
-  
+  String dropdownValue = "";
 
   Future<void> _submit(BuildContext context, Auth auth, String code) async {
     final isValid = _form.currentState!.validate();
+
+    var catPro = Provider.of<Categories>(context);
+    var catt = catPro.categories;
+    for (Category cat in catt) {
+      if (cat.name == dropdownValue) {
+        _formData['id'] = cat.id.toString();
+      }
+    }
+
     if (!isValid) {
       return;
     }
@@ -92,8 +102,18 @@ class _AddThreadScreenState extends State<AddThreadScreen> {
     Provider.of<Categories>(context).getCats(code);
     var catPro = Provider.of<Categories>(context);
     var catt = catPro.categories;
-    
-    cats = Provider.of<Categories>(context)
+
+    List<String> list = [];
+    for (Category cat in catt) {
+      list.add(cat.name);
+    }
+
+    if (catt.isEmpty) {
+      dropdownValue = "Žádné kategorie";
+    } else {
+      dropdownValue = catt[0].name;
+    }
+
     final auth = Provider.of<Auth>(context);
     var screen = SafeArea(
       child: Scaffold(
@@ -151,18 +171,17 @@ class _AddThreadScreenState extends State<AddThreadScreen> {
                             icon: const Icon(Icons.arrow_downward),
                             iconSize: 24,
                             elevation: 16,
-                            style:
-                                const TextStyle(color: Colors.blueAccent),
-                            underline: Container(
-                                height: 2, color: Colors.blueAccent),
+                            style: const TextStyle(color: Colors.blueAccent),
+                            underline:
+                                Container(height: 2, color: Colors.blueAccent),
                             onChanged: (String? newValue) {
                               setState(() {
                                 dropdownValue = newValue!;
                               });
                             },
-                            items: roles.map((String roles) {
+                            items: list.map((String list) {
                               return DropdownMenuItem(
-                                  value: roles, child: Text(roles));
+                                  value: list, child: Text(list));
                             }).toList())
                       ],
                     ),
