@@ -5,8 +5,15 @@ import 'package:fituska_web_app/providers/users.dart';
 import 'package:fituska_web_app/providers/role.dart';
 import 'package:provider/provider.dart';
 
-class ManageUser extends StatelessWidget {
-  static const routeName = "/user-managment";
+class ManageUser extends StatefulWidget {
+  const ManageUser({Key? key}) : super(key: key);
+  static const routeName = "/user-management";
+
+  @override
+  State<ManageUser> createState() => _ManageUserState();
+}
+
+class _ManageUserState extends State<ManageUser> {
   String dropdownValue = 'User';
   var roles = ['Admin', 'Mod', 'User'];
 
@@ -75,12 +82,12 @@ class ManageUser extends StatelessWidget {
                             Text(
                               user.email,
                               style: const TextStyle(
-                                  color: Colors.lightBlue, fontSize: 12.0),
+                                  color: Colors.blueAccent, fontSize: 12.0),
                             ),
                             Text(
                               user.name,
                               style: const TextStyle(
-                                  color: Colors.lightBlue, fontSize: 12.0),
+                                  color: Colors.blueAccent, fontSize: 12.0),
                             ),
                             DropdownButton<String>(
                                 value: dropdownValue,
@@ -92,7 +99,9 @@ class ManageUser extends StatelessWidget {
                                 underline: Container(
                                     height: 2, color: Colors.blueAccent),
                                 onChanged: (String? newValue) {
-                                  dropdownValue = newValue!;
+                                  setState(() {
+                                    dropdownValue = newValue!;
+                                  });
                                 },
                                 items: roles.map((String roles) {
                                   return DropdownMenuItem(
