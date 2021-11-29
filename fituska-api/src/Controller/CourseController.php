@@ -147,6 +147,13 @@ class CourseController extends Controller
 
     public function approveCourse(Request $request, Response $response, $args): Response
     {
+        $jwtRole = $request->getAttribute('jwt')->role;
+
+        if ($jwtRole != 'moderator' && $jwtRole != 'admin')
+        {
+            return $this->return403response("Only user with 'moderator' or 'admin' role is able to approve courses.");
+        }
+
         /** @var Course */
         $course = $this->em->find(Course::class, $args["code"]);
 
@@ -179,6 +186,34 @@ class CourseController extends Controller
         )));
         return $response
             ->withHeader('Content-type', 'application/json');
+    }
+
+    public function deleteCourse(Request $request, Response $response, $args): Response
+    {
+        $jwtRole = $request->getAttribute('jwt')->role;
+
+        if ($jwtRole != 'moderator' && $jwtRole != 'admin')
+        {
+            return $this->return403response("Only user with 'moderator' or 'admin' role is able to delete courses.");
+        }
+
+        /** @var Course */
+        $course = $this->em->find(Course::class, $args["code"]);
+
+        if (!$course)
+        {
+            return $this->return403response("Unable to find course with specified code.");
+        }
+
+        $this->em->remove($course);
+        $this->em->flush();
+
+        $response->getBody()->write(json_encode(array(
+            "message" => "Successfully deleted course."
+        )));
+        return $response
+            ->withHeader('Content-type', 'application/json');
+
     }
 
     public function getApprovedCourses(Request $request, Response $response, $args): Response
