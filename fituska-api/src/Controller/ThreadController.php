@@ -183,9 +183,10 @@ class ThreadController extends Controller
     public function getThreadsByTitle(Request $request, Response $response, $args): Response
     {
         $qb = $this->em->createQueryBuilder()
-            ->select("t, a")
+            ->select("t, a, c")
             ->from(Thread::class, 't')
             ->join('t.created_by', 'a')
+            ->join('t.category', 'c')
             ->where("t.title LIKE '%" . $args["title"] . "%'")
             ->orderBy('t.closed_on');
 
@@ -208,6 +209,7 @@ class ThreadController extends Controller
                 "id" => $result["id"],
                 "title" => $result["title"],
                 "is_closed" => $result["closed_on"] == NULL ? false : true,
+                'category' => $result['category']['name'],
                 "author" => array(
                     "id" => $result["created_by"]["id"],
                     "name" => $result["created_by"]["name"]
