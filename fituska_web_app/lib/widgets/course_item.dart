@@ -4,7 +4,7 @@ import 'package:fituska_web_app/providers/users.dart';
 import 'package:fituska_web_app/screens/course_detail.dart';
 
 class CourseItem extends StatelessWidget {
-  final int id;
+  final String id;
   final String title;
   final int teacher;
   final int nbrOfThreads;
@@ -24,7 +24,7 @@ class CourseItem extends StatelessWidget {
                 .pushNamed(CourseDetailScreen.routeName, arguments: id);
           },
           child: ListTile(
-            leading: Text(id.toString()),
+            leading: Text(id),
             title: Text(title),
             subtitle: Text(teach.name),
           ),

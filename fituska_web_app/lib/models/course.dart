@@ -3,7 +3,7 @@ import 'package:flutter/foundation.dart';
 import '../models/thread.dart';
 
 class Course {
-  int id;
+  String id;
   String name;
   int teacher;
   int approvedBy;
@@ -13,6 +13,6 @@ class Course {
   List<Thread> threads = [];
 
   Course({
-    this.id = 0, this.name = "", this.teacher = -1, this.approvedBy = -1, required this.threads, required this.created, required this.approved,
+    this.id = "", this.name = "", this.teacher = -1, this.approvedBy = -1, required this.threads, required this.created, required this.approved,
   });
 }

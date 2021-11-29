@@ -1,10 +1,63 @@
+import 'dart:async';
+
 import 'package:fituska_web_app/providers/courses.dart';
+import 'package:fituska_web_app/providers/users.dart';
 import 'package:fituska_web_app/widgets/appbar.dart';
 import 'package:fituska_web_app/widgets/course_item.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class FituskaStart extends StatelessWidget {
+class FituskaStart extends StatefulWidget {
+  @override
+  _FituskaStartState createState() => _FituskaStartState();
+}
+
+class _FituskaStartState extends State<FituskaStart> {
+  var _isInit = true;
+  var _isLoading = false;
+
+  Future<void> _update(BuildContext context) async {
+    try {
+      Provider.of<Courses>(context).initCourses();
+    } catch (e) {
+      _showErrorDialog(context, "Chyba při komunikaci se serverem.");
+    }
+  }
+
+  @override
+  void didChangeDependencies() {
+    if (_isInit) {
+      Provider.of<Users>(context).initUsers();
+      const tim = const Duration(seconds: 5);
+      Timer.periodic(tim, (timer) => _update(context));
+      setState(() {
+        _isLoading = true;
+      });
+      _isInit = false;
+      Provider.of<Courses>(context).initCourses().then((_) => setState(() {
+                  _isLoading = false;
+                }));
+      _update(context);
+    }
+    super.didChangeDependencies();
+  }
+
+  void _showErrorDialog(BuildContext ctx, String message) {
+    showDialog(
+        context: ctx,
+        builder: (ctx) => AlertDialog(
+              title: Text("Nastala chyba"),
+              content: Text(message),
+              actions: [
+                FlatButton(
+                    onPressed: () {
+                      Navigator.of(ctx).pop();
+                    },
+                    child: Text("Jasně, chápu"))
+              ],
+            ));
+  }
+
   @override
   Widget build(BuildContext context) {
     final courseData = Provider.of<Courses>(context);
@@ -27,13 +80,16 @@ class FituskaStart extends StatelessWidget {
                 SizedBox(
                   height: 10,
                 ),
-                Expanded(child: ListView.builder( 
+                Expanded(
+                child: _isLoading
+                  ? Center(child: CircularProgressIndicator(),) :
+                    ListView.builder(
                   itemCount: courses.length,
                   itemBuilder: (ctx, i) => CourseItem(
-                    courses[i].id,
-                    courses[i].name,
-                    courses[i].teacher,
-                    courses[i].threads.length),
+                      courses[i].id,
+                      courses[i].name,
+                      courses[i].teacher,
+                      courses[i].threads.length),
                 )),
               ],
             ))));

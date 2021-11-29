@@ -1,12 +1,20 @@
+import 'dart:convert';
+
 import 'package:fituska_web_app/models/message.dart';
 import 'package:fituska_web_app/models/thread.dart';
 import 'package:fituska_web_app/models/user.dart';
+
 import 'package:flutter/material.dart';
+import 'package:collection/collection.dart';
+import 'package:http/http.dart' as http;
 
 import '../models/course.dart';
 
 class Courses with ChangeNotifier {
-  List<Course> _courses = [
+  final api = "164.68.102.86";
+
+  List<Course> _courses = [];
+  /*List<Course> _courses = [
     Course(
         id: 1,
         name: "Course1",
@@ -172,17 +180,58 @@ class Courses with ChangeNotifier {
                     author: 2),
               ])
         ]),
-  ];
+  ];*/
 
   List<Course> get courses {
     return [..._courses];
   }
 
-  void addCourse() {
-    notifyListeners();
+  void addCourse(String id, String name, int lec, String app, String ctr) {
+    // get threads for this course
+  }
+
+  bool isIn(String id) {
+    Course? c = _courses.firstWhereOrNull((element) => element.id == id);
+    if (c == null) {
+      return false;
+    }
+    return true;
   }
 
   Course findById(int id) {
     return _courses.firstWhere((element) => element.id == id);
+  }
+
+  Future<void> initCourses() async {
+    final Uri url = Uri.parse("http://$api:8000/courses/get/approved");
+    try {
+      final response = await http.get(url, headers: {
+        'Accept': 'application/json',
+      }).timeout(const Duration(seconds: 4), onTimeout: () {
+        throw Exception("You Timed out");
+      });
+      final res = json.decode(response.body);
+      bool notify = false;
+
+      /*res.forEach((element) {
+        if (!isIn(element["code"])) {
+          notify = true;
+          // get threads for this course
+          try {
+            final Uri url1 = Uri.parse("http://$api:8000/courses/get/approved");
+          } catch (error) {
+            rethrow;
+          }
+          addCourse(element["id"], element["name"], element["lecturer"]["id"],
+              element["approved_on"], element["created_on"]);
+        }
+      });*/
+
+      if (notify) {
+        notifyListeners();
+      }
+    } catch (error) {
+      rethrow;
+    }
   }
 }

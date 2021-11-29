@@ -26,7 +26,6 @@ class CourseCreate extends StatelessWidget {
     }
     _form.currentState!.save();
     final Uri url = Uri.parse("http://$api:8000/courses/add");
-    print(auth.token);
     String b =
         jsonEncode({"code": _formData["code"], 'name': _formData['name']});
     try {

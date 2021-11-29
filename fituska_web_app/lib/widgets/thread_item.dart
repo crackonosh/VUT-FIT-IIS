@@ -5,7 +5,7 @@ import 'package:fituska_web_app/providers/users.dart';
 import 'package:fituska_web_app/screens/thread_detail.dart';
 
 class ThreadItem extends StatelessWidget {
-  final int courseId;
+  final String courseId;
   final int id;
   final String title;
   final bool isClosed;
