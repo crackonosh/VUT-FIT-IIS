@@ -5,32 +5,39 @@ import 'package:flutter/widgets.dart';
 import 'package:http/http.dart' as http;
 
 class Auth with ChangeNotifier {
-  late String _token;
-  String username = "";
-  late DateTime _exipryDate;
+  String _token = "";
+  int _id = -1;
+  late DateTime _expireryDate = DateTime.now();
 
   final api = "164.68.102.86";
 
   bool get isAuth {
-    bool yes = token != null;
-    return yes;
+    if (_expireryDate.isAfter(DateTime.now()) && _token != "" && _id != -1) {
+      return true;
+    }
+    return false;
   }
 
-  String? get token {
-    if (_exipryDate != null &&
-        _exipryDate.isAfter(DateTime.now()) &&
-        _token != null) {
+  String get token {
+    if (_expireryDate.isAfter(DateTime.now()) && _token != "" && _id != -1) {
       return _token;
     }
-    return null;
+    return "";
+  }
+
+  int get id {
+    if (_expireryDate.isAfter(DateTime.now()) && _token != "" && _id != -1) {
+      return _id;
+    }
+    return -1;
   }
 
   Future<void> signup(String? nickname, String? password, String? email) async {
     return _authReg(nickname, password, email);
   }
 
-  Future<void> signin(String? nickname, String? password) async {
-    return _authLog(nickname, password);
+  Future<void> signin(String? email, String? password) async {
+    return _authLog(email, password);
   }
 
   Future<void> _authReg(
@@ -43,27 +50,29 @@ class Auth with ChangeNotifier {
 
     try {
       //final response = await http.get(url)
-      final response = await http.post(
-        url,
-        headers: {
-          'Content-type': 'application/json',
-          //'Access-Control-Allow-Origin': '*',
-        },
-        body: body
-      ).timeout(const Duration(seconds: 4), onTimeout: () {
+      final response = await http
+          .post(url,
+              headers: {
+                'Content-type': 'application/json',
+                //'Access-Control-Allow-Origin': '*',
+              },
+              body: body)
+          .timeout(const Duration(seconds: 4), onTimeout: () {
         throw TimeoutException("Timed out");
       });
       final res = json.decode(response.body);
       if (res.toString() == "{}") {
         throw Error();
       }
-      print(res);
+      if (res['message'] != "Successfully created new user.") {
+        throw Exception(res['message']);
+      }
     } catch (error) {
       rethrow;
     }
   }
 
-  Future<void> _authLog(String? nickname, String? password) async {
+  Future<void> _authLog(String? email, String? password) async {
     final Uri url = Uri.parse("http://$api:8000/login");
     try {
       final response = await http
@@ -73,7 +82,7 @@ class Auth with ChangeNotifier {
           'Content-type': 'application/json',
         },
         body: jsonEncode({
-          "name": nickname,
+          "email": email,
           "password": password,
         }),
       )
@@ -84,7 +93,12 @@ class Auth with ChangeNotifier {
       if (res.toString() == "{}") {
         throw Error();
       }
-      print(res);
+      _token = res['jwt'];
+      _expireryDate = DateTime.fromMillisecondsSinceEpoch(res['exp'] * 1000);
+      var strId = res['user']
+          .toString()
+          .substring(5, res['user'].toString().length - 1);
+      _id = int.parse(strId);
     } catch (error) {
       rethrow;
     }

@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fituska_web_app/models/user.dart';
-import 'package:fituska_web_app/utils/user_pref.dart';
 import 'package:fituska_web_app/widgets/appbar.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -12,7 +11,7 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
-    const user = UserPreferences.myUser;
+    User user = User();
     var screen = SafeArea(
       child: Builder(
         builder: (context) => Scaffold(
@@ -56,7 +55,7 @@ class _ProfilePageState extends State<ProfilePage> {
             ),
             const SizedBox(height: 16),
             Text(
-              user.about,
+              "Fuck off you little bitch",
               style: const TextStyle(fontSize: 16, height: 1.4),
             ),
           ],

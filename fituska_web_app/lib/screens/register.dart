@@ -26,8 +26,7 @@ class RegisterScreen extends StatelessWidget {
       try {
         await Provider.of<Auth>(context, listen: false).signup(
             _authData["login"], _authData["password"], _authData["email"]);
-        //await Provider.of<Auth>(context, listen: false).signin(
-            //_authData["login"], _authData["password"]);
+        Navigator.of(context).pushNamed("/login");
       } on TimeoutException catch (e) {
         _showErrorDialog(context, e.toString());
       } catch (error) {
@@ -40,14 +39,14 @@ class RegisterScreen extends StatelessWidget {
     showDialog(
         context: ctx,
         builder: (ctx) => AlertDialog(
-              title: Text("An Error Occured"),
+              title: Text("Nastala chyba"),
               content: Text(message),
               actions: [
                 FlatButton(
                     onPressed: () {
                       Navigator.of(ctx).pop();
                     },
-                    child: Text("Alright then"))
+                    child: Text("Jasně, chápu"))
               ],
             ));
   }
@@ -168,7 +167,6 @@ class RegisterScreen extends StatelessWidget {
       ),
     );
     final auth = Provider.of<Auth>(context, listen: true);
-    //return auth.isAuth ? FituskaStart() : screen;
-    return screen;
+    return auth.isAuth ? FituskaStart() : screen;
   }
 }
