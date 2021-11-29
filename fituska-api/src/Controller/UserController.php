@@ -33,7 +33,8 @@ class UserController extends Controller
         );
 
         $this->parseArgument($bodyArguments);
-        echo($this->errorMsg);
+        if ($this->errorMsg != "")
+            return $this->return403response($this->errorMsg);
 
         /** @var User */
         $user = $this->em->getRepository(User::class)->findOneBy(array("email" => "{$body['email']}"));
@@ -71,7 +72,8 @@ class UserController extends Controller
         );
 
         $this->parseArgument($bodyArguments);
-        echo($this->errorMsg);
+        if ($this->errorMsg != "")
+            return $this->return403response($this->errorMsg);
 
         // check email validity and if it's unique
         if (!$this->us->isEmailValid($body["email"]))

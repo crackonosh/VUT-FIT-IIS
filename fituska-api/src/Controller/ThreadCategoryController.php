@@ -31,7 +31,8 @@ class ThreadCategoryController extends Controller
         );
 
         $this->parseArgument($bodyArguments);
-        echo($this->errorMsg);
+        if ($this->errorMsg != "")
+            return $this->return403response($this->errorMsg);
 
         if (!$this->tcs->isNameUniqueForCourse($body["name"], $body["course_code"]))
         {
@@ -122,7 +123,9 @@ class ThreadCategoryController extends Controller
         );
 
         $this->parseArgument($bodyArguments);
-        echo($this->errorMsg);
+        if ($this->errorMsg != "")
+            return $this->return403response($this->errorMsg);
+
 
         /** @var ThreadCategory */
         $tCategory = $this->em->find(ThreadCategory::class, $args["id"]);

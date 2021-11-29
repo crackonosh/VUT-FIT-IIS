@@ -52,7 +52,8 @@ class ThreadController extends Controller
         );
 
         $this->parseArgument($bodyArguments);
-        echo($this->errorMsg);
+        if ($this->errorMsg != "")
+            return $this->return403response($this->errorMsg);
 
         /** @var Course */
         $course = $this->em->find(Course::class, $body['course_code']);
@@ -207,7 +208,6 @@ class ThreadController extends Controller
                 "id" => $result["id"],
                 "title" => $result["title"],
                 "is_closed" => $result["closed_on"] == NULL ? false : true,
-                "category" => $thread->getCategory()->getName(),
                 "author" => array(
                     "id" => $result["created_by"]["id"],
                     "name" => $result["created_by"]["name"]

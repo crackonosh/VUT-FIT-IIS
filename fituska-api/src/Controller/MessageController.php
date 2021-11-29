@@ -37,7 +37,8 @@ class MessageController extends Controller
         );
 
         $this->parseArgument($bodyArguments);
-        echo($this->errorMsg);
+        if ($this->errorMsg != "")
+            return $this->return403response($this->errorMsg);
 
         /** @var Thread */
         $thread = $this->em->find(Thread::class, $args["id"]);
@@ -137,7 +138,8 @@ class MessageController extends Controller
         );
 
         $this->parseArgument($bodyArguments);
-        echo($this->errorMsg);
+        if ($this->errorMsg != "")
+            return $this->return403response($this->errorMsg);
 
         $msgsCount = count($body['messages']);
         $failed = 0;

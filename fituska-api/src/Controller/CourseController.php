@@ -31,7 +31,8 @@ class CourseController extends Controller
         );
 
         $this->parseArgument($bodyArguments);
-        echo($this->errorMsg);
+        if ($this->errorMsg != "")
+            return $this->return403response($this->errorMsg);
 
         if ($this->cs->isCodeUnique($body["code"]))
         {
