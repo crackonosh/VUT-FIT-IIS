@@ -44,8 +44,8 @@ class Categories with ChangeNotifier {
         _cat.clear();
         res.forEach((elements) {
           _cat.add(Category(id: elements["id"], name: elements["name"]));
-          notifyListeners();
         });
+        notifyListeners();
       });
     } catch (error) {
       print(error);
