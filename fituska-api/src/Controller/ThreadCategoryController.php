@@ -90,10 +90,6 @@ class ThreadCategoryController extends Controller
                 ->withStatus(404);
         }
 
-        if ($course->getLecturer()->getID() != $request->getAttribute('jwt')->sub)
-        {
-            return $this->return403response("Only lecturer of course is able to list thread categories.");
-        }
 
         $results = $this->em->getRepository(ThreadCategory::class)->findBy(array("course" => $args["code"]));
 
