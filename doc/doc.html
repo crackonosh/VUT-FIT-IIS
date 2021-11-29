@@ -1,0 +1,95 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!-- saved from url=(0070)https://www.fit.vutbr.cz/study/courses/IIS/private/projekt/doc.html.cs -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-2">
+    
+    <title>Projekt IIS</title>
+    <style type="text/css">
+    	table { border-collapse: collapse; }
+    	td, th { border: 1px solid black; padding: 0.3em 0.5em; text-align: left; }
+    	dt { font-weight: bold; margin-top: 0.5em; }
+    </style>
+</head>
+<body>
+
+<!-- Zkontrolujte prosím nastavení kódování v hlavičce dokumentu 
+     podle použitého editoru -->
+
+<h1>Fituška-v2: sdílení a řešení testových otázek studenty</h1> <!-- Nahradte názvem svého zadání -->
+
+<dl>
+	<dt>Autoři</dt>
+	<dd>Sotirios Pupakis <!-- Nahraďte skutečným jménem a e-mailem autora a popisem činnosti -->
+	    <a href="mailto:xpupak01@stud.fit.vutbr.cz">xpupak01@stud.fit.vutbr.cz</a> -
+		Frontend
+	</dd>
+	<dd>Karel Norek <!-- Nahraďte skutečným jménem a e-mailem autora a popisem činnosti -->
+	    <a href="mailto:xnorek01@stud.fit.vutbr.cz">xnorek01@stud.fit.vutbr.cz</a> - 
+		Frontend, dokumentace, testování, výpomoct při backendu
+	</dd>
+  <dd>Lukáš Hais <!-- Nahraďte skutečným jménem a e-mailem autora a popisem činnosti -->
+	    <a href="mailto:xhaisl00@stud.fit.vutbr.cz">xhaisl00@stud.fit.vutbr.cz</a> - 
+		Backend
+	</dd>
+	<dt>URL aplikace</dt>
+	<dd><a href="http://164.68.102.86/#/">http://164.68.102.86/#/</a></dd>
+</dl>
+
+<h2>Uživatelé systému pro testování</h2>
+
+<table>
+<tbody><tr><th>Email</th><th>Heslo</th><th>Role</th></tr>
+<tr><td>admin@admin.admin</td><td>adminadmin</td><td>Administrátor</td></tr>
+<tr><td>mod@mod.mod</td><td>modmodmod</td><td>Moderátor</td></tr>
+<tr><td>teacher@teacher.teacher</td><td>teacherteacher</td><td>User</td></tr>
+<tr><td>student@student.student</td><td>studentstudent</td><td>User</td></tr>
+</tbody></table>
+
+<h2>Implementace</h2>
+<p>Pro implementaci backendu je zvolen framework Slim</p>
+
+<p>Seznam controlleru:</p>
+	<ul>
+		<li><b>fituska-api/src/Controller/Controller.php</b>: základní controller</li>
+		<li><b>fituska-api/src/Controller/UserController.php</b>: controller pro práci s uživatelským učtem</li>
+		<li><b>fituska-api/src/Controller/RoleController.php</b>: controller pro spravování rolí</li>
+		<li><b>fituska-api/src/Controller/CourseController.php</b>: controller pro práci s kurzy</li>
+		<li><b>fituska-api/src/Controller/MessageController.php</b>: controller pro spravování zpráv</li>
+		<li><b>fituska-api/src/Controller/ThreadController.php</b>: controller pro správu vláken</li>
+		<li><b>fituska-api/src/Controller/ThreadCategoryController.php</b>: controller pro práci s kategoriemi</li>
+		<li><b>fituska-api/src/Controller/ApprovedStudnetController.php</b>: controller pro spravování žádostí o přidání do kurzu</li>
+	</ul>
+
+<h3>Databáze</h3>
+
+<img src="er.png" alt="Relační schéma databáze">
+
+<h2>Instalace</h2>
+<ol>
+	
+	<li> Backend - instalace pomocí dockeru.
+		<p>Požadavky: <b>docker</b> s <b>docker-compose</b> </p>
+		<p>Pro instalaci lze použít následující postup:</p>
+		<ol>
+			<li><b>docker-compose up</b> - tento příkaz nastavý php server, mysql a phpmyadmin (lze pustit na pozadí přikazem <b>docker-compose up -d)</b></li>
+			<li><b>./install-dependencies.sh</b> - nainstaluje závislosti </li>
+			<li><b>./update-schema.sh</b> - aktualizuje schéma databáze podle entit v Domain adresáři</li>
+		</ol>
+		<p>Další možnosti instalace backendu se nachází v souboru <a href="../README.md" target="_blank">README.md</a> v kořenovém adresáři projektu.</p>
+	</li>
+
+	<li>
+		Frontend 
+		<p>Požadavky: <b>flutter</b> </p>
+		<ol>
+			<li>Frontend je nutné spouštět ve složce fituska_web_app.</li>
+			<li>Njedříve je nutné stáhnout potřebované knihovny pomocí příkazu <b>flutter pub get</b>.</li>
+			<li>Poté příkaz <b>flutter run</b> - tento příkaz spustí frontend.</li>
+		</ol>
+	</li>
+
+</ol>
+
+
+<h2>Známé problémy</h2>
+<p>Nelze udělovat hlasy, nelze přidávat reakce, nelze zakládat vláknam, posílat zprávy</p>
+</body></html>

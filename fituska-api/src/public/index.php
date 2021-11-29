@@ -10,13 +10,16 @@ use App\Controller\RoleController;
 use App\Controller\UserController;
 use App\Controller\ThreadCategoryController;
 use App\Controller\ThreadController;
+use App\Services\SetupService;
 use Slim\Exception\HttpNotFoundException;
 use Slim\Factory\AppFactory;
 use Slim\Routing\RouteCollectorProxy;
+use Slim\Exception\HttpMethodNotAllowedException;
 
 require __DIR__ . '/../../vendor/autoload.php';
 
-// Set container to create App with on AppFactory
+header('Access-Control-Allow-Origin: *');
+
 AppFactory::setContainer(require __DIR__ . '/../../bootstrap.php');
 $app = AppFactory::create();
 $container = $app->getContainer();
@@ -35,7 +38,13 @@ if (!$displayErrorDetails)
         include_once __DIR__ . '/../Handler/HttpNotFoundHandler.php'
     );
 }
+$errorMiddleware->setErrorHandler(
+    HttpMethodNotAllowedException::class,
+    include_once __DIR__ . '/../Handler/HttpMethodNotAllowedHandler.php'
+);
 
+// used for data setup when newly deployed to server
+$app->get('/setup', SetupService::class . ':setup');
 
 /** SIGNUP/LOGIN ENDPOINTS */
 $app->post('/signup', UserController::class . ':addUser');
@@ -44,6 +53,7 @@ $app->post('/login', UserController::class . ':loginUser');
 
 /********************** PUBLIC ENDPOINTS *****************************/
 // user endpoints
+$app->get('/users', UserController::class . ':getUsers');
 $app->get('/users/{id}/get', UserController::class . ':getUser');
 $app->get('/users/email/{email}/get', UserController::class . ':getUsersByEmail'); // maybe delete this endpoint?
 $app->get('/users/name/{name}/get', UserController::class . ':getUsersByName');
@@ -69,7 +79,6 @@ $app->group('', function (RouteCollectorProxy $group) {
     $group->delete('/roles/{id}', RoleController::class . ':deleteRole');
 
     /** USER ENDPOINTS */
-    $group->get('/users', UserController::class . ':getUsers');
     $group->put('/users/{userID}/role/{roleID}', UserController::class . ':changeRole');
 
     /** COURSE ENDPOINTS */
@@ -96,12 +105,9 @@ $app->group('', function (RouteCollectorProxy $group) {
 
     /** THREAD MESSAGE ENDPOINTS */
     $group->post('/threads/{id}/message/add', MessageController::class . ':addMessage');
-
-
-    // NEEDS TESTING
+    $group->post('/messages/{id}/vote', MessageController::class . ':addVote');
     $group->post('/messages/compensate', MessageController::class . ':compensateMessages');
     $group->put('/messages/{id}/update-score', MessageController::class . ':updateScoreForMessage');
-    $group->post('/messages/{id}/vote', MessageController::class . ':addVote');
 
 })->add(include_once __DIR__ . '/../Middleware/JwtMiddleware.php');
 /********************** PROTECTED ENDPOINTS **************************/

@@ -11,7 +11,7 @@ fi
 CONTAINER_ID=$(docker ps --filter name=fituska_php73 -q)
 if [[ -z $CONTAINER_ID ]]
 then
-  echo "No container named fituska_php73 is running, try running 'docker-composer up'"
+  echo "No container named fituska_php73 is running, try running 'docker-compose up'"
   exit 1
 fi
 

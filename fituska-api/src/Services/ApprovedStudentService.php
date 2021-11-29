@@ -24,12 +24,13 @@ class ApprovedStudentService
         );
     }
 
-    public function isApproved(User $student, Course $course)
+    public function isApproved(User $requester, Course $course)
     {
         /** @var ApprovedStudent */
         $application = $this->em->getRepository(ApprovedStudent::class)
-            ->findBy(array('student' => $student->getID(), 'course' => $course->getCode()))[0];
+            ->findOneBy(array('student' => "{$requester->getID()}", 'course' => $course->getCode()));
 
+        if (!$application) return false;
         return $application->getStatus();
     }
 }

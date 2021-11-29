@@ -31,7 +31,8 @@ class ThreadCategoryController extends Controller
         );
 
         $this->parseArgument($bodyArguments);
-        echo($this->errorMsg);
+        if ($this->errorMsg != "")
+            return $this->return403response($this->errorMsg);
 
         if (!$this->tcs->isNameUniqueForCourse($body["name"], $body["course_code"]))
         {
@@ -77,7 +78,7 @@ class ThreadCategoryController extends Controller
     public function readThreadCategories(Request $request, Response $response, $args): Response
     {
         /** @var Course */
-        $course = $this->em->find(Course::class, $args['coude']);
+        $course = $this->em->find(Course::class, $args['code']);
         if (!$course)
         {
             $response->getBody()->write(json_encode(array(
@@ -89,10 +90,6 @@ class ThreadCategoryController extends Controller
                 ->withStatus(404);
         }
 
-        if ($course->getLecturer()->getID() != $request->getAttribute('jwt')->sub)
-        {
-            return $this->return403response("Only lecturer of course is able to list thread categories.");
-        }
 
         $results = $this->em->getRepository(ThreadCategory::class)->findBy(array("course" => $args["code"]));
 
@@ -122,7 +119,9 @@ class ThreadCategoryController extends Controller
         );
 
         $this->parseArgument($bodyArguments);
-        echo($this->errorMsg);
+        if ($this->errorMsg != "")
+            return $this->return403response($this->errorMsg);
+
 
         /** @var ThreadCategory */
         $tCategory = $this->em->find(ThreadCategory::class, $args["id"]);

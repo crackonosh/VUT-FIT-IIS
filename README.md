@@ -47,7 +47,7 @@ In `fituska-api/src/` folder:
 - `index.php` - this file contains some middlewares (you probably won't change those) and endpoint definitions 
 
 ##### Domain
-Contains files for ORM to database. They're all should be inside `App\Domain` namespace and have getter/setter methods
+Contains files for ORM to database. They all should be inside `App\Domain` namespace and have getter/setter methods
 
 ##### Controller
 Contains controllers, for various endpoints, that has functions for CRUD operations
@@ -69,7 +69,8 @@ All endpoints should be forwarded to `localhost:8000/{endpoint}` where `{endpoin
     "name": "string",
     "password": "string",
     "email": "string",
-    "role": "int" // this should correspond to default member role ID in database
+    "phone": "string", // optional
+    "addresss": "string" // optional
 }
 ```
 
@@ -240,7 +241,7 @@ Because users should get points for correct answers they shouldn't be able to ch
     "messages": [
         {
             "id": "int",
-            "vote": "int" // number to incerement score
+            "votes": "int" // number to incerement score
         },
         // ...
     ]

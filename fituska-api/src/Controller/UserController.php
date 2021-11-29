@@ -33,22 +33,28 @@ class UserController extends Controller
         );
 
         $this->parseArgument($bodyArguments);
-        echo($this->errorMsg);
+        if ($this->errorMsg != "")
+            return $this->return403response($this->errorMsg);
 
-        /** @var User[] */
-        $user = $this->em->getRepository(User::class)->findBy(array("email" => "{$body['email']}"));
+        /** @var User */
+        $user = $this->em->getRepository(User::class)->findOneBy(array("email" => "{$body['email']}"));
         
         if (
-            !$user[0] ||
-            $user[0]->getPassword() != $this->us->hashPassword($body['password'])
+            !$user||
+            $user->getPassword() != $this->us->hashPassword($body['password'])
         ){
             return $this->return403response("Invalid credentials.");
         }
 
-        $jwt = $this->as->encodeJWT($user[0]->getID(), $user[0]->getRole()->getName());
+        $jwt = $this->as->encodeJWT($user->getID(), $user->getRole()->getName());
 
         $response->getBody()->write(json_encode(array(
-            "jwt" => $jwt
+            "jwt" => $jwt,
+            "exp" => time() + 1800,
+            "user" => array(
+                'id' => $user->getID(),
+                'role' => $user->getRole()->getName()
+            )
         )));
         return $response
             ->withHeader('Content-type', 'application/json');
@@ -67,7 +73,8 @@ class UserController extends Controller
         );
 
         $this->parseArgument($bodyArguments);
-        echo($this->errorMsg);
+        if ($this->errorMsg != "")
+            return $this->return403response($this->errorMsg);
 
         // check email validity and if it's unique
         if (!$this->us->isEmailValid($body["email"]))
@@ -80,7 +87,7 @@ class UserController extends Controller
         }
 
         /** @var Role */
-        $userRole = $this->em->find(Role::class, 2); // TODO: 2 equals to member right now
+        $userRole = $this->em->find(Role::class, 3);
 
         if ($userRole == NULL)
         {
@@ -112,11 +119,6 @@ class UserController extends Controller
 
     public function getUsers(Request $request, Response $response): Response
     {
-        if ($request->getAttribute('jwt')->role != 'admin')
-        {
-            return $this->return403response("Only admin is able to list all users.");
-        }
-
         $results = $this->em->getRepository(User::class)->findAll();
         
         $msg = array();
@@ -149,7 +151,8 @@ class UserController extends Controller
             "name" => $user->getName(),
             "email" => $user->getEmail(),
             "phone" => $user->getPhone(),
-            "address" => $user->getAddress()
+            "address" => $user->getAddress(),
+            "score" => $user->getScore()
         );
 
         $response->getBody()->write(json_encode($msg));

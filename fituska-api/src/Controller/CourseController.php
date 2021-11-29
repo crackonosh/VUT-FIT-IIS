@@ -31,7 +31,8 @@ class CourseController extends Controller
         );
 
         $this->parseArgument($bodyArguments);
-        echo($this->errorMsg);
+        if ($this->errorMsg != "")
+            return $this->return403response($this->errorMsg);
 
         if ($this->cs->isCodeUnique($body["code"]))
         {
@@ -146,6 +147,13 @@ class CourseController extends Controller
 
     public function approveCourse(Request $request, Response $response, $args): Response
     {
+        $jwtRole = $request->getAttribute('jwt')->role;
+
+        if ($jwtRole != 'moderator' && $jwtRole != 'admin')
+        {
+            return $this->return403response("Only user with 'moderator' or 'admin' role is able to approve courses.");
+        }
+
         /** @var Course */
         $course = $this->em->find(Course::class, $args["code"]);
 
@@ -180,12 +188,41 @@ class CourseController extends Controller
             ->withHeader('Content-type', 'application/json');
     }
 
+    public function deleteCourse(Request $request, Response $response, $args): Response
+    {
+        $jwtRole = $request->getAttribute('jwt')->role;
+
+        if ($jwtRole != 'moderator' && $jwtRole != 'admin')
+        {
+            return $this->return403response("Only user with 'moderator' or 'admin' role is able to delete courses.");
+        }
+
+        /** @var Course */
+        $course = $this->em->find(Course::class, $args["code"]);
+
+        if (!$course)
+        {
+            return $this->return403response("Unable to find course with specified code.");
+        }
+
+        $this->em->remove($course);
+        $this->em->flush();
+
+        $response->getBody()->write(json_encode(array(
+            "message" => "Successfully deleted course."
+        )));
+        return $response
+            ->withHeader('Content-type', 'application/json');
+
+    }
+
     public function getApprovedCourses(Request $request, Response $response, $args): Response
     {
         $courses = $this->em->createQueryBuilder()
-            ->select("c, u")
+            ->select("c, l, a")
             ->from(Course::class, 'c')
-            ->join("c.lecturer", 'u')
+            ->join("c.lecturer", 'l')
+            ->join("c.approved_by", 'a')
             ->where("c.approved_on IS NOT NULL");
 
         $results = $courses->getQuery()->getArrayResult();
@@ -209,6 +246,7 @@ class CourseController extends Controller
                 );
             }
 
+
             $tmp = array(
                 "code" => $course["code"],
                 "name" => $course["name"],
@@ -230,7 +268,7 @@ class CourseController extends Controller
     {
         $jwtRole = $request->getAttribute('jwt')->role;
 
-        if ($jwtRole != 'moderator' || $jwtRole != 'admin')
+        if ($jwtRole != 'moderator' && $jwtRole != 'admin')
         {
             return $this->return403response("Only user with 'moderator' or 'admin' role is able to list not approved courses.");
         }

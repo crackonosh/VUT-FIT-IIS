@@ -52,7 +52,8 @@ class ThreadController extends Controller
         );
 
         $this->parseArgument($bodyArguments);
-        echo($this->errorMsg);
+        if ($this->errorMsg != "")
+            return $this->return403response($this->errorMsg);
 
         /** @var Course */
         $course = $this->em->find(Course::class, $body['course_code']);
@@ -64,15 +65,10 @@ class ThreadController extends Controller
 
         /** @var User */
         $createdBy = $this->em->find(User::class, $request->getAttribute('jwt')->sub);
-        if (!$createdBy)
-        {
-            return $this->return403response("Unable to assign not existing user.");
-        }
         if (
-            $course->getLecturer() != $createdBy->getID() &&
-            $this->ass->isApproved($createdBy, $course)
-        )
-        {
+            $course->getLecturer()->getID() != $createdBy->getID() &&
+            !$this->ass->isApproved($createdBy, $course)
+        ){
             return $this->return403response("Only course lecturer and approved enrolled students are able to create new threads.");
         }
 
@@ -114,7 +110,9 @@ class ThreadController extends Controller
         // save all attachments
         $this->em->flush();
 
-        $response->getBody()->write("Successfully created new thread.");
+        $response->getBody()->write(json_encode(array(
+            "message" => "Successfully created new thread."
+        )));
         return $response
             ->withHeader('Content-type', 'application/json')
             ->withStatus(201);
@@ -141,6 +139,7 @@ class ThreadController extends Controller
                 "id" => $thread->getCreatedBy()->getID(),
                 "name" => $thread->getCreatedBy()->getName()
             ),
+            "category" => $thread->getCategory()->getName(),
             "messages" => $this->ts->prepareMessagesForResponse($thread->getMessages())
         );
 
@@ -170,6 +169,7 @@ class ThreadController extends Controller
                     "id" => $thread->getCreatedBy()->getID(),
                     "name" => $thread->getCreatedBy()->getName()
                 ),
+                "category" => $thread->getCategory()->getName(),
                 "is_closed" => $thread->getClosedOn() == NULL ? false : true
             );
             array_push($msg, $tmp);
@@ -183,9 +183,10 @@ class ThreadController extends Controller
     public function getThreadsByTitle(Request $request, Response $response, $args): Response
     {
         $qb = $this->em->createQueryBuilder()
-            ->select("t, a")
+            ->select("t, a, c")
             ->from(Thread::class, 't')
             ->join('t.created_by', 'a')
+            ->join('t.category', 'c')
             ->where("t.title LIKE '%" . $args["title"] . "%'")
             ->orderBy('t.closed_on');
 
@@ -208,6 +209,7 @@ class ThreadController extends Controller
                 "id" => $result["id"],
                 "title" => $result["title"],
                 "is_closed" => $result["closed_on"] == NULL ? false : true,
+                'category' => $result['category']['name'],
                 "author" => array(
                     "id" => $result["created_by"]["id"],
                     "name" => $result["created_by"]["name"]
@@ -243,7 +245,9 @@ class ThreadController extends Controller
         $this->em->persist($thread);
         $this->em->flush();
 
-        $response->getBody()->write("Successfully closed a thread.");
+        $response->getBody()->write(json_encode(array(
+            "message" => "Successfully closed a thread."
+        )));
         return $response
             ->withHeader('Content-type', 'application/json');
     }
@@ -267,7 +271,9 @@ class ThreadController extends Controller
         $this->em->remove($thread);
         $this->em->flush();
 
-        $response->getBody()->write("Successfully deleted a thread.");
+        $response->getBody()->write(json_encode(array(
+            "message" => "Successfully deleted a thread."
+        )));
         return $response
             ->withHeader('Content-type', 'application/json');
     }
