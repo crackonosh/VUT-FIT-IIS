@@ -208,6 +208,28 @@ class Courses with ChangeNotifier {
     return _courses.firstWhere((element) => element.id == id);
   }
 
+  Future<void> setClosed(String cour, int id, Auth auth) async {
+    final Uri url = Uri.parse("http://$api:8000/threads/${id}/close");
+    try {
+      final response = await http.put(url, headers: {
+        'Authorization': 'Bearer ${auth.token}',
+      }).timeout(Duration(seconds: 4), onTimeout: () {
+        throw Exception("Timed out");
+      }).then((value) {
+        List<Thread> thre = findById(cour).threads;
+        for (Thread thr in thre) {
+          if (thr.id == id) {
+            thr.isClosed = true;
+            break;
+          }
+        }
+        notifyListeners();
+      });
+    } catch (error) {
+      rethrow;
+    }
+  }
+
   Future<void> initCourses() async {
     _courses.clear();
     final Uri url = Uri.parse("http://$api:8000/courses/get/approved");
@@ -264,7 +286,10 @@ class Courses with ChangeNotifier {
       List<Message> msg = [];
       final res = json.decode(response.body);
       res["messages"].forEach((element) {
-        msg.add(Message(text: element["text"], role: element["role"], author: element["author"]["id"]));
+        msg.add(Message(
+            text: element["text"],
+            role: element["role"],
+            author: element["author"]["id"]));
       });
       return msg;
     } catch (error) {
