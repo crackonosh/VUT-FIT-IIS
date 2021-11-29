@@ -36,22 +36,24 @@ class Users with ChangeNotifier {
 
   Future<void> initUsers() async {
     final Uri url = Uri.parse("http://$api:8000/users");
+    _users.clear();
     try {
       final response = await http.get(url).timeout(const Duration(seconds: 4),
           onTimeout: () {
         throw Exception("You Timed out");
+      }).then((value) {
+        final res = json.decode(value.body);
+        res.forEach((element) {
+          addUser(
+              element['id'],
+              element['name'],
+              element['email'],
+              element['address'].toString(),
+              element['phone'].toString(),
+              element['score']);
+        });
+        notifyListeners();
       });
-      final res = json.decode(response.body);
-      res.forEach((element) {
-        addUser(
-            element['id'],
-            element['name'],
-            element['email'],
-            element['address'].toString(),
-            element['phone'].toString(),
-            element['score']);
-      });
-      notifyListeners();
     } catch (error) {
       rethrow;
     }

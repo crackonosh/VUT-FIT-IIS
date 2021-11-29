@@ -26,17 +26,17 @@ class UserPanel extends StatelessWidget {
               TextButton(
                   onPressed: () =>
                       Navigator.of(context).pushNamed("/course-list"),
-                  child: const Text("Spravovat kurzy")),
+                  child: const Text("Správa kurzů")),
               if (auth.role == "admin" || auth.role == "moderator")
                 TextButton(
                     onPressed: () =>
                         Navigator.of(context).pushNamed("/course-management"),
-                    child: const Text("Spravovat kurzy - ADMIN")),
+                    child: const Text("Správa kurzů - Moderátor")),
               if (auth.role == "admin")
                 TextButton(
                     onPressed: () =>
                         Navigator.of(context).pushNamed("/user-list"),
-                    child: const Text("Spravovat Uživatele")),
+                    child: const Text("Správa Uživatelů")),
             ],
           ),
         ),
