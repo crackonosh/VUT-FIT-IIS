@@ -4,6 +4,7 @@ import 'package:fituska_web_app/screens/add_thread.dart';
 import 'package:fituska_web_app/screens/course_create.dart';
 import 'package:fituska_web_app/screens/course_detail.dart';
 import 'package:fituska_web_app/screens/course_edit.dart';
+import 'package:fituska_web_app/screens/course_reg.dart';
 import 'package:fituska_web_app/screens/my_courses.dart';
 import 'package:fituska_web_app/screens/thread_detail.dart';
 import 'package:fituska_web_app/screens/user_panel.dart';
@@ -72,6 +73,7 @@ class Fituska extends StatelessWidget {
           "/course-management": (ctx) => ApproveCoursesScreen(),
           "/user-management": (ctx) => ManageUser(),
           "/user-list": (ctx) => UserList(),
+          "/course-reg": (ctx) => CourseRegScreen(),
         },
       ),
     );

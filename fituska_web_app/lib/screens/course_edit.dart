@@ -6,8 +6,6 @@ import 'package:fituska_web_app/providers/users.dart';
 import 'package:flutter/material.dart';
 import 'package:fituska_web_app/widgets/appbar.dart';
 import 'package:provider/provider.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
 
 class CourseEditScreen extends StatelessWidget {
   static const routeName = "/course-edit";
@@ -67,8 +65,8 @@ class CourseEditScreen extends StatelessWidget {
       child: Scaffold(
         appBar: buildAppBar(context),
         body: Center(
-          child: Column(mainAxisAlignment: MainAxisAlignment.start, children: <
-              Widget>[
+          child: Column(mainAxisAlignment: MainAxisAlignment.start,
+          children: <Widget>[
             Padding(
               padding: EdgeInsets.all(8.0),
               child: Text(course.name,

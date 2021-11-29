@@ -1,5 +1,6 @@
 import 'package:fituska_web_app/providers/auth.dart';
 import 'package:fituska_web_app/providers/courses.dart';
+import 'package:fituska_web_app/providers/categories.dart';
 import 'package:fituska_web_app/screens/login.dart';
 import 'package:flutter/material.dart';
 
@@ -9,17 +10,26 @@ import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-// TODO - ADD CATEGORY SELECTOR
+class AddThreadScreen extends StatefulWidget {
+  const AddThreadScreen({Key? key}) : super(key: key);
+  static const routeName = "/user-management";
 
-class AddThreadScreen extends StatelessWidget {
+  @override
+  State<AddThreadScreenr> createState() => _AddThreadScreenState();
+}
+
+class _AddThreadScreenState extends State<AddThreadScreen> {
   final Map<String, String> _formData = {
     'title': '',
     'category': '',
     'message': '',
+    'id': '',
   };
 
   final api = "164.68.102.86";
   final _form = GlobalKey<FormState>();
+
+  
 
   Future<void> _submit(BuildContext context, Auth auth, String code) async {
     final isValid = _form.currentState!.validate();
@@ -31,7 +41,7 @@ class AddThreadScreen extends StatelessWidget {
     String b = jsonEncode({
       "course_code": code,
       'title': _formData['title'],
-      "category": 1,
+      "category": _formData['id'] as int,
       "message": _formData["message"],
       "attachments": []
     });
@@ -79,6 +89,11 @@ class AddThreadScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     String code = ModalRoute.of(context)!.settings.arguments as String;
+    Provider.of<Categories>(context).getCats(code);
+    var catPro = Provider.of<Categories>(context);
+    var catt = catPro.categories;
+    
+    cats = Provider.of<Categories>(context)
     final auth = Provider.of<Auth>(context);
     var screen = SafeArea(
       child: Scaffold(
@@ -131,6 +146,24 @@ class AddThreadScreen extends StatelessWidget {
                             _formData['message'] = value!;
                           },
                         ),
+                        DropdownButton<String>(
+                            value: dropdownValue,
+                            icon: const Icon(Icons.arrow_downward),
+                            iconSize: 24,
+                            elevation: 16,
+                            style:
+                                const TextStyle(color: Colors.blueAccent),
+                            underline: Container(
+                                height: 2, color: Colors.blueAccent),
+                            onChanged: (String? newValue) {
+                              setState(() {
+                                dropdownValue = newValue!;
+                              });
+                            },
+                            items: roles.map((String roles) {
+                              return DropdownMenuItem(
+                                  value: roles, child: Text(roles));
+                            }).toList())
                       ],
                     ),
                   )),

@@ -16,9 +16,9 @@ class UserPanel extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
               TextButton(
-                  onPressed: () =>
-                      Navigator.of(context).pushNamed("/course-create"),
-                  child: const Text("Registrovat na kurz")),
+                  onPressed: () {},
+                      //Navigator.of(context).pushNamed("/course-create"),
+                  child: const Text("Registrovatna kurz - TBD")),
               TextButton(
                   onPressed: () =>
                       Navigator.of(context).pushNamed("/course-create"),
