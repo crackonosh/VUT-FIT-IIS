@@ -5,6 +5,8 @@ use App\Domain\ApprovedStudent;
 use App\Domain\Course;
 use App\Domain\User;
 use App\Services\ApprovedStudentService;
+use DateTime;
+use DateTimeZone;
 use Doctrine\ORM\EntityManager;
 use JsonException;
 use Slim\Psr7\Request;
@@ -119,6 +121,10 @@ class ApprovedStudentController extends Controller
         }
 
         $application->setStatus(true);
+        $application->setApprovedBy($this->em->find(
+            User::class, $request->getAttribute('jwt')->sub
+        ));
+        $application->setApprovedOn(new DateTime('now', new DateTimeZone('Europe/Prague')));
 
         $this->em->persist($application);
         $this->em->flush();
@@ -147,6 +153,10 @@ class ApprovedStudentController extends Controller
         }
 
         $application->setStatus(false);
+        $application->setApprovedBy($this->em->find(
+            User::class, $request->getAttribute('jwt')->sub
+        ));
+        $application->setApprovedOn(new DateTime('now', new DateTimeZone('Europe/Prague')));
 
         $this->em->persist($application);
         $this->em->flush();
