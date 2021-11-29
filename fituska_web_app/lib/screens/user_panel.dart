@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 class UserPanel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final auth = Provider.of<Auth>(context);
     var screen = SafeArea(
       child: Scaffold(
         appBar: buildAppBar(context),
@@ -17,18 +18,15 @@ class UserPanel extends StatelessWidget {
               TextButton(onPressed: () => Navigator.of(context).pushNamed("/course-create"), child: const Text("Registrovat na kurz")),
               TextButton(onPressed: () => Navigator.of(context).pushNamed("/course-create"), child: const Text("Vytvořit kurz")),
               TextButton(onPressed: () => Navigator.of(context).pushNamed("/course-list"), child: const Text("Spravovat kurzy")),
-              TextButton(onPressed: () => Navigator.of(context).pushNamed("/course-create"), child: const Text("Vytvořit kurz")),
-              TextButton(onPressed: () => Navigator.of(context).pushNamed("/course-create"), child: const Text("Vytvořit kurz")),
-              TextButton(onPressed: () => Navigator.of(context).pushNamed("/course-create"), child: const Text("Vytvořit kurz")),
-              TextButton(onPressed: () => Navigator.of(context).pushNamed("/course-create"), child: const Text("Vytvořit kurz")),
+              if (auth.role == "admin" || auth.role == "moderator")
+                TextButton(onPressed: () => Navigator.of(context).pushNamed("/course-management"), child: const Text("Spravovat kurzy - ADMIN")),
+              if (auth.role == "admin")
+                TextButton(onPressed: () => Navigator.of(context).pushNamed("/course-management"), child: const Text("Spravovat Uživatele")),
             ],
           ),
         ),
       ),
     );
-
-    final auth = Provider.of<Auth>(context, listen: true);
-    // Show user screen if logged in
     return auth.isAuth ? screen : LoginScreen();
   }
 }

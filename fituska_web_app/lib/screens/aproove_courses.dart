@@ -1,26 +1,16 @@
-import 'package:fituska_web_app/models/student_application.dart';
-import 'package:fituska_web_app/providers/applications.dart';
 import 'package:fituska_web_app/providers/auth.dart';
 import 'package:fituska_web_app/providers/courses.dart';
 import 'package:flutter/material.dart';
 import 'package:fituska_web_app/widgets/appbar.dart';
 import 'package:provider/provider.dart';
-import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-class CourseEditScreen extends StatelessWidget {
+class AprooveCoursesScreen extends StatelessWidget {
   static const routeName = "/course-edit";
-
-  
 
   @override
   Widget build(BuildContext context) {
-    String code = ModalRoute.of(context)!.settings.arguments as String;
-    var course = Provider.of<Courses>(context).findById(code);
-    var auth = Provider.of<Auth>(context);
-    Provider.of<Applications>(context).getAppli(code, auth);
-    var apPro = Provider.of<Applications>(context);
-    var appli = apPro.applications;
+    
 
     var screen = SafeArea(
       child: Scaffold(
@@ -58,11 +48,8 @@ class CourseEditScreen extends StatelessWidget {
                             leading: Icon(Icons.messenger_outline_sharp),
                             title: Text(appli[i].student),
                             trailing: Chip(
-                              label: appli[i].approved
-                                  ? Text("Přístup")
-                                  : Text("NEpřístup"),
-                              backgroundColor:
-                                  appli[i].approved ? Colors.green : Colors.red,
+                              label: Text("Nepovoleno"),
+                              backgroundColor: Colors.red,
                             ),
                           ),
                           Row(
@@ -83,7 +70,6 @@ class CourseEditScreen extends StatelessWidget {
                     ),
                   ),
                 ),
-
               ]),
         ),
       ),

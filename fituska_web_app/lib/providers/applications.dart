@@ -22,9 +22,9 @@ class Applications with ChangeNotifier {
         'Authorization': 'Bearer ${auth.token}',
       }).timeout(const Duration(seconds: 4), onTimeout: () {
         throw Exception("Timed out");
+      }).then((value) {
+        getAppliSilent(code, auth).then((value) => notifyListeners());
       });
-      getAppli(code, auth);
-      notifyListeners();
     } catch (error) {
       rethrow;
     }
@@ -37,15 +37,39 @@ class Applications with ChangeNotifier {
         'Authorization': 'Bearer ${auth.token}',
       }).timeout(const Duration(seconds: 4), onTimeout: () {
         throw Exception("Timed out");
+      }).then((value) {
+        getAppliSilent(code, auth).then((value) => notifyListeners());
       });
-      getAppli(code, auth);
-      notifyListeners();
     } catch (error) {
       rethrow;
     }
   }
 
   Future<void> getAppli(String code, Auth auth) async {
+    final Uri url =
+        Uri.parse("http://$api:8000/courses/$code/applications/get");
+    try {
+      await http.get(url, headers: {
+        'Authorization': 'Bearer ${auth.token}',
+      }).timeout(const Duration(seconds: 4), onTimeout: () {
+        throw Exception("Timed out");
+      }).then((value) {
+        final res = json.decode(value.body);
+        _sap.clear();
+        res.forEach((entity) {
+          int id = entity["id"];
+          String s = entity["student"]["name"];
+          bool app = entity["status"];
+          _sap.add(StudentApplication(id: id, student: s, approved: app));
+          notifyListeners();
+        });
+      });
+    } catch (error) {
+      rethrow;
+    }
+  }
+
+  Future<void> getAppliSilent(String code, Auth auth) async {
     final Uri url =
         Uri.parse("http://$api:8000/courses/$code/applications/get");
     try {

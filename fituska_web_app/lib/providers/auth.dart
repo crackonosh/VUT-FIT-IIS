@@ -7,6 +7,7 @@ import 'package:http/http.dart' as http;
 class Auth with ChangeNotifier {
   String _token = "";
   int _id = -1;
+  String _role = "";
   late DateTime _expireryDate = DateTime.now();
 
   final api = "164.68.102.86";
@@ -21,6 +22,13 @@ class Auth with ChangeNotifier {
   String get token {
     if (_expireryDate.isAfter(DateTime.now()) && _token != "" && _id != -1) {
       return _token;
+    }
+    return "";
+  }
+
+  String get role {
+    if (_expireryDate.isAfter(DateTime.now()) && _token != "" && _id != -1) {
+      return _role;
     }
     return "";
   }
@@ -95,10 +103,8 @@ class Auth with ChangeNotifier {
       }
       _token = res['jwt'];
       _expireryDate = DateTime.fromMillisecondsSinceEpoch(res['exp'] * 1000);
-      var strId = res['user']
-          .toString()
-          .substring(5, res['user'].toString().length - 1);
-      _id = int.parse(strId);
+      _id = res['user']["id"];
+      _role = res['user']['role'];
     } catch (error) {
       rethrow;
     }
