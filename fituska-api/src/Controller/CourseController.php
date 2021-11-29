@@ -183,9 +183,10 @@ class CourseController extends Controller
     public function getApprovedCourses(Request $request, Response $response, $args): Response
     {
         $courses = $this->em->createQueryBuilder()
-            ->select("c, u")
+            ->select("c, l, a")
             ->from(Course::class, 'c')
-            ->join("c.lecturer", 'u')
+            ->join("c.lecturer", 'l')
+            ->join("c.approved_by", 'a')
             ->where("c.approved_on IS NOT NULL");
 
         $results = $courses->getQuery()->getArrayResult();
@@ -208,6 +209,7 @@ class CourseController extends Controller
                     "name" => $course["approved_by"]["name"]
                 );
             }
+
 
             $tmp = array(
                 "code" => $course["code"],
