@@ -1,15 +1,16 @@
+import 'package:fituska_web_app/screens/course_edit.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:fituska_web_app/providers/users.dart';
 import 'package:fituska_web_app/screens/course_detail.dart';
 
-class CourseItem extends StatelessWidget {
+class MyCourseItem extends StatelessWidget {
   final String id;
   final String title;
   final int teacher;
   final int nbrOfThreads;
 
-  CourseItem(this.id, this.title, this.teacher, this.nbrOfThreads);
+  MyCourseItem(this.id, this.title, this.teacher, this.nbrOfThreads);
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +22,7 @@ class CourseItem extends StatelessWidget {
         child: GestureDetector(
           onTap: () {
             Navigator.of(context)
-                .pushNamed(CourseDetailScreen.routeName, arguments: id);
+                .pushNamed(CourseEditScreen.routeName, arguments: id);
           },
           child: ListTile(
             leading: Text(id),

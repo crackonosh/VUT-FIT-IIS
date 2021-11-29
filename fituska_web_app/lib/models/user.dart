@@ -1,11 +1,17 @@
 class User {
-  final String name;
-  final String email;
-  final String about;
+  int id;
+  String name;
+  String email;
+  String adress;
+  String phone;
+  int score;
 
-  const User({
-    required this.name,
-    required this.email,
-    required this.about,
+  User({
+    this.id = -1,
+    this.name = "",
+    this.email = "",
+    this.adress = "",
+    this.phone = "",
+    this.score = 0,
   });
 }

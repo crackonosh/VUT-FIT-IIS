@@ -1,6 +1,9 @@
+import 'package:fituska_web_app/providers/auth.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 AppBar buildAppBar(BuildContext context) {
+  final auth = Provider.of<Auth>(context);
   return AppBar(
     automaticallyImplyLeading: false,
     backgroundColor: Colors.blueAccent,
@@ -14,7 +17,7 @@ AppBar buildAppBar(BuildContext context) {
           style: TextStyle(fontSize: 25),
         )),
     actions: <Widget>[
-      TextButton(
+      TextButton (
           onPressed: () => Navigator.of(context).pushNamed("/leaderboard"),
           style: TextButton.styleFrom(
             primary: Colors.white,
@@ -29,6 +32,16 @@ AppBar buildAppBar(BuildContext context) {
             Icons.account_circle,
             size: 25,
           )),
+      if (auth.isAuth)
+        TextButton(
+          onPressed: () => Navigator.of(context).pushNamed("/user-panel"),
+            style: TextButton.styleFrom(
+              primary: Colors.white,
+            ),
+            child: const Text(
+              "Možnosti",
+              style: TextStyle(fontSize: 25),
+        )),
     ],
   );
 }

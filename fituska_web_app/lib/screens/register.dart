@@ -23,13 +23,32 @@ class RegisterScreen extends StatelessWidget {
       return;
     } else {
       _form.currentState!.save();
-      print(_authData['login']);
-      print(_authData['password']);
       try {
         await Provider.of<Auth>(context, listen: false).signup(
             _authData["login"], _authData["password"], _authData["email"]);
-      } catch (error) {}
+        Navigator.of(context).pushNamed("/login");
+      } on TimeoutException catch (e) {
+        _showErrorDialog(context, e.toString());
+      } catch (error) {
+        _showErrorDialog(context, error.toString());
+      }
     }
+  }
+
+  void _showErrorDialog(BuildContext ctx, String message) {
+    showDialog(
+        context: ctx,
+        builder: (ctx) => AlertDialog(
+              title: Text("Nastala chyba"),
+              content: Text(message),
+              actions: [
+                FlatButton(
+                    onPressed: () {
+                      Navigator.of(ctx).pop();
+                    },
+                    child: Text("Jasně, chápu"))
+              ],
+            ));
   }
 
   @override
@@ -86,6 +105,16 @@ class RegisterScreen extends StatelessWidget {
                         },
                       ),
                       TextFormField(
+                        validator: (value) {
+                          if (value != null) {
+                            if (RegExp(
+                                    r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+                                .hasMatch(value)) {
+                              return null;
+                            }
+                          }
+                          return "Není email";
+                        },
                         decoration: const InputDecoration(
                             labelText: "Email",
                             labelStyle: TextStyle(
@@ -138,7 +167,6 @@ class RegisterScreen extends StatelessWidget {
       ),
     );
     final auth = Provider.of<Auth>(context, listen: true);
-    //return auth.isAuth ? FituskaStart() : screen;
-    return screen;
+    return auth.isAuth ? FituskaStart() : screen;
   }
 }
