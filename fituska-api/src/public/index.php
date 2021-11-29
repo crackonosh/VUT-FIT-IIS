@@ -53,6 +53,7 @@ $app->post('/login', UserController::class . ':loginUser');
 
 /********************** PUBLIC ENDPOINTS *****************************/
 // user endpoints
+$app->get('/users', UserController::class . ':getUsers');
 $app->get('/users/{id}/get', UserController::class . ':getUser');
 $app->get('/users/email/{email}/get', UserController::class . ':getUsersByEmail'); // maybe delete this endpoint?
 $app->get('/users/name/{name}/get', UserController::class . ':getUsersByName');
@@ -78,7 +79,6 @@ $app->group('', function (RouteCollectorProxy $group) {
     $group->delete('/roles/{id}', RoleController::class . ':deleteRole');
 
     /** USER ENDPOINTS */
-    $group->get('/users', UserController::class . ':getUsers');
     $group->put('/users/{userID}/role/{roleID}', UserController::class . ':changeRole');
 
     /** COURSE ENDPOINTS */

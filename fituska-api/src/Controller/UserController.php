@@ -116,11 +116,6 @@ class UserController extends Controller
 
     public function getUsers(Request $request, Response $response): Response
     {
-        if ($request->getAttribute('jwt')->role != 'admin')
-        {
-            return $this->return403response("Only admin is able to list all users.");
-        }
-
         $results = $this->em->getRepository(User::class)->findAll();
         
         $msg = array();
