@@ -49,12 +49,14 @@ class Auth with ChangeNotifier {
     return _authLog(email, password);
   }
 
-  void logout() {
+  Future<void> logout() async {
     _token = "";
     _expireryDate = DateTime.now();
     _id = -1;
     _role = "";
     notifyListeners();
+    final prefs = await SharedPreferences.getInstance();
+    prefs.clear();
   }
 
   Future<bool> tryAutoLogin() async {
