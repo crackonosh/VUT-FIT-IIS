@@ -1,4 +1,5 @@
 import 'package:fituska_web_app/providers/applications.dart';
+import 'package:fituska_web_app/providers/categories.dart';
 import 'package:fituska_web_app/screens/add_thread.dart';
 import 'package:fituska_web_app/screens/course_create.dart';
 import 'package:fituska_web_app/screens/course_detail.dart';
@@ -48,7 +49,10 @@ class Fituska extends StatelessWidget {
         ),
         ChangeNotifierProvider<ChangeRole>(
           create: (_) => ChangeRole(),
-        )
+        ),
+        ChangeNotifierProvider<Categories>(
+          create: (_) => Categories(),
+        ),
       ],
       child: MaterialApp(
         title: "Fituška",

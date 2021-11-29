@@ -25,7 +25,7 @@ class Applications with ChangeNotifier {
         getAppliSilent(code, auth).then((value) => notifyListeners());
       });
     } catch (error) {
-      rethrow;
+      print(error);
     }
   }
 
@@ -40,7 +40,7 @@ class Applications with ChangeNotifier {
         getAppliSilent(code, auth).then((value) => notifyListeners());
       });
     } catch (error) {
-      rethrow;
+      print(error);
     }
   }
 
@@ -64,7 +64,7 @@ class Applications with ChangeNotifier {
         });
       });
     } catch (error) {
-      rethrow;
+      print(error);
     }
   }
 
@@ -86,7 +86,7 @@ class Applications with ChangeNotifier {
         _sap.add(StudentApplication(id: id, student: s, approved: app));
       });
     } catch (error) {
-      rethrow;
+      print(error);
     }
   }
 }

@@ -28,7 +28,7 @@ class Course_Applications with ChangeNotifier {
         getAppliSilent(auth).then((value) => notifyListeners());
       });
     } catch (error) {
-      rethrow;
+      print(error);
     }
   }
 
@@ -43,7 +43,7 @@ class Course_Applications with ChangeNotifier {
         getAppliSilent(auth).then((value) => notifyListeners());
       });
     } catch (error) {
-      rethrow;
+      print(error);
     }
   }
 
@@ -65,7 +65,7 @@ class Course_Applications with ChangeNotifier {
         });
       });
     } catch (error) {
-      rethrow;
+      print(error);
     }
   }
 

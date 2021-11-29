@@ -17,7 +17,7 @@ class ChangeRole with ChangeNotifier {
         throw Exception("Timed out");
       });
     } catch (error) {
-      rethrow;
+      print(error);
     }
   }
 }

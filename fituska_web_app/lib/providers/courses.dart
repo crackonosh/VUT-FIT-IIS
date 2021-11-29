@@ -59,7 +59,7 @@ class Courses with ChangeNotifier {
         notifyListeners();
       });
     } catch (error) {
-      rethrow;
+      print(error);
     }
   }
 
@@ -80,7 +80,7 @@ class Courses with ChangeNotifier {
         notifyListeners();
       });
     } catch (error) {
-      rethrow;
+      print(error);
     }
   }
 
@@ -105,7 +105,8 @@ class Courses with ChangeNotifier {
       });
       return threads;
     } catch (error) {
-      rethrow;
+      print(error);
+      return Future.delayed(Duration.zero);
     }
   }
 
@@ -126,7 +127,8 @@ class Courses with ChangeNotifier {
       });
       return msg;
     } catch (error) {
-      rethrow;
+      print(error);
+      return Future.delayed(Duration.zero);
     }
   }
 }

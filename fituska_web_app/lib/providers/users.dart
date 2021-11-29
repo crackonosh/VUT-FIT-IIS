@@ -55,7 +55,7 @@ class Users with ChangeNotifier {
         notifyListeners();
       });
     } catch (error) {
-      rethrow;
+      print(error);
     }
   }
 }

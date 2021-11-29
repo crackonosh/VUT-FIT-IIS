@@ -1,5 +1,6 @@
 import 'package:fituska_web_app/providers/applications.dart';
 import 'package:fituska_web_app/providers/auth.dart';
+import 'package:fituska_web_app/providers/categories.dart';
 import 'package:fituska_web_app/providers/courses.dart';
 import 'package:fituska_web_app/providers/users.dart';
 import 'package:flutter/material.dart';
@@ -11,6 +12,44 @@ import 'dart:convert';
 class CourseEditScreen extends StatelessWidget {
   static const routeName = "/course-edit";
 
+  final Map<String, String> _catData = {
+    'name': '',
+  };
+
+  final _form = GlobalKey<FormState>();
+
+  Future<void> _sendCategory(
+      BuildContext context, String code, Auth auth) async {
+    final isValid = _form.currentState!.validate();
+    if (!isValid) {
+      return;
+    } else {
+      _form.currentState!.save();
+      try {
+        await Provider.of<Categories>(context, listen: false)
+            .addCat(code, _catData["name"] as String, auth);
+      } catch (error) {
+        _showErrorDialog(context, error.toString());
+      }
+    }
+  }
+
+  void _showErrorDialog(BuildContext ctx, String message) {
+    showDialog(
+        context: ctx,
+        builder: (ctx) => AlertDialog(
+              title: Text("Nastala chyba"),
+              content: Text(message),
+              actions: [
+                FlatButton(
+                    onPressed: () {
+                      Navigator.of(ctx).pop();
+                    },
+                    child: Text("Jasně, chápu"))
+              ],
+            ));
+  }
+
   @override
   Widget build(BuildContext context) {
     String code = ModalRoute.of(context)!.settings.arguments as String;
@@ -20,6 +59,9 @@ class CourseEditScreen extends StatelessWidget {
     Provider.of<Applications>(context).getAppli(code, auth);
     var apPro = Provider.of<Applications>(context);
     var appli = apPro.applications;
+    Provider.of<Categories>(context).getCats(code);
+    var catPro = Provider.of<Categories>(context);
+    var catt = catPro.categories;
 
     var screen = SafeArea(
       child: Scaffold(
@@ -81,11 +123,60 @@ class CourseEditScreen extends StatelessWidget {
                 ),
               ),
             ),
-            Text("Kategorie: - TBD",
+            Text("Kategorie:",
                 style: TextStyle(
                   fontSize: 25.0,
                   fontWeight: FontWeight.bold,
                 )),
+            Expanded(
+              child: ListView.builder(
+                itemCount: catt.length,
+                itemBuilder: (ctx, i) {
+                  return Card(
+                    margin:
+                        const EdgeInsets.symmetric(horizontal: 15, vertical: 4),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        ListTile(
+                          leading: Icon(Icons.category),
+                          title: Text(catt[i].name),
+                          subtitle: Text(catt[i].id.toString()),
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              ),
+            ),
+            Form(
+              key: _form,
+              child: Column(
+                children: <Widget>[
+                  TextFormField(
+                    textInputAction: TextInputAction.next,
+                    validator: (value) {
+                      if (value!.isEmpty) {
+                        return "Nemůže být prázdné";
+                      }
+                      return null;
+                    },
+                    decoration: const InputDecoration(
+                        labelText: "Název",
+                        labelStyle:
+                            TextStyle(color: Colors.lightBlue, fontSize: 12.0)),
+                    onSaved: (value) {
+                      _catData['name'] = value!;
+                    },
+                  ),
+                  TextButton(
+                      onPressed: () {
+                        _sendCategory(context, code, auth);
+                      },
+                      child: const Text("Přidat")),
+                ],
+              ),
+            ),
             Text(
               "Otázky",
               style: TextStyle(
