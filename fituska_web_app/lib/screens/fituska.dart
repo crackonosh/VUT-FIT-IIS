@@ -18,26 +18,25 @@ class _FituskaStartState extends State<FituskaStart> {
 
   Future<void> _update(BuildContext context) async {
     try {
-      Provider.of<Courses>(context).initCourses();
+      Provider.of<Courses>(context, listen: false).initCourses();
     } catch (e) {
-      _showErrorDialog(context, "Chyba při komunikaci se serverem.");
+      _showErrorDialog(context, e.toString());
     }
   }
 
   @override
   void didChangeDependencies() {
     if (_isInit) {
-      Provider.of<Users>(context).initUsers();
-      const tim = const Duration(seconds: 5);
-      Timer.periodic(tim, (timer) => _update(context));
+      Provider.of<Users>(context, listen: false).initUsers();
+      const tim = const Duration(seconds: 30);
+      //Timer.periodic(tim, (timer) => _update(context));
       setState(() {
         _isLoading = true;
       });
       _isInit = false;
-      Provider.of<Courses>(context).initCourses().then((_) => setState(() {
+      Provider.of<Courses>(context, listen: false).initCourses().then((_) => setState(() {
                   _isLoading = false;
                 }));
-      _update(context);
     }
     super.didChangeDependencies();
   }

@@ -1,33 +1,40 @@
-import 'dart:convert';
-
 import 'package:fituska_web_app/providers/auth.dart';
+import 'package:fituska_web_app/providers/courses.dart';
 import 'package:fituska_web_app/screens/login.dart';
-import 'package:fituska_web_app/widgets/appbar.dart';
-
-import 'package:http/http.dart' as http;
-
 import 'package:flutter/material.dart';
+
+import 'package:fituska_web_app/widgets/appbar.dart';
 import 'package:provider/provider.dart';
 
-class CourseCreate extends StatelessWidget {
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+
+// TODO - ADD CATEGORY SELECTOR
+
+class AddThreadScreen extends StatelessWidget {
   final Map<String, String> _formData = {
-    'code': '',
-    'name': '',
+    'title': '',
+    'category': '',
+    'message': '',
   };
 
   final api = "164.68.102.86";
-
   final _form = GlobalKey<FormState>();
 
-  Future<void> _submit(BuildContext context, Auth auth) async {
+  Future<void> _submit(BuildContext context, Auth auth, String code) async {
     final isValid = _form.currentState!.validate();
     if (!isValid) {
       return;
     }
     _form.currentState!.save();
-    final Uri url = Uri.parse("http://$api:8000/courses/add");
-    String b =
-        jsonEncode({"code": _formData["code"], 'name': _formData['name']});
+    final Uri url = Uri.parse("http://$api:8000/threads/add");
+    String b = jsonEncode({
+      "course_code": code,
+      'title': _formData['title'],
+      "category": 1,
+      "message": _formData["message"],
+      "attachments": []
+    });
     try {
       final response = await http
           .post(
@@ -41,11 +48,13 @@ class CourseCreate extends StatelessWidget {
           .timeout(const Duration(seconds: 4), onTimeout: () {
         throw Exception("Timed out");
       });
+      Provider.of<Courses>(context, listen: false).initCourses();
       final res = json.decode(response.body);
-      if (res['message'] != "Successfully created new course.") {
+      print(res);
+      /*if (res['message'] != "Successfully created new course.") {
         throw Exception(res["message"]);
-      }
-      Navigator.of(context).pushNamed("/user-panel");
+      }*/
+      Navigator.of(context).pop();
     } catch (error) {
       _showErrorDialog(context, error.toString());
     }
@@ -69,6 +78,7 @@ class CourseCreate extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    String code = ModalRoute.of(context)!.settings.arguments as String;
     final auth = Provider.of<Auth>(context);
     var screen = SafeArea(
       child: Scaffold(
@@ -80,7 +90,7 @@ class CourseCreate extends StatelessWidget {
               const Padding(
                 padding: EdgeInsets.all(36.0),
                 child: Text(
-                  "Vytvoření kurzu",
+                  "Vytvoření vlákna",
                   style: TextStyle(fontSize: 40.0, fontWeight: FontWeight.bold),
                 ),
               ),
@@ -99,26 +109,26 @@ class CourseCreate extends StatelessWidget {
                             return null;
                           },
                           decoration: const InputDecoration(
-                              labelText: "Kód",
+                              labelText: "Název",
                               labelStyle: TextStyle(
                                   color: Colors.lightBlue, fontSize: 12.0)),
                           onSaved: (value) {
-                            _formData['code'] = value!;
+                            _formData['title'] = value!;
                           },
                         ),
                         TextFormField(
                           validator: (value) {
                             if (value!.length < 2) {
-                              return "Název musí být delší";
+                              return "Zpráva musí být větší";
                             }
                             return null;
                           },
                           decoration: const InputDecoration(
-                              labelText: "Jméno",
+                              labelText: "Zpráva",
                               labelStyle: TextStyle(
                                   color: Colors.lightBlue, fontSize: 12.0)),
                           onSaved: (value) {
-                            _formData['name'] = value!;
+                            _formData['message'] = value!;
                           },
                         ),
                       ],
@@ -132,7 +142,7 @@ class CourseCreate extends StatelessWidget {
                           left: 24.0, top: 48.0, right: 24.0, bottom: 8.0),
                       child: GestureDetector(
                           onTap: () {
-                            _submit(context, auth);
+                            _submit(context, auth, code);
                           },
                           child: Container(
                             alignment: Alignment.center,

@@ -1,5 +1,9 @@
+import 'package:fituska_web_app/providers/applications.dart';
+import 'package:fituska_web_app/screens/add_thread.dart';
 import 'package:fituska_web_app/screens/course_create.dart';
 import 'package:fituska_web_app/screens/course_detail.dart';
+import 'package:fituska_web_app/screens/course_edit.dart';
+import 'package:fituska_web_app/screens/my_courses.dart';
 import 'package:fituska_web_app/screens/thread_detail.dart';
 import 'package:fituska_web_app/screens/user_panel.dart';
 import 'package:flutter/material.dart';
@@ -31,6 +35,9 @@ class Fituska extends StatelessWidget {
         ChangeNotifierProvider<Users>(
           create: (_) => Users(),
         ),
+        ChangeNotifierProvider<Applications>(
+          create: (_) => Applications(),
+        ),
       ],
       child: MaterialApp(
         title: "Fituška",
@@ -44,6 +51,9 @@ class Fituska extends StatelessWidget {
           "/thread-detail": (ctx) => ThreadDetailScreen(),
           "/course-create": (ctx) => CourseCreate(),
           "/user-panel": (ctx) => UserPanel(),
+          "/add-thread": (ctx) => AddThreadScreen(),
+          "/course-list": (ctx) => MyCourseList(),
+          "/course-edit": (ctx) => CourseEditScreen(),
         },
       ),
     );

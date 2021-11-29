@@ -16,7 +16,7 @@ class UserPanel extends StatelessWidget {
             children: <Widget>[
               TextButton(onPressed: () => Navigator.of(context).pushNamed("/course-create"), child: const Text("Registrovat na kurz")),
               TextButton(onPressed: () => Navigator.of(context).pushNamed("/course-create"), child: const Text("Vytvořit kurz")),
-              TextButton(onPressed: () => Navigator.of(context).pushNamed("/course-create"), child: const Text("Spravovat kurzy")),
+              TextButton(onPressed: () => Navigator.of(context).pushNamed("/course-list"), child: const Text("Spravovat kurzy")),
               TextButton(onPressed: () => Navigator.of(context).pushNamed("/course-create"), child: const Text("Vytvořit kurz")),
               TextButton(onPressed: () => Navigator.of(context).pushNamed("/course-create"), child: const Text("Vytvořit kurz")),
               TextButton(onPressed: () => Navigator.of(context).pushNamed("/course-create"), child: const Text("Vytvořit kurz")),

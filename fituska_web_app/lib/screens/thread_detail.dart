@@ -54,23 +54,17 @@ class ThreadDetailScreen extends StatelessWidget {
             ],
           ),
         ),
-        floatingActionButton: float(auth, context),
+        floatingActionButton: Visibility(
+          visible: auth.isAuth,
+          child: FloatingActionButton(
+            child: Icon(Icons.add),
+            onPressed: () {
+              //Navigator.of(context).pushNamed("/newTransaction");
+            },
+          ),
+        ),
       ),
     );
     return screen;
-  }
-
-  Widget float(Auth auth, BuildContext context) {
-    if (auth.isAuth) {
-      return FloatingActionButton(
-        child: Icon(Icons.add),
-        onPressed: () {
-          Navigator.of(context).pushNamed("/newTransaction");
-        },
-      );
-    }
-    return FloatingActionButton(
-        child: Icon(Icons.disabled_by_default_outlined), onPressed: () {}
-      );
   }
 }

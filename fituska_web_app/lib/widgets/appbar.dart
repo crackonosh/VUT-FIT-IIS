@@ -17,7 +17,7 @@ AppBar buildAppBar(BuildContext context) {
           style: TextStyle(fontSize: 25),
         )),
     actions: <Widget>[
-      /*(
+      TextButton (
           onPressed: () => Navigator.of(context).pushNamed("/leaderboard"),
           style: TextButton.styleFrom(
             primary: Colors.white,
@@ -25,7 +25,7 @@ AppBar buildAppBar(BuildContext context) {
           child: const Text(
             "Žebříček",
             style: TextStyle(fontSize: 25),
-          )),*/
+          )),
       IconButton(
           onPressed: () => Navigator.of(context).pushNamed("/login"),
           icon: const Icon(

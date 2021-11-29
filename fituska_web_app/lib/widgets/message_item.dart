@@ -26,7 +26,6 @@ class MessageItem extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.end,
             children: <Widget>[
               IconButton(onPressed: () => {}, icon: Icon(Icons.thumb_up)),
-              IconButton(onPressed: () => {}, icon: Icon(Icons.thumb_down))
             ],
           )
         ],
