@@ -52,7 +52,8 @@ class UserController extends Controller
             "jwt" => $jwt,
             "exp" => time() + 1800,
             "user" => array(
-                'id' => $user->getID()
+                'id' => $user->getID(),
+                'role' => $user->getRole()->getName()
             )
         )));
         return $response
