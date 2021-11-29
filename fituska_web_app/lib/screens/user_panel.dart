@@ -21,7 +21,7 @@ class UserPanel extends StatelessWidget {
               if (auth.role == "admin" || auth.role == "moderator")
                 TextButton(onPressed: () => Navigator.of(context).pushNamed("/course-management"), child: const Text("Spravovat kurzy - ADMIN")),
               if (auth.role == "admin")
-                TextButton(onPressed: () => Navigator.of(context).pushNamed("/course-management"), child: const Text("Spravovat Uživatele")),
+                TextButton(onPressed: () => Navigator.of(context).pushNamed("/user-managment"), child: const Text("Spravovat Uživatele")),
             ],
           ),
         ),

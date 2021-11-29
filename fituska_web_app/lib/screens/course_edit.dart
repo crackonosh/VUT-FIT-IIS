@@ -11,8 +11,6 @@ import 'dart:convert';
 class CourseEditScreen extends StatelessWidget {
   static const routeName = "/course-edit";
 
-  
-
   @override
   Widget build(BuildContext context) {
     String code = ModalRoute.of(context)!.settings.arguments as String;
@@ -22,30 +20,69 @@ class CourseEditScreen extends StatelessWidget {
     var apPro = Provider.of<Applications>(context);
     var appli = apPro.applications;
 
+
     var screen = SafeArea(
       child: Scaffold(
         appBar: buildAppBar(context),
         body: Center(
-          child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: <Widget>[
-                Padding(
-                  padding: EdgeInsets.all(8.0),
-                  child: Text(course.name,
-                      style: TextStyle(
-                        fontSize: 40.0,
-                        fontWeight: FontWeight.bold,
-                      )),
+          child: Column(mainAxisAlignment: MainAxisAlignment.start, children: <
+              Widget>[
+            Padding(
+              padding: EdgeInsets.all(8.0),
+              child: Text(course.name,
+                  style: TextStyle(
+                    fontSize: 40.0,
+                    fontWeight: FontWeight.bold,
+                  )),
+            ),
+            SizedBox(
+              height: 10,
+            ),
+            Text("Studenti co se chtějí přidat:",
+                style: TextStyle(
+                  fontSize: 25.0,
+                  fontWeight: FontWeight.bold,
+                )),
+            Expanded(
+              child: ListView.builder(
+                itemCount: appli.length,
+                itemBuilder: (ctx, i) => Card(
+                  margin:
+                      const EdgeInsets.symmetric(horizontal: 15, vertical: 4),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      ListTile(
+                        leading: Icon(Icons.category),
+                        title: Text(appli[i].student),
+                        trailing: Chip(
+                          label: appli[i].approved
+                              ? Text("Přístup")
+                              : Text("NEpřístup"),
+                          backgroundColor:
+                              appli[i].approved ? Colors.green : Colors.red,
+                        ),
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: <Widget>[
+                          IconButton(
+                              onPressed: () =>
+                                  {apPro.setAccept(appli[i].id, code, auth)},
+                              icon: Icon(Icons.delete_forever)),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
-                SizedBox(
-                  height: 10,
-                ),
-                Text("Studenti co se chtějí přidat:",
-                    style: TextStyle(
-                      fontSize: 25.0,
-                      fontWeight: FontWeight.bold,
-                    )),
-                Expanded(
+              ),
+            ),
+            Text("Kategorie:",
+                style: TextStyle(
+                  fontSize: 25.0,
+                  fontWeight: FontWeight.bold,
+                )),
+            Expanded(
                   child: ListView.builder(
                     itemCount: appli.length,
                     itemBuilder: (ctx, i) => Card(
@@ -83,8 +120,7 @@ class CourseEditScreen extends StatelessWidget {
                     ),
                   ),
                 ),
-
-              ]),
+          ]),
         ),
       ),
     );

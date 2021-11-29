@@ -20,6 +20,7 @@ class ThreadItem extends StatelessWidget {
     final auth = Provider.of<Users>(context).findById(author);
     var args = {"courseId": courseId, "id": id};
     return Card(
+      color: isClosed ? Colors.grey : Colors.white,
       margin: const EdgeInsets.symmetric(horizontal: 15, vertical: 4),
       child: Padding(
         padding: const EdgeInsets.all(8),

@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:html';
 
 import 'package:fituska_web_app/models/student_application.dart';
 import 'package:fituska_web_app/providers/auth.dart';

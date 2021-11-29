@@ -1,7 +1,9 @@
+import 'package:fituska_web_app/providers/auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fituska_web_app/models/user.dart';
 import 'package:fituska_web_app/widgets/appbar.dart';
+import 'package:provider/provider.dart';
 
 class ProfilePage extends StatefulWidget {
   @override
@@ -22,6 +24,13 @@ class _ProfilePageState extends State<ProfilePage> {
               buildName(user),
               const SizedBox(height: 48),
               buildAbout(user),
+              const SizedBox(height: 24),
+              TextButton(
+                  onPressed: () {
+                    Provider.of<Auth>(context, listen: false).logout();
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text("Odhlásit")),
             ],
           ),
         ),
@@ -55,7 +64,7 @@ class _ProfilePageState extends State<ProfilePage> {
             ),
             const SizedBox(height: 16),
             Text(
-              "Fuck off you little bitch",
+              "TODO",
               style: const TextStyle(fontSize: 16, height: 1.4),
             ),
           ],

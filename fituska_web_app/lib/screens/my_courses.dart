@@ -39,10 +39,10 @@ class MyCourseList extends StatelessWidget {
                   child: ListView.builder(
                   itemCount: myCourses.length,
                   itemBuilder: (ctx, i) => MyCourseItem(
-                      courses[i].id,
-                      courses[i].name,
-                      courses[i].teacher,
-                      courses[i].threads.length),
+                      myCourses[i].id,
+                      myCourses[i].name,
+                      myCourses[i].teacher,
+                      myCourses[i].threads.length),
                 )),
               ],
             ))));

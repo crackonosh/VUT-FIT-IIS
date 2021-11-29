@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:fituska_web_app/providers/auth.dart';
 import 'package:fituska_web_app/providers/courses.dart';
 import 'package:fituska_web_app/providers/users.dart';
 import 'package:fituska_web_app/widgets/appbar.dart';
@@ -27,6 +28,7 @@ class _FituskaStartState extends State<FituskaStart> {
   @override
   void didChangeDependencies() {
     if (_isInit) {
+      Provider.of<Auth>(context, listen: false).tryAutoLogin();
       Provider.of<Users>(context, listen: false).initUsers();
       const tim = const Duration(seconds: 30);
       //Timer.periodic(tim, (timer) => _update(context));

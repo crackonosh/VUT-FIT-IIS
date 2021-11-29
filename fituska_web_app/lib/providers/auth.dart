@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:flutter/widgets.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Auth with ChangeNotifier {
   String _token = "";
@@ -46,6 +47,37 @@ class Auth with ChangeNotifier {
 
   Future<void> signin(String? email, String? password) async {
     return _authLog(email, password);
+  }
+
+  void logout() {
+    _token = "";
+    _expireryDate = DateTime.now();
+    _id = -1;
+    _role = "";
+    notifyListeners();
+  }
+
+  Future<bool> tryAutoLogin() async {
+    final prefs = await SharedPreferences.getInstance();
+    if (!prefs.containsKey("userData")) {
+      return false;
+    }
+
+    final extractedUserDat = prefs.getString("userData") as String;
+    final extractedUserData = json.decode(extractedUserDat);
+    final expiryDate =
+        DateTime.parse(extractedUserData["expireryDate"].toString());
+
+    if (expiryDate.isBefore(DateTime.now())) {
+      return false;
+    }
+
+    _token = extractedUserData["token"].toString();
+    _expireryDate = expiryDate;
+    _id = int.parse(extractedUserData["id"].toString());
+    _role = extractedUserData["role"].toString();
+    notifyListeners();
+    return true;
   }
 
   Future<void> _authReg(
@@ -105,6 +137,14 @@ class Auth with ChangeNotifier {
       _expireryDate = DateTime.fromMillisecondsSinceEpoch(res['exp'] * 1000);
       _id = res['user']["id"];
       _role = res['user']['role'];
+      final prefs = await SharedPreferences.getInstance();
+      final userData = json.encode({
+        'token': _token,
+        'expireryDate': _expireryDate.toIso8601String(),
+        'id': _id,
+        'role': _role
+      });
+      prefs.setString('userData', userData);
     } catch (error) {
       rethrow;
     }

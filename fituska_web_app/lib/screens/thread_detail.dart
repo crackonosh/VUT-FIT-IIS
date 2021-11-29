@@ -55,7 +55,7 @@ class ThreadDetailScreen extends StatelessWidget {
           ),
         ),
         floatingActionButton: Visibility(
-          visible: auth.isAuth,
+          visible: auth.isAuth && !thread.isClosed,
           child: FloatingActionButton(
             child: Icon(Icons.add),
             onPressed: () {
