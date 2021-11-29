@@ -1,6 +1,7 @@
 import 'package:fituska_web_app/providers/applications.dart';
 import 'package:fituska_web_app/providers/categories.dart';
-import 'package:fituska_web_app/screens/add_thread.dart';
+import 'package:fituska_web_app/providers/cours_prov.dart';
+//import 'package:fituska_web_app/screens/add_thread.dart';
 import 'package:fituska_web_app/screens/course_create.dart';
 import 'package:fituska_web_app/screens/course_detail.dart';
 import 'package:fituska_web_app/screens/course_edit.dart';
@@ -54,6 +55,9 @@ class Fituska extends StatelessWidget {
         ChangeNotifierProvider<Categories>(
           create: (_) => Categories(),
         ),
+        ChangeNotifierProvider<CoursProv>(
+          create: (_) => CoursProv(),
+        ),
       ],
       child: MaterialApp(
         title: "Fituška",
@@ -67,7 +71,7 @@ class Fituska extends StatelessWidget {
           "/thread-detail": (ctx) => ThreadDetailScreen(),
           "/course-create": (ctx) => CourseCreate(),
           "/user-panel": (ctx) => UserPanel(),
-          "/add-thread": (ctx) => AddThreadScreen(),
+          //"/add-thread": (ctx) => AddThreadScreen(),
           "/course-list": (ctx) => MyCourseList(),
           "/course-edit": (ctx) => CourseEditScreen(),
           "/course-management": (ctx) => ApproveCoursesScreen(),

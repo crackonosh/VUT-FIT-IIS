@@ -28,7 +28,7 @@ class _ProfilePageState extends State<ProfilePage> {
               TextButton(
                   onPressed: () {
                     Provider.of<Auth>(context, listen: false).logout();
-                    Navigator.of(context).pop();
+                    Navigator.of(context).pushNamed("/");
                   },
                   child: const Text("Odhlásit")),
             ],

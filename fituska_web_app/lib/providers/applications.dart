@@ -44,6 +44,25 @@ class Applications with ChangeNotifier {
     }
   }
 
+  Future<void> sendAppli(String code, Auth auth) async {
+    final Uri url =
+        Uri.parse("http://$api:8000/courses/${code}/application/add");
+    try {
+      await http.post(url,
+      headers: {
+        'Content-type': 'application/json',
+        'Authorization': 'Bearer ${auth.token}',
+      },
+      ).timeout(const Duration(seconds: 4), onTimeout: () {
+        throw Exception("Timed out");
+      }).then((value) {
+          getAppliSilent(code, auth).then((value) => notifyListeners());
+      });
+    } catch (error) {
+      print(error);
+    }
+  }
+
   Future<void> getAppli(String code, Auth auth) async {
     final Uri url =
         Uri.parse("http://$api:8000/courses/$code/applications/get");
