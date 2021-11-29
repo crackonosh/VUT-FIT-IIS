@@ -24,25 +24,24 @@
 	</dd>
 	<dd>Karel Norek <!-- Nahraïte skuteèným jménem a e-mailem autora a popisem èinnosti -->
 	    <a href="mailto:xnorek01@stud.fit.vutbr.cz">xnorek01@stud.fit.vutbr.cz</a> - 
-		Výpomoc pøi Frontendu a Backendu, dokumentace, testování
+		Frontend, dokumentace, testování, výpomoct pøi backendu
 	</dd>
   <dd>Luká¹ Hais <!-- Nahraïte skuteèným jménem a e-mailem autora a popisem èinnosti -->
 	    <a href="mailto:xhaisl00@stud.fit.vutbr.cz">xhaisl00@stud.fit.vutbr.cz</a> - 
 		Backend
 	</dd>
 	<dt>URL aplikace</dt>
-	<dd><a href="http://www.stud.fit.vutbr.cz/~xautor01/IIS">http://www.stud.fit.vutbr.cz/~xautor01/IIS</a></dd>
-	<dd>(pokud má aplikace více vstupních stránek, napi¹te obdobnì dal¹í URL)</dd>
+	<dd><a href="http://164.68.102.86/#/">http://164.68.102.86/#/</a></dd>
 </dl>
 
 <h2>U¾ivatelé systému pro testování</h2>
 
 <table>
-<tbody><tr><th>Login</th><th>Heslo</th><th>Role</th></tr>
-<tr><td>admin</td><td>admin</td><td>Administrátor</td></tr>
-<tr><td>mod</td><td>mod</td><td>Moderátor</td></tr>
-<tr><td>ucitel</td><td>ucitel</td><td>Uèitel</td></tr>
-<tr><td>student</td><td>student</td><td>Student</td></tr>
+<tbody><tr><th>Email</th><th>Heslo</th><th>Role</th></tr>
+<tr><td>admin@admin.admin</td><td>adminadmin</td><td>Administrátor</td></tr>
+<tr><td>mod@mod.mod</td><td>modmodmod</td><td>Moderátor</td></tr>
+<tr><td>teacher@teacher.teacher</td><td>teacherteacher</td><td>User</td></tr>
+<tr><td>student@student.student</td><td>studentstudent</td><td>User</td></tr>
 </tbody></table>
 
 <h2>Implementace</h2>
@@ -58,8 +57,6 @@
 		<li><b>fituska-api/src/Controller/ThreadController.php</b>: controller pro správu vláken</li>
 		<li><b>fituska-api/src/Controller/ThreadCategoryController.php</b>: controller pro práci s kategoriemi</li>
 		<li><b>fituska-api/src/Controller/ApprovedStudnetController.php</b>: controller pro spravování ¾ádostí o pøidání do kurzu</li>
-		
-		
 	</ul>
 
 <h3>Databáze</h3>
@@ -81,12 +78,18 @@
 	</li>
 
 	<li>
-		Frontend
+		Frontend 
+		<p>Po¾adavky: <b>flutter</b> </p>
+		<ol>
+			<li>Frontend je nutné spou¹tìt ve slo¾ce fituska_web_app.</li>
+			<li>Njedøíve je nutné stáhnout potøebované knihovny pomocí pøíkazu <b>flutter pub get</b>.</li>
+			<li>Poté pøíkaz <b>flutter run</b> - tento pøíkaz spustí frontend.</li>
+		</ol>
 	</li>
 
 </ol>
 
 
 <h2>Známé problémy</h2>
-
+<p>Nelze udìlovat hlasy, nelze pøidávat reakce, nelze zakládat vláknam, posílat zprávy</p>
 </body></html>
